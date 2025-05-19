@@ -66,10 +66,10 @@ public boolean atBorder(int nextLocation) {
 }
     public void loadPlayer(){
      try {
-            playerImage_down = ImageIO.read(new File("C:\\Users\\pf43e\\OneDrive\\Documents\\Visual Studio 2022\\Java\\PROJEKPEMLANAKHIR\\TileGambar\\tile_chara000.png"));
-            playerImage_up = ImageIO.read(new File("C:\\Users\\pf43e\\OneDrive\\Documents\\Visual Studio 2022\\Java\\PROJEKPEMLANAKHIR\\TileGambar\\tile_chara012.png"));
-            playerImage_left = ImageIO.read(new File("C:\\Users\\pf43e\\OneDrive\\Documents\\Visual Studio 2022\\Java\\PROJEKPEMLANAKHIR\\TileGambar\\tile_chara004.png"));
-            playerImage_right = ImageIO.read(new File("C:\\Users\\pf43e\\OneDrive\\Documents\\Visual Studio 2022\\Java\\PROJEKPEMLANAKHIR\\TileGambar\\tile_chara008.png"));
+            playerImage_down = ImageIO.read(new File("TileGambar/tile_chara000.png"));
+            playerImage_up = ImageIO.read(new File("TileGambar/tile_chara012.png"));
+            playerImage_left = ImageIO.read(new File("TileGambar/tile_chara004.png"));
+            playerImage_right = ImageIO.read(new File("TileGambar/tile_chara008.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

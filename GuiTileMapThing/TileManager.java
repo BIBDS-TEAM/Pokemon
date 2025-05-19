@@ -19,7 +19,7 @@ public class TileManager {
 
     public void loadTileImages() {
         try {
-            tiles[1] = new Tile(ImageIO.read(new File("C:\\Users\\pf43e\\OneDrive\\Documents\\Visual Studio 2022\\Java\\PROJEKPEMLANAKHIR\\TileGambar\\tile_0051.png")), false);
+            tiles[1] = new Tile(ImageIO.read(new File("TileGambar/tile_0051.png")), false);
         } catch (IOException e) {
             e.printStackTrace();
         }
