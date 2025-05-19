@@ -1,0 +1,85 @@
+{
+  "NORMAL": {
+    "attack": {
+      "0.5x": ["ROCK", "STEEL"],
+      "0x": ["GHOST"]
+    },
+    "defense": {
+      "2x": ["FIGHTING"],
+      "0.5x": [],
+      "0x": ["GHOST"]
+    }
+  },
+  "FIRE": {
+    "attack": {
+      "2x": ["GRASS", "ICE", "BUG", "STEEL"],
+      "0.5x": ["FIRE", "WATER", "ROCK", "DRAGON"],
+      "0x": []
+    },
+    "defense": {
+      "2x": ["WATER", "GROUND", "ROCK"],
+      "0.5x": ["FIRE", "GRASS", "ICE", "BUG", "STEEL", "FAIRY"],
+      "0x": []
+    }
+  },
+  "WATER": {
+    "attack": {
+      "2x": ["FIRE", "GROUND", "ROCK"],
+      "0.5x": ["WATER", "GRASS", "DRAGON"],
+      "0x": []
+    },
+    "defense": {
+      "2x": ["ELECTRIC", "GRASS"],
+      "0.5x": ["FIRE", "WATER", "ICE", "STEEL"],
+      "0x": []
+    }
+  },
+  "GRASS": {
+    "attack": {
+      "2x": ["WATER", "GROUND", "ROCK"],
+      "0.5x": ["FIRE", "GRASS", "POISON", "FLYING", "BUG", "DRAGON", "STEEL"],
+      "0x": []
+    },
+    "defense": {
+      "2x": ["FIRE", "ICE", "POISON", "FLYING", "BUG"],
+      "0.5x": ["WATER", "ELECTRIC", "GRASS", "GROUND"],
+      "0x": []
+    }
+  },
+  "ELECTRIC": {
+    "attack": {
+      "2x": ["WATER", "FLYING"],
+      "0.5x": ["ELECTRIC", "GRASS", "DRAGON"],
+      "0x": ["GROUND"]
+    },
+    "defense": {
+      "2x": ["GROUND"],
+      "0.5x": ["ELECTRIC", "FLYING", "STEEL"],
+      "0x": []
+    }
+  },
+  "ICE": {
+    "attack": {
+      "2x": ["GRASS", "GROUND", "FLYING", "DRAGON"],
+      "0.5x": ["FIRE", "WATER", "ICE", "STEEL"],
+      "0x": []
+    },
+    "defense": {
+      "2x": ["FIRE", "FIGHTING", "ROCK", "STEEL"],
+      "0.5x": ["ICE"],
+      "0x": []
+    }
+  },
+  "ROCK": {
+    "attack": {
+      "2x": ["FIRE", "ICE", "FLYING", "BUG"],
+      "0.5x": ["FIGHTING", "GROUND", "STEEL"],
+      "0x": []
+    },
+    "defense": {
+      "2x": ["WATER", "GRASS", "FIGHTING", "GROUND", "STEEL"],
+      "0.5x": ["NORMAL", "FIRE", "POISON", "FLYING"],
+      "0x": []
+    }
+  }
+}

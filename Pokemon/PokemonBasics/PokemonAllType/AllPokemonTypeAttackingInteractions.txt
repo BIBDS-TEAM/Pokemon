@@ -1,0 +1,46 @@
+🔵 Normal
+½ Not very effective against: Rock, Steel
+
+×0 Ineffective against: Ghost
+
+🔥 Fire
+×2 Super effective against: Grass, Ice, Bug, Steel
+
+½ Not very effective against: Fire, Water, Rock, Dragon
+
+×0 Ineffective against: —
+
+💧 Water
+×2 Super effective against: Fire, Ground, Rock
+
+½ Not very effective against: Water, Grass, Dragon
+
+×0 Ineffective against: —
+
+🌱 Grass
+×2 Super effective against: Water, Ground, Rock
+
+½ Not very effective against: Fire, Grass, Poison, Flying, Bug, Dragon, Steel
+
+×0 Ineffective against: —
+
+⚡ Electric
+×2 Super effective against: Water, Flying
+
+½ Not very effective against: Electric, Grass, Dragon
+
+×0 Ineffective against: Ground
+
+🟣 Ice
+×2 Super effective against: Grass, Ground, Flying, Dragon
+
+½ Not very effective against: Fire, Water, Ice, Steel
+
+×0 Ineffective against: —
+
+🪨 Rock
+×2 Super effective against: Fire, Ice, Flying, Bug
+
+½ Not very effective against: Fighting, Ground, Steel
+
+×0 Ineffective against: —

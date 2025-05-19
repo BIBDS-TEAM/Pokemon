@@ -27,8 +27,8 @@ public abstract class Pokemon {
     protected BufferedImage[] model = new BufferedImage[2];
     protected String miniModelPath;
     protected String fightModelPath;
-    // index 0 for ATTACK, 1 for DEFEND, 2 for SKIPPING_TURN, 3 for TAKE_DAMAGE, 4 for HEAL, 5 for SPECIAL_ATTACK, 6 for SPECIAL_DEFEND, 7 for LVL_UP, 8 for MOVE, 9 for RESIST
-    protected PokemonSound[] sound = new PokemonSound[10];
+    // index 0 for ATTACK, 1 for DEFEND, 2 for SKIPPING_TURN, 3 for TAKE_DAMAGE, 4 for HEAL, 5 for SPECIAL_ATTACK, 6 for SPECIAL_DEFEND, 7 for LVL_UP, 8 for MOVE, 9 for RESIST, 10 for DODGE
+    protected PokemonSound[] sound = new PokemonSound[11];
 
     public void print() {
         System.out.println(("Name: " + name));
@@ -64,10 +64,9 @@ public abstract class Pokemon {
         g.drawImage(model[modelIndex], 0, 0, null);
     }
 
-    public Pokemon(String name, PokemonType type, int lvl, int maxHp, int hp, int atk, int def, int spAtk, int spDef, int spd,
+    public Pokemon(String name,  int lvl, int maxHp, int hp, int atk, int def, int spAtk, int spDef, int spd,
             String miniModelPath, String fightModelPath) {
         this.name = name;
-        this.type = type;
         this.lvl = lvl;
         this.maxHp = maxHp;
         setHp(hp);

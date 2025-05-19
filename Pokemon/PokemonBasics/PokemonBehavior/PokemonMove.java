@@ -7,13 +7,15 @@ import java.util.HashMap;
 public abstract class PokemonMove {
     protected String MoveName;
     protected PokemonMoveType moveType;
+    protected PokemonMoveCategory moveCategory;
+    protected int maxSp;
     protected int sp;
     protected String desc;
 
-    public PokemonMove(String MoveName, PokemonMoveType moveType, int sp, String desc) {
+    public PokemonMove(String MoveName, int maxSp, String desc) {
         this.MoveName = MoveName;
-        this.moveType = moveType;
-        this.sp = sp;
+        this.maxSp = maxSp;
+        this.sp = maxSp;
         this.desc = desc;
     }
 
@@ -34,8 +36,16 @@ public abstract class PokemonMove {
     public int getSp() {
         return sp;
     }
-    public void setSp(int sp) {
-        this.sp = sp;
+    public boolean isSpZero() {
+        return sp > 0;
+    }
+
+    public void useMove() {
+        if (!isSpZero()) {
+            System.out.println("SP not enough");
+            return;
+        }
+        sp--;
     }
 
     public String getDesc() {
@@ -44,17 +54,9 @@ public abstract class PokemonMove {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    
-    public boolean isSpEnough() {
-        return sp > 0;
-    }
-
-    public void useSp() {
-        sp--;
-    }
 
     public Map<String, String> useMoveInfo() {
-        if (!isSpEnough()) {
+        if (!isSpZero()) {
             System.out.println("SP not enough");
             return null;
         } else {
@@ -66,6 +68,8 @@ public abstract class PokemonMove {
             return map;
         }
     }
+
+    public abstract void move();
 
     public abstract void move(Pokemon pokemon);
 

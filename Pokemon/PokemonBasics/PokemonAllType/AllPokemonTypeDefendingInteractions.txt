@@ -1,0 +1,48 @@
+🛡️ NORMAL
+×2 Weak to: Fighting
+
+½ Resistant to: —
+
+×0 Immune to: Ghost
+
+🛡️ FIRE
+×2 Weak to: Water, Ground, Rock
+
+½ Resistant to: Fire, Grass, Ice, Bug, Steel, Fairy
+
+×0 Immune to: —
+
+🛡️ WATER
+×2 Weak to: Electric, Grass
+
+½ Resistant to: Fire, Water, Ice, Steel
+
+×0 Immune to: —
+
+🛡️ GRASS
+×2 Weak to: Fire, Ice, Poison, Flying, Bug
+
+½ Resistant to: Water, Electric, Grass, Ground
+
+×0 Immune to: —
+
+🛡️ ELECTRIC
+×2 Weak to: Ground
+
+½ Resistant to: Electric, Flying, Steel
+
+×0 Immune to: —
+
+🛡️ ICE
+×2 Weak to: Fire, Fighting, Rock, Steel
+
+½ Resistant to: Ice
+
+×0 Immune to: —
+
+🛡️ ROCK
+×2 Weak to: Water, Grass, Fighting, Ground, Steel
+
+½ Resistant to: Normal, Fire, Poison, Flying
+
+×0 Immune to: —

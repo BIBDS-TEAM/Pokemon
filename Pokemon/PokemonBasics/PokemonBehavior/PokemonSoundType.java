@@ -20,5 +20,7 @@ public enum PokemonSoundType {
     // 8
     MOVE, 
     // 9
-    RESIST
+    RESIST,
+    // 10
+    DODGE
 }
