@@ -1,0 +1,673 @@
+{
+    
+  "BULBASAUR": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 45,
+    "atk": 49,
+    "def": 49,
+    "spAtk": 65,
+    "spDef": 65,
+    "spd": 45
+  },
+  "IVYSAUR": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 60,
+    "atk": 62,
+    "def": 63,
+    "spAtk": 80,
+    "spDef": 80,
+    "spd": 60
+  },
+  "VENUSAUR": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 80,
+    "atk": 82,
+    "def": 83,
+    "spAtk": 100,
+    "spDef": 100,
+    "spd": 80
+  },
+  "CHARMANDER": {
+    "type": "FIRE",
+    "lvl": 1,
+    "maxHp": 39,
+    "atk": 52,
+    "def": 43,
+    "spAtk": 60,
+    "spDef": 50,
+    "spd": 65
+  },
+  "CHARMELEON": {
+    "type": "FIRE",
+    "lvl": 1,
+    "maxHp": 58,
+    "atk": 64,
+    "def": 58,
+    "spAtk": 80,
+    "spDef": 65,
+    "spd": 80
+  },
+  "CHARIZARD": {
+    "type": "FIRE",
+    "lvl": 1,
+    "maxHp": 78,
+    "atk": 84,
+    "def": 78,
+    "spAtk": 100,
+    "spDef": 85,
+    "spd": 100
+  },
+  "SQUIRTLE": {
+    "type": "WATER",
+    "lvl": 1,
+    "maxHp": 44,
+    "atk": 48,
+    "def": 65,
+    "spAtk": 50,
+    "spDef": 64,
+    "spd": 43
+  },
+  "WARTORTLE": {
+    "type": "WATER",
+    "lvl": 1,
+    "maxHp": 59,
+    "atk": 63,
+    "def": 80,
+    "spAtk": 65,
+    "spDef": 80,
+    "spd": 58
+  },
+  "BLASTOISE": {
+    "type": "WATER",
+    "lvl": 1,
+    "maxHp": 79,
+    "atk": 83,
+    "def": 100,
+    "spAtk": 85,
+    "spDef": 105,
+    "spd": 78
+  },
+  "CATERPIE": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 45,
+    "atk": 30,
+    "def": 35,
+    "spAtk": 20,
+    "spDef": 20,
+    "spd": 45
+  },
+  "METAPOD": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 50,
+    "atk": 20,
+    "def": 55,
+    "spAtk": 25,
+    "spDef": 25,
+    "spd": 30
+  },
+  "BUTTERFREE": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 60,
+    "atk": 45,
+    "def": 50,
+    "spAtk": 80,
+    "spDef": 80,
+    "spd": 70
+  },
+  "WEEDLE": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 40,
+    "atk": 35,
+    "def": 30,
+    "spAtk": 20,
+    "spDef": 20,
+    "spd": 50
+  },
+  "KAKUNA": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 45,
+    "atk": 25,
+    "def": 50,
+    "spAtk": 25,
+    "spDef": 25,
+    "spd": 35
+  },
+  "BEEDRILL": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 65,
+    "atk": 80,
+    "def": 40,
+    "spAtk": 45,
+    "spDef": 80,
+    "spd": 75
+  },
+  "PIDGEY": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 40,
+    "atk": 45,
+    "def": 40,
+    "spAtk": 35,
+    "spDef": 35,
+    "spd": 56
+  },
+  "PIDGEOTTO": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 63,
+    "atk": 60,
+    "def": 55,
+    "spAtk": 50,
+    "spDef": 50,
+    "spd": 71
+  },
+  "PIDGEOT": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 83,
+    "atk": 80,
+    "def": 75,
+    "spAtk": 70,
+    "spDef": 70,
+    "spd": 91
+  },
+  "RATTATA": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 30,
+    "atk": 56,
+    "def": 35,
+    "spAtk": 25,
+    "spDef": 35,
+    "spd": 72
+  },
+  "CLEFAIRY": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 70,
+    "atk": 45,
+    "def": 48,
+    "spAtk": 60,
+    "spDef": 65,
+    "spd": 35
+  },
+  "CLEFABLE": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 95,
+    "atk": 70,
+    "def": 73,
+    "spAtk": 85,
+    "spDef": 90,
+    "spd": 60
+  },
+  "VULPIX": {
+    "type": "FIRE",
+    "lvl": 1,
+    "maxHp": 38,
+    "atk": 41,
+    "def": 40,
+    "spAtk": 65,
+    "spDef": 65,
+    "spd": 65
+  },
+  "NINETALES": {
+    "type": "FIRE",
+    "lvl": 1,
+    "maxHp": 73,
+    "atk": 76,
+    "def": 75,
+    "spAtk": 100,
+    "spDef": 100,
+    "spd": 100
+  },
+  "JIGGLYPUFF": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 115,
+    "atk": 45,
+    "def": 20,
+    "spAtk": 25,
+    "spDef": 25,
+    "spd": 20
+  },
+  "WIGGLYTUFF": {
+    "type": "NORMAL",
+    "lvl": 1,
+    "maxHp": 140,
+    "atk": 70,
+    "def": 45,
+    "spAtk": 50,
+    "spDef": 50,
+    "spd": 45
+  },
+  "ODDISH": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 45,
+    "atk": 50,
+    "def": 55,
+    "spAtk": 75,
+    "spDef": 65,
+    "spd": 30
+  },
+  "GLOOM": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 60,
+    "atk": 65,
+    "def": 70,
+    "spAtk": 85,
+    "spDef": 75,
+    "spd": 40
+  },
+  "VILEPLUME": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 75,
+    "atk": 80,
+    "def": 85,
+    "spAtk": 100,
+    "spDef": 90,
+    "spd": 50
+  },
+  "PARAS": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 35,
+    "atk": 70,
+    "def": 55,
+    "spAtk": 55,
+    "spDef": 55,
+    "spd": 25
+  },
+  "PARASECT": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 60,
+    "atk": 95,
+    "def": 80,
+    "spAtk": 60,
+    "spDef": 80,
+    "spd": 30
+  },
+  "VENONAT": {
+    "type": "GRASS",
+    "lvl": 1,
+    "maxHp": 60,
+    "atk": 55,
+    "def": 50,
+    "spAtk": 40,
+    "spDef": 40,
+    "spd": 45
+  },
+  "VENOMOTH": {
+  "type": "GRASS",
+  "lvl": 1,
+  "maxHp": 70,
+  "atk": 65,
+  "def": 60,
+  "spAtk": 90,
+  "spDef": 75,
+  "spd": 90
+},
+"DIGLETT": {
+  "type": "ROCK",
+  "lvl": 1,
+  "maxHp": 10,
+  "atk": 55,
+  "def": 25,
+  "spAtk": 35,
+  "spDef": 45,
+  "spd": 95
+},
+"DUGTRIO": {
+  "type": "ROCK",
+  "lvl": 1,
+  "maxHp": 35,
+  "atk": 80,
+  "def": 50,
+  "spAtk": 50,
+  "spDef": 70,
+  "spd": 120
+},
+"MEOWTH": {
+  "type": "NORMAL",
+  "lvl": 1,
+  "maxHp": 40,
+  "atk": 45,
+  "def": 35,
+  "spAtk": 40,
+  "spDef": 40,
+  "spd": 90
+},
+"PERSIAN": {
+  "type": "NORMAL",
+  "lvl": 1,
+  "maxHp": 65,
+  "atk": 70,
+  "def": 60,
+  "spAtk": 65,
+  "spDef": 65,
+  "spd": 115
+},
+"PSYDUCK": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 50,
+  "atk": 52,
+  "def": 48,
+  "spAtk": 65,
+  "spDef": 50,
+  "spd": 55
+},
+"GOLDUCK": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 80,
+  "atk": 82,
+  "def": 78,
+  "spAtk": 95,
+  "spDef": 80,
+  "spd": 85
+},
+"GROWLITHE": {
+  "type": "FIRE",
+  "lvl": 1,
+  "maxHp": 55,
+  "atk": 70,
+  "def": 45,
+  "spAtk": 70,
+  "spDef": 50,
+  "spd": 60
+},
+"ARCANINE": {
+  "type": "FIRE",
+  "lvl": 1,
+  "maxHp": 90,
+  "atk": 110,
+  "def": 80,
+  "spAtk": 100,
+  "spDef": 80,
+  "spd": 95
+},
+"POLIWAG": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 40,
+  "atk": 50,
+  "def": 40,
+  "spAtk": 40,
+  "spDef": 40,
+  "spd": 90
+},
+"POLIWHIRL": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 65,
+  "atk": 65,
+  "def": 65,
+  "spAtk": 50,
+  "spDef": 50,
+  "spd": 90
+},
+"POLIWRATH": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 90,
+  "atk": 95,
+  "def": 95,
+  "spAtk": 70,
+  "spDef": 90,
+  "spd": 70
+},
+"BELLSPROUT": {
+  "type": "GRASS",
+  "lvl": 1,
+  "maxHp": 50,
+  "atk": 75,
+  "def": 35,
+  "spAtk": 70,
+  "spDef": 30,
+  "spd": 40
+},
+"WEEPINBELL": {
+  "type": "GRASS",
+  "lvl": 1,
+  "maxHp": 65,
+  "atk": 90,
+  "def": 50,
+  "spAtk": 85,
+  "spDef": 45,
+  "spd": 55
+},
+"VICTREEBEL": {
+  "type": "GRASS",
+  "lvl": 1,
+  "maxHp": 80,
+  "atk": 105,
+  "def": 65,
+  "spAtk": 100,
+  "spDef": 70,
+  "spd": 70
+},
+"TENTACOOL": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 40,
+  "atk": 40,
+  "def": 35,
+  "spAtk": 50,
+  "spDef": 100,
+  "spd": 70
+},
+"TENTACRUEL": {
+  "type": "WATER",
+  "lvl": 1,
+  "maxHp": 80,
+  "atk": 70,
+  "def": 65,
+  "spAtk": 80,
+  "spDef": 120,
+  "spd": 100
+},
+"GEODUDE": {
+  "type": "ROCK",
+  "lvl": 1,
+  "maxHp": 40,
+  "atk": 80,
+  "def": 100,
+  "spAtk": 30,
+  "spDef": 30,
+  "spd": 20
+},
+"GRAVELER": {
+  "type": "ROCK",
+  "lvl": 1,
+  "maxHp": 55,
+  "atk": 95,
+  "def": 115,
+  "spAtk": 45,
+  "spDef": 45,
+  "spd": 35
+},
+"GOLEM": {
+  "type": "ROCK",
+  "lvl": 1,
+  "maxHp": 80,
+  "atk": 120,
+  "def": 130,
+  "spAtk": 55,
+  "spDef": 65,
+  "spd": 45
+},
+"PONYTA": {
+  "type": "FIRE",
+  "lvl": 1,
+  "maxHp": 50,
+  "atk": 85,
+  "def": 55,
+  "spAtk": 65,
+  "spDef": 65,
+  "spd": 90
+},
+"RAPIDASH": {
+  "type": "FIRE",
+  "lvl": 1,
+  "maxHp": 65,
+  "atk": 100,
+  "def": 70,
+  "spAtk": 80,
+  "spDef": 80,
+  "spd": 105
+},
+  "SHELlder": {
+    "type": "WATER",
+    "lvl": 30,
+    "maxHp": 30,
+    "atk": 65,
+    "def": 100,
+    "spAtk": 40,
+    "spDef": 45,
+    "spd": 85
+  },
+  "CLOYSTER": {
+    "type": "WATER",
+    "lvl": 50,
+    "maxHp": 50,
+    "atk": 95,
+    "def": 180,
+    "spAtk": 70,
+    "spDef": 85,
+    "spd": 70
+  },
+  "ONIX": {
+    "type": "ROCK",
+    "lvl": 35,
+    "maxHp": 35,
+    "atk": 45,
+    "def": 160,
+    "spAtk": 70,
+    "spDef": 30,
+    "spd": 90
+  },
+  "KRABBY": {
+    "type": "WATER",
+    "lvl": 30,
+    "maxHp": 30,
+    "atk": 105,
+    "def": 90,
+    "spAtk": 50,
+    "spDef": 25,
+    "spd": 25
+  },
+  "KINGLER": {
+    "type": "WATER",
+    "lvl": 55,
+    "maxHp": 55,
+    "atk": 130,
+    "def": 115,
+    "spAtk": 75,
+    "spDef": 50,
+    "spd": 50
+  },
+  "VAPOREON": {
+    "type": "WATER",
+    "lvl": 130,
+    "maxHp": 130,
+    "atk": 65,
+    "def": 60,
+    "spAtk": 110,
+    "spDef": 95,
+    "spd": 65
+  },
+  "FLAREON": {
+    "type": "FIRE",
+    "lvl": 65,
+    "maxHp": 65,
+    "atk": 130,
+    "def": 60,
+    "spAtk": 95,
+    "spDef": 110,
+    "spd": 65
+  },
+  "OMANYTE": {
+    "type": "ROCK",
+    "lvl": 35,
+    "maxHp": 35,
+    "atk": 40,
+    "def": 100,
+    "spAtk": 90,
+    "spDef": 55,
+    "spd": 35
+  },
+  "OMASTAR": {
+    "type": "ROCK",
+    "lvl": 70,
+    "maxHp": 70,
+    "atk": 60,
+    "def": 125,
+    "spAtk": 115,
+    "spDef": 70,
+    "spd": 55
+  },
+  "KABUTO": {
+    "type": "ROCK",
+    "lvl": 30,
+    "maxHp": 30,
+    "atk": 80,
+    "def": 90,
+    "spAtk": 55,
+    "spDef": 45,
+    "spd": 45
+  },
+  "KABUTOPS": {
+    "type": "ROCK",
+    "lvl": 60,
+    "maxHp": 60,
+    "atk": 115,
+    "def": 105,
+    "spAtk": 80,
+    "spDef": 70,
+    "spd": 70
+  },
+  "AERODACTYL": {
+    "type": "ROCK",
+    "lvl": 80,
+    "maxHp": 80,
+    "atk": 105,
+    "def": 65,
+    "spAtk": 60,
+    "spDef": 75,
+    "spd": 130
+  },
+  "ARTICUNO": {
+    "type": "ICE",
+    "lvl": 90,
+    "maxHp": 90,
+    "atk": 85,
+    "def": 100,
+    "spAtk": 125,
+    "spDef": 80,
+    "spd": 85
+  },
+  "MOLTRES": {
+    "type": "FIRE",
+    "lvl": 90,
+    "maxHp": 90,
+    "atk": 100,
+    "def": 90,
+    "spAtk": 125,
+    "spDef": 85,
+    "spd": 90
+  }
+}
