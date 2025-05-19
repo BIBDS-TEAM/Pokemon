@@ -1,6 +1,6 @@
-package Projek_BIBD_Pokemon.Item;
+package Item;
 
-import Projek_BIBD_Pokemon.Pokemon.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.*;
 
 public abstract class Item {
     protected String name;

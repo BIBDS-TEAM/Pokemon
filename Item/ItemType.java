@@ -1,4 +1,4 @@
-package Projek_BIBD_Pokemon.Item;
+package Item;
 
 public enum ItemType {
     HEAL,

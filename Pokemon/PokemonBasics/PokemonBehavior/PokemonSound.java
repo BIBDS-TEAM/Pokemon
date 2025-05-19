@@ -1,4 +1,4 @@
-package Projek_BIBD_Pokemon.Pokemon;
+package Pokemon.PokemonBasics.PokemonBehavior;
 
 import java.util.Map;
 import java.util.HashMap;
