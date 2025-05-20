@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 public class KeyInput implements KeyListener {
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed,enterPressed;
 
     private LinkedList<String> directionList = new LinkedList<>();
 
@@ -19,7 +19,9 @@ public class KeyInput implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-
+        if (code == KeyEvent.VK_ENTER) {
+            enterPressed = true;
+        }
         if(code == KeyEvent.VK_W){
             upPressed = true;
             if(!directionList.contains("up")){
@@ -49,7 +51,9 @@ public class KeyInput implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
-
+        if (code == KeyEvent.VK_ENTER) {
+            enterPressed = false;
+        }
         if(code == KeyEvent.VK_W){
             upPressed = false;
             directionList.remove("up");

@@ -10,60 +10,60 @@ import javax.imageio.ImageIO;
 public class Player extends Entity{
     GamePanel gp;
     KeyInput keyI;
+    public final int screenX,screenY;
     int lastLocationX,lastLocationY;
     BufferedImage playerImage_down,playerImage_up,playerImage_right,playerImage_left,playerImage;
     public Player(GamePanel gp, KeyInput keyI) {
         this.gp = gp;
         this.keyI = keyI;
+        screenX = 512/2 - 32;
+        screenY = 512/2 - 32;
+        solidArea = new Rectangle();
+        solidArea.x = 8;
+        solidArea.y = 16;
+        solidArea.width = 48;
+        solidArea.height = 48;
+
+
         setDefaultValues(); 
         loadPlayer();
         playerImage = playerImage_down;
     }
     public void setDefaultValues(){
-        x = 100;
-        y = 100;
-        speed = 4;
+        worldX = 256;
+        worldY = 256;
+        speed = 2;
     }
 
     public void update() {
-    lastLocationX = x;
-    lastLocationY = y;
 
-    String direction = keyI.getCurrentDirection();
+    direction = keyI.getCurrentDirection();
 
     if(direction == null){
         return;
     }
-
-    if(direction.equals("up")){
-        if(!atBorder(y - speed)){
-            y -= speed;
-            playerImage = playerImage_up;
+    collisionOn = false;
+    gp.cc.cekTile(this);
+    if(!collisionOn){
+        switch (direction) {
+            case "up":
+                worldY -= speed;
+                break;
+            case "down":
+                worldY += speed;
+                break;
+            case "left":
+                worldX -= speed;
+                break;
+            case "right":
+                worldX += speed;
+                break;
+            default:
+                break;
         }
-    }
-    else if(direction.equals("down")){
-        if(!atBorder(y + speed)){
-            y += speed;
-            playerImage = playerImage_down;
-        }
-    }
-    else if(direction.equals("left")){
-        if(!atBorder(x - speed)){
-            x -= speed;
-            playerImage = playerImage_left;
-        }
-    }
-    else if(direction.equals("right")){
-        if(!atBorder(x + speed)){
-            x += speed;
-            playerImage = playerImage_right;
-        }
-    }
+    }    
 }
 
-public boolean atBorder(int nextLocation) {
-    return nextLocation < 0 || nextLocation > 448;
-}
     public void loadPlayer(){
      try {
             playerImage_down = ImageIO.read(new File("TileGambar/tile_chara000.png"));
@@ -75,9 +75,23 @@ public boolean atBorder(int nextLocation) {
         }
     }
     public void draw(Graphics2D g2){
-         if (playerImage != null) {
-            g2.drawImage(playerImage, x, y, 32, 32, null); // draws the image at (x,y), scaled to 32x32
-        }
+    if(direction != null){
+        switch(direction) {
+    case "up":
+        playerImage = playerImage_up;
+        break;
+    case "down":
+        playerImage = playerImage_down;
+        break;
+    case "left":
+        playerImage = playerImage_left;
+        break;
+    case "right":
+        playerImage = playerImage_right;
+        break;
     }
 }
+            g2.drawImage(playerImage, screenX, screenY, 64, 64, null); // draws the image at (x,y), scaled to 32x32
+        }
+    }
 
