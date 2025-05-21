@@ -14,13 +14,20 @@ public class GamePanel extends JPanel implements Runnable{
     public final int maxScreenRow = 8;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
-
     public final int maxWorldC = 20;
     public final int maxWorldR = 20;
     public final int worldWidth = tileSize * maxWorldC;
     public final int worldHeight = tileSize * maxWorldR;
     public CollisionCheck cc = new CollisionCheck(this);
-    int FPS = 60;
+    int normalFPS = 60;
+    int transitionFPS = 180;
+    int currentFPS = normalFPS;
+    private int transitionStep = 0;
+    private int transitionTimer = 0;
+    private final int transitionSpeed = 4; 
+    private boolean isOpeningPhase = false;
+    private int openingStep = 0;
+    private final int openingSpeed = 2;
     KeyInput  keyI = new KeyInput();
     Thread gameThread;
     TileManager tileManager = new TileManager(this);
@@ -60,13 +67,13 @@ public class GamePanel extends JPanel implements Runnable{
     @Override
     public void run(){
 
-        double interval = 1000000000/FPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
         long drawCount = 0;
         while(gameThread != null){
+            double interval = 1000000000/currentFPS;
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / interval;
             timer += (currentTime - lastTime);
@@ -86,7 +93,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-         switch(currentState){
+        switch(currentState){
         case SPLASH:
             splashTimer++;
             if (splashTimer >= splashDuration) {
@@ -108,9 +115,35 @@ public class GamePanel extends JPanel implements Runnable{
 
         case OVERWORLD:
             player.update();
-            break;
+            if (keyI.spacePressed) {
+                    keyI.spacePressed = false;
+                    currentState = GameState.BATTLETRANSITION;
+                    currentFPS = transitionFPS;
+                    transitionStep = 0;
+                    transitionTimer = 0;
+                }
+                break;
 
         case BATTLETRANSITION:
+            if (!isOpeningPhase) {
+                transitionTimer++;
+                if (transitionTimer >= transitionSpeed) {
+                    transitionTimer = 0;
+                    transitionStep++;
+                if (transitionStep > (getWidth() / 2 / transitionSpeed + getHeight() / 2 / transitionSpeed)) {
+                    isOpeningPhase = true;
+                    openingStep = 0;
+                }
+            }
+        } else {
+            openingStep++;
+            if (openingStep > getHeight() / 2 / openingSpeed) {
+                currentState = GameState.BATTLE;
+                currentFPS = normalFPS;
+            }
+        }
+            break;
+
         case OVERWORLDTRANSITION:
         case BATTLE:
             break;
@@ -142,7 +175,6 @@ public class GamePanel extends JPanel implements Runnable{
         g2.setComposite(originalComposite);
     }
     break;
-
         case MAINMENU:
             float menuProgress = Math.min(1.0f, (float) mainMenuFadeTimer / mainMenuFadeDuration);
 
@@ -173,8 +205,33 @@ public class GamePanel extends JPanel implements Runnable{
             tileManager.draw(g2);
             player.draw(g2);
             break;
-    }
+        case BATTLETRANSITION:
+            tileManager.draw(g2);
+            player.draw(g2);
+            g2.setColor(Color.BLACK);
 
+            if (!isOpeningPhase) {
+                int stepPixels = transitionStep * transitionSpeed;
+                g2.fillRect(getWidth() - stepPixels, 0, stepPixels, getHeight());
+                g2.fillRect(0, 0, getWidth(), stepPixels);
+                g2.fillRect(0, 0, stepPixels, getHeight());
+                g2.fillRect(0, getHeight() - stepPixels, getWidth(), stepPixels);
+            } else {
+                int openPixels = openingStep * openingSpeed;
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.clearRect(0, getHeight() / 2 - openPixels, getWidth(), openPixels);
+                g2.clearRect(0, getHeight() / 2, getWidth(), openPixels);
+            }
+            break;
+
+            case BATTLE:
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(Color.BLACK);
+                g2.setFont(new Font("Arial", Font.BOLD, 20));
+                g2.drawString("Battle Start!", 100, 100);
+                break;
+    }
     g2.dispose();
 }
 }
