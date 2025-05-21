@@ -19,10 +19,10 @@ public class Player extends Entity{
         screenX = 512/2 - 32;
         screenY = 512/2 - 32;
         solidArea = new Rectangle();
-        solidArea.x = 8;
-        solidArea.y = 16;
-        solidArea.width = 48;
-        solidArea.height = 48;
+        solidArea.x = 10;
+        solidArea.y = 30;
+        solidArea.width = 32;
+        solidArea.height = 32;
 
 
         setDefaultValues(); 
@@ -62,6 +62,8 @@ public class Player extends Entity{
                 break;
         }
     }    
+
+    System.out.println("Player Position -> X: " + worldX + ", Y: " + worldY);
 }
 
     public void loadPlayer(){
