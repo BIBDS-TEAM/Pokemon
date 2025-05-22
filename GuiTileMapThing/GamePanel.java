@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable{
     private final int mainMenuFadeDuration = 60;
     private Image splashLogo,mainMenuBG, titleScreenImage;
     private Font pokemonFont;
+    private MenuWithSelection mainMenu;
     
     
     public GamePanel(){
@@ -50,6 +51,9 @@ public class GamePanel extends JPanel implements Runnable{
             splashLogo = new ImageIcon("pokemon_logo.png").getImage();
             mainMenuBG = new ImageIcon("bg_menu.png").getImage();
             titleScreenImage = new ImageIcon("TileGambar/FilkomEd_title2.png").getImage();
+            String[] menuOptions = { "New Game", "Load Game", "Settings" };
+            mainMenu = new MenuWithSelection(menuOptions, 140, 290, 300, 150);
+            mainMenu.setVisible(false);
             try {
                 pokemonFont = Font.createFont(Font.TRUETYPE_FONT, new File("Font/Pokemon_Jadul.ttf")).deriveFont(28f);
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -102,16 +106,29 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
         case MAINMENU:
-            if (mainMenuFadeTimer < mainMenuFadeDuration) {
-                mainMenuFadeTimer++;
-            }
+            mainMenu.setVisible(true);
 
-            if (keyI.enterPressed) {
-                System.out.println("Enter pressed on Main Menu!");
-                currentState = GameState.OVERWORLD; 
-                keyI.enterPressed = false; 
-            }
-            break;
+        if (mainMenuFadeTimer < mainMenuFadeDuration) {
+            mainMenuFadeTimer++;
+        }
+
+        if (keyI.upPressed) {
+            mainMenu.moveUp();
+            keyI.upPressed = false;
+        }
+        if (keyI.downPressed) {
+            mainMenu.moveDown();
+            keyI.downPressed = false;
+        }
+        if (keyI.enterPressed) {
+            String selected = mainMenu.select();
+            System.out.println("Selected: " + selected);
+        if (selected.equals("New Game")) {
+            currentState = GameState.OVERWORLD;
+        }
+        keyI.enterPressed = false;
+    }
+    break;
 
         case OVERWORLD:
             player.update();
@@ -194,10 +211,12 @@ public class GamePanel extends JPanel implements Runnable{
 
             g2.setColor(Color.BLACK);
             g2.setFont(pokemonFont);
-            g2.drawString("New Game", 160, 300);
-            g2.drawString("Load Game", 160, 350);
-            g2.drawString("Settings", 160, 400);
-
+            JButton textButton = new JButton("New Game");
+            textButton.setBorderPainted(false);      
+            textButton.setContentAreaFilled(false);   
+            textButton.setFocusPainted(false);       
+            textButton.setOpaque(false);
+            mainMenu.draw(g2);
             g2.setComposite(originalComposite);
             break;
 
