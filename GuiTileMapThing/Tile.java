@@ -8,5 +8,8 @@ public class Tile {
         this.image = image;
         this.collision = collision;
     }
+    public void setCollision(boolean a){
+        collision = a;
+    }
 }
 
