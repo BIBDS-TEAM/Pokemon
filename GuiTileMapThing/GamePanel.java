@@ -40,7 +40,7 @@ public class GamePanel extends JPanel implements Runnable{
     private Image splashLogo,mainMenuBG, titleScreenImage;
     private Font pokemonFont;
     private MenuWithSelection mainMenu;
-    
+    private TextBox textBox;
     
     public GamePanel(){
             setPreferredSize(new Dimension(screenWidth,screenHeight));
@@ -54,6 +54,8 @@ public class GamePanel extends JPanel implements Runnable{
             String[][] menuOptions = {{ "New Game", "Load Game"},{"Settings","Test"}};
             mainMenu = new MenuWithSelection(menuOptions, 140, 290, 300, 150);
             mainMenu.setVisible(false);
+            textBox = new TextBox();
+            textBox.setText("Selamat datang di dunia petualangan!sssssssssssssssssssssssssssssssssssssssss");
             try {
                 pokemonFont = Font.createFont(Font.TRUETYPE_FONT, new File("Font/Pokemon_Jadul.ttf")).deriveFont(28f);
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -61,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable{
             } catch (IOException | FontFormatException e) {
                  e.printStackTrace();
                 pokemonFont = new Font("Arial", Font.BOLD, 12); 
-}
+            }
             startGameThread();
         }
     public void startGameThread(){
@@ -218,6 +220,12 @@ public class GamePanel extends JPanel implements Runnable{
         case OVERWORLD:
             tileManager.draw(g2);
             player.draw(g2);
+            textBox.draw(g2, getWidth(), getHeight());
+            if (keyI.spacePressed) {
+                keyI.spacePressed = false;
+                textBox.setText("Hello world,text goes here");
+            }
+
             break;
         
         case BATTLETRANSITION:
