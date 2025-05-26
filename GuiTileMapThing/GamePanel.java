@@ -51,7 +51,7 @@ public class GamePanel extends JPanel implements Runnable{
             splashLogo = new ImageIcon("pokemon_logo.png").getImage();
             mainMenuBG = new ImageIcon("bg_menu.png").getImage();
             titleScreenImage = new ImageIcon("TileGambar/FilkomEd_title2.png").getImage();
-            String[] menuOptions = { "New Game", "Load Game", "Settings" };
+            String[][] menuOptions = {{ "New Game", "Load Game"},{"Settings","Test"}};
             mainMenu = new MenuWithSelection(menuOptions, 140, 290, 300, 150);
             mainMenu.setVisible(false);
             try {
@@ -160,9 +160,9 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
             break;
-
         case OVERWORLDTRANSITION:
         case BATTLE:
+            
             break;
     }
 
@@ -211,11 +211,6 @@ public class GamePanel extends JPanel implements Runnable{
 
             g2.setColor(Color.BLACK);
             g2.setFont(pokemonFont);
-            JButton textButton = new JButton("New Game");
-            textButton.setBorderPainted(false);      
-            textButton.setContentAreaFilled(false);   
-            textButton.setFocusPainted(false);       
-            textButton.setOpaque(false);
             mainMenu.draw(g2);
             g2.setComposite(originalComposite);
             break;
@@ -224,6 +219,7 @@ public class GamePanel extends JPanel implements Runnable{
             tileManager.draw(g2);
             player.draw(g2);
             break;
+        
         case BATTLETRANSITION:
             tileManager.draw(g2);
             player.draw(g2);
