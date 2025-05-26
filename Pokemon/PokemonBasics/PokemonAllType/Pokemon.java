@@ -12,7 +12,7 @@ import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
 
-public abstract class Pokemon {
+public class Pokemon {
     protected String name;
     protected PokemonType type;
     protected int lvl;
@@ -27,8 +27,11 @@ public abstract class Pokemon {
     protected BufferedImage[] model = new BufferedImage[2];
     protected String miniModelPath;
     protected String fightModelPath;
-    // index 0 for ATTACK, 1 for DEFEND, 2 for SKIPPING_TURN, 3 for TAKE_DAMAGE, 4 for HEAL, 5 for SPECIAL_ATTACK, 6 for SPECIAL_DEFEND, 7 for LVL_UP, 8 for MOVE, 9 for RESIST, 10 for DODGE
+    // index 0 for ATTACK, 1 for DEFEND, 2 for SKIPPING_TURN, 3 for TAKE_DAMAGE, 4
+    // for HEAL, 5 for SPECIAL_ATTACK, 6 for SPECIAL_DEFEND, 7 for LVL_UP, 8 for
+    // MOVE, 9 for RESIST, 10 for DODGE
     protected PokemonSound[] sound = new PokemonSound[11];
+    protected PokemonMove[] move;
 
     public void print() {
         System.out.println(("Name: " + name));
@@ -64,12 +67,26 @@ public abstract class Pokemon {
         g.drawImage(model[modelIndex], 0, 0, null);
     }
 
-    public Pokemon(String name,  int lvl, int maxHp, int hp, int atk, int def, int spAtk, int spDef, int spd,
-            String miniModelPath, String fightModelPath) {
+    public Pokemon(String name, PokemonType type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd) {
         this.name = name;
+        this.type = type;
         this.lvl = lvl;
         this.maxHp = maxHp;
-        setHp(hp);
+        setHp(maxHp);
+        this.atk = atk;
+        this.def = def;
+        this.spAtk = spAtk;
+        this.spDef = spDef;
+        this.spd = spd;
+    }
+
+    public Pokemon(String name, PokemonType type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
+            String miniModelPath, String fightModelPath) {
+        this.name = name;
+        this.type = type;
+        this.lvl = lvl;
+        this.maxHp = maxHp;
+        setHp(maxHp);
         this.atk = atk;
         this.def = def;
         this.spAtk = spAtk;
@@ -162,12 +179,17 @@ public abstract class Pokemon {
         this.spd = spd;
     }
 
-    public void setModel(BufferedImage model, int modelIndex) {
+    public void setModel(String filePath, int modelIndex) {
         if (modelIndex < 0 || modelIndex >= this.model.length) {
             System.err.println("Invalid model index (0 - 1): " + modelIndex);
             return;
         }
-        this.model[modelIndex] = model;
+        try {
+            BufferedImage image = ImageIO.read(new File(filePath));
+            this.model[modelIndex] = image;
+        } catch (IOException e) {
+            System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
+        }
     }
 
     public BufferedImage getMiniModel() {
@@ -187,7 +209,8 @@ public abstract class Pokemon {
     }
 
     public Dimension getPreferredSize(int modelIndex) {
-        if (modelIndex < 0 || modelIndex >= model.length) throw new IndexOutOfBoundsException();
+        if (modelIndex < 0 || modelIndex >= model.length)
+            throw new IndexOutOfBoundsException();
         if (model[modelIndex] == null) {
             return new Dimension(100, 100);
         } else {
@@ -195,19 +218,37 @@ public abstract class Pokemon {
         }
     }
 
-    public abstract void lvlUp();
+    public int hpStatsUp() {
+        return (int)(maxHp + (lvl * 1.5) + 15);
+    }
+    public int statsUp(int stat)  {
+        int statsUp = (int)(stat + (lvl * 1.5) + 5);
+        return statsUp;
+    }
 
-    public abstract void attack(Pokemon pokemon);
+    public void lvlUp()  {
+        lvl++;
+        hpStatsUp();
+        atk = statsUp(atk);
+        def = statsUp(def);
+        spAtk = statsUp(spAtk);
+        spDef = statsUp(spDef);
+        spd = statsUp(spd);
+    }
 
-    public abstract void specialAttack(Pokemon pokemon);
+    public void attack(PokemonMove move, Pokemon defender) {
+        move.move(this, defender);
+    }
 
-    public abstract void defend(Pokemon pokemon);
+    public void specialAttack(Pokemon pokemon);
 
-    public abstract void specialDefend(Pokemon pokemon);
+    public void defend(Pokemon pokemon);
 
-    public abstract void skipTurn(Pokemon pokemon);
+    public void specialDefend(Pokemon pokemon);
 
-    public abstract void takeDamage(int damage);
+    public void skipTurn(Pokemon pokemon);
+
+    public void takeDamage(int damage);
 
     public void playSound() {
 
