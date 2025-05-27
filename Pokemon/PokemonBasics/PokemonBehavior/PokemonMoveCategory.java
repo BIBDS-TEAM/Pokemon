@@ -8,7 +8,7 @@ public enum PokemonMoveCategory {
     // 2
     STATUS,
     // 3 
-    SKIP,
+    RUN,
     // 4
     NONE
 }

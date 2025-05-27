@@ -4,11 +4,14 @@ import java.awt.*;
 import javax.swing.*;
 
 public class Main {
+    protected static final int screenWidth = 800;
+    protected static final int screenHeight = 800; 
+
     public static void main(String argz[]) {
         JFrame frame = new JFrame("pukemon");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 800);
-            frame.setMinimumSize(new Dimension(800,800));
+            frame.setSize(screenWidth, screenHeight);
+            frame.setMinimumSize(new Dimension(screenWidth, screenHeight));
             frame.getContentPane().setBackground(Color.BLACK);
             JPanel outerPanel = new JPanel(new GridBagLayout());
             outerPanel.setBackground(Color.BLACK);

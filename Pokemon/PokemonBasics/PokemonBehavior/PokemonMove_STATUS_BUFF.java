@@ -65,39 +65,52 @@ public class PokemonMove_STATUS_BUFF extends PokemonMove {
             int value = 0;
             switch (buffType) {
                 case "HP":
+                    int hp = pokemon.getHp();
                     if (isBuffInPercent)
-                        value = (pokemon.getHp() * (buffValue));
+                        value = (hp * (buffValue));
                     else
                         value = (buffValue);
-                    pokemon.setHp(value);
+                    pokemon.setHp(hp + value);
                     break;
                 case "ATK":
+                    int atk = pokemon.getAtk();
                     if (isBuffInPercent)
-                        value = ((int) (pokemon.getAtk() * (buffValue)));
+                        value = ((int) (atk * (buffValue)));
                     else
                         value = (buffValue);
-                    pokemon.setAtk(value);
+                    pokemon.setAtk(atk + value);
                     break;
                 case "DEF":
+                    int def = pokemon.getDef();
                     if (isBuffInPercent)
-                        value = ((int) (pokemon.getDef() * (buffValue)));
+                        value = ((int) (def * (buffValue)));
                     else
                         value = (buffValue);
-                    pokemon.setDef(value);
+                    pokemon.setDef(def + value);
                     break;
                 case "SPATK":
+                    int spAtk = pokemon.getSpAtk();
                     if (isBuffInPercent)
-                        value = ((int) (pokemon.getSpAtk() * (buffValue)));
+                        value = ((int) (spAtk * (buffValue)));
                     else
                         value = (buffValue);
-                    pokemon.setSpAtk(value);
+                    pokemon.setSpAtk(spAtk + value);
                     break;
                 case "SPDEF":
+                    int spDef = pokemon.getSpDef();
                     if (isBuffInPercent)
-                        value = ((int) (pokemon.getSpDef() * (buffValue)));
+                        value = ((int) (spDef * (buffValue)));
                     else
                         value = (buffValue);
-                    pokemon.setSpDef(value);
+                    pokemon.setSpDef(spDef + value);
+                    break;
+                case "SPD":
+                    int spd = pokemon.getSpd();
+                    if (isBuffInPercent)
+                        value = ((int) (spd * (buffValue)));
+                    else
+                        value = (buffValue);
+                    pokemon.setSpd(spd + value);
                     break;
                 default:
                     System.out.println("Invalid buff type");
@@ -130,43 +143,57 @@ public class PokemonMove_STATUS_BUFF extends PokemonMove {
             return response;
         } else {
             useMove();
-            message = buffer.getName() + " has used " + moveName + " to " + target.getName() + " and increased " + buffType + " by ";
+            message = buffer.getName() + " has used " + moveName + " to " + target.getName() + " and increased "
+                    + buffType + " by ";
             int value = 0;
-            switch(buffType) {
+            switch (buffType) {
                 case "HP":
+                    int hp = target.getHp();
                     if (isBuffInPercent)
-                        value = (target.getHp() * (buffValue));
+                        value = (hp * (buffValue));
                     else
                         value = (buffValue);
-                    target.setHp(value);
+                    target.setHp(hp + value);
                     break;
                 case "ATK":
+                    int atk = target.getAtk();
                     if (isBuffInPercent)
-                        value = ((int) (target.getAtk() * (buffValue)));
+                        value = ((int) (atk * (buffValue)));
                     else
                         value = (buffValue);
-                    target.setAtk(value);
+                    target.setAtk(atk + value);
                     break;
                 case "DEF":
+                    int def = target.getDef();
                     if (isBuffInPercent)
-                        value = ((int) (target.getDef() * (buffValue)));
+                        value = ((int) (def * (buffValue)));
                     else
                         value = (buffValue);
-                    target.setDef(value);
+                    target.setDef(def + value);
                     break;
                 case "SPATK":
+                    int spAtk = target.getSpAtk();
                     if (isBuffInPercent)
-                        value = ((int) (target.getSpAtk() * (buffValue)));
+                        value = ((int) (spAtk * (buffValue)));
                     else
                         value = (buffValue);
-                    target.setSpAtk(value);
+                    target.setSpAtk(spAtk + value);
                     break;
                 case "SPDEF":
+                    int spDef = target.getSpDef();
                     if (isBuffInPercent)
-                        value = ((int) (target.getSpDef() * (buffValue)));
+                        value = ((int) (spDef * (buffValue)));
                     else
                         value = (buffValue);
-                    target.setSpDef(value);
+                    target.setSpDef(spDef + value);
+                    break;
+                case "SPD":
+                    int spd = target.getSpd();
+                    if (isBuffInPercent)
+                        value = ((int) (spd * (buffValue)));
+                    else
+                        value = (buffValue);
+                    target.setSpd(spd + value);
                     break;
                 default:
                     System.out.println("Invalid buff type");
@@ -174,7 +201,7 @@ public class PokemonMove_STATUS_BUFF extends PokemonMove {
                     response.put("flag", "false");
                     return response;
             }
-            
+
             message += value + "!";
 
             System.out.println(message);

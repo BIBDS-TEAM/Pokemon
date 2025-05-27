@@ -14,7 +14,5 @@ public enum PokemonMoveType {
     // 6
     BUFF,
     // 7
-    SKIP,
-    // 8
     RUN
 }

@@ -1,5 +1,6 @@
 {
   "java.project.referencedLibraries": [
-    "C:/Users/hasan/Documents/GitHub/Pokemon/gson-2.13.1.jar"
+    "C:/Users/hasan/Documents/GitHub/Pokemon/gson-2.13.1.jar",
+    "resources/**/*.ttf"
   ]
 }

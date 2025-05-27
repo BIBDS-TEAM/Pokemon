@@ -5,12 +5,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.awt.*;
 import java.awt.image.*;
-import java.io.*;
 import javax.imageio.*;
-import javax.swing.*;
 
 public class Pokemon {
     protected String name;
@@ -31,7 +28,7 @@ public class Pokemon {
     // for HEAL, 5 for SPECIAL_ATTACK, 6 for SPECIAL_DEFEND, 7 for LVL_UP, 8 for
     // MOVE, 9 for RESIST, 10 for DODGE
     protected PokemonSound[] sound = new PokemonSound[11];
-    protected PokemonMove[] move;
+    protected PokemonMove[] moves = new PokemonMove[4];
 
     public void print() {
         System.out.println(("Name: " + name));
@@ -124,6 +121,14 @@ public class Pokemon {
 
     public void setLvl(int lvl) {
         this.lvl = lvl;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
     }
 
     public int getHp() {
@@ -240,17 +245,35 @@ public class Pokemon {
         move.move(this, defender);
     }
 
-    public void specialAttack(Pokemon pokemon);
+    public void defense(PokemonMove move) {
+        move.move(this);
+    }
 
-    public void defend(Pokemon pokemon);
+    public void specialAttack(PokemonMove move, Pokemon defender) {
+        move.move(this, defender);
+    }
 
-    public void specialDefend(Pokemon pokemon);
+    public void specialDefense(PokemonMove move) {
+        move.move(this);
+    }
 
-    public void skipTurn(Pokemon pokemon);
+    public void debuff(PokemonMove move, Pokemon defender) {
+        move.move(this, defender);
+    }
 
-    public void takeDamage(int damage);
+    public void selfBuff(PokemonMove move) {
+        move.move(this);
+    }
 
-    public void playSound() {
+    public void othersBuff(PokemonMove move, Pokemon defender) {
+        move.move(this, defender);
+    }
 
+    public void playSound(int soundIndex) {
+        if (soundIndex < 0 || soundIndex >= sound.length) {
+            System.err.println("Invalid sound index (0 - 9): " + soundIndex);
+            return;
+        }
+        sound[soundIndex].playSound();
     }
 }
