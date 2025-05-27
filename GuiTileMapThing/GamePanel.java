@@ -1,7 +1,11 @@
 package GuiTileMapThing;
 
 import PlayerNPCgitu.Player;
+import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
@@ -263,13 +267,37 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
 
             case BATTLE:
+                String[][] gridOptions = {{"FIGHT", "PKMN"}, {"ITEM", "RUN"}};
+                BattleSelection battleSelection = new BattleSelection(gridOptions, 20, 20, 200, 100);
+                String snorlaxEnemyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ENEMY.png";
+                String snorlaxAllyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
+                String snorlaxMiniModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
+                Pokemon pokemon = new Pokemon("SNORLAX", PokemonType.NORMAL, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
+                
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.setColor(Color.BLACK);
-                g2.setFont(new Font("Arial", Font.BOLD, 20));
-                g2.drawString("Battle Start!", 100, 100);
+                // g2.setColor(Color.BLACK);
+                // g2.setFont(new Font("Arial", Font.BOLD, 20));
+                // g2.drawString("Battle Start!", 100, 100);
+                BufferedImage tempAllyFightModel = battleSelection.scaleImage(pokemon.getAllyFightModel(), 2.0);
+                BufferedImage tempEnemyFightModel = battleSelection.scaleImage(pokemon.getEnemyFightModel(), 2.0);
+                pokemon.setAllyFightModel(tempAllyFightModel);
+                pokemon.setEnemyFightModel(tempEnemyFightModel);
+                battleSelection.drawAllyPokemonHpBar(g2, pokemon, 290, 320, 130, 20);
+                battleSelection.drawEnemyPokemonHpBar(g2, pokemon, 50, 100, 130, 20);
+                battleSelection.drawPokemonSpriteWithIndex(g2, pokemon, 2,  350,  30); // 300 20
+                battleSelection.drawPokemonSpriteWithIndex(g2, pokemon, 1, 60,  230); // 60 180
                 break;
         }
         g2.dispose();
+    }
+
+    public void startBattle(Graphics g) {
+        currentState = GameState.BATTLETRANSITION;
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(Color.LIGHT_GRAY);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+        
+
     }
 }

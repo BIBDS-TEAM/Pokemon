@@ -21,13 +21,14 @@ public class Pokemon {
     protected int spDef;
     protected int spd;
     // index 0 for miniModel and 1 for fightModel
-    protected BufferedImage[] model = new BufferedImage[2];
+    protected BufferedImage[] model = new BufferedImage[3];
     protected String miniModelPath;
-    protected String fightModelPath;
-    // index 0 for ATTACK, 1 for DEFEND, 2 for SKIPPING_TURN, 3 for TAKE_DAMAGE, 4
-    // for HEAL, 5 for SPECIAL_ATTACK, 6 for SPECIAL_DEFEND, 7 for LVL_UP, 8 for
-    // MOVE, 9 for RESIST, 10 for DODGE
-    protected PokemonSound[] sound = new PokemonSound[11];
+    protected String AllyFightModelPath;
+    protected String EnemyFightModelPath;
+    // index 0 for ATTACK, 1 for DEFEND, 2 for TAKE_DAMAGE, 3
+    // for HEAL, 4 for SPECIAL_ATTACK, 5 for SPECIAL_DEFEND, 6 for LVL_UP, 7 for
+    // MOVE, 8 for RESIST, 9 for DODGE
+    protected PokemonSound[] sound = new PokemonSound[10];
     protected PokemonMove[] moves = new PokemonMove[4];
 
     public void print() {
@@ -56,7 +57,8 @@ public class Pokemon {
         pokemonInfo.put("specialDefense", String.valueOf(spDef));
         pokemonInfo.put("speed", String.valueOf(spd));
         pokemonInfo.put("miniModelPath", miniModelPath);
-        pokemonInfo.put("fightModelPath", fightModelPath);
+        pokemonInfo.put("AllyFightModelPath", AllyFightModelPath);
+        pokemonInfo.put("EnemyFightModelPath", EnemyFightModelPath);
         return pokemonInfo;
     }
 
@@ -78,7 +80,7 @@ public class Pokemon {
     }
 
     public Pokemon(String name, PokemonType type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
-            String miniModelPath, String fightModelPath) {
+            String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath) {
         this.name = name;
         this.type = type;
         this.lvl = lvl;
@@ -91,8 +93,8 @@ public class Pokemon {
         this.spd = spd;
         try {
             model[0] = ImageIO.read(new File(miniModelPath));
-            model[1] = ImageIO.read(new File(fightModelPath));
-            System.out.println("Image loaded successfully!");
+            model[1] = ImageIO.read(new File(AllyFightModelPath));
+            model[2] = ImageIO.read(new File(EnemyFightModelPath));
         } catch (IOException e) {
             System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
         }
@@ -201,8 +203,30 @@ public class Pokemon {
         return model[0];
     }
 
-    public BufferedImage getFightModel() {
+    public BufferedImage getAllyFightModel() {
         return model[1];
+    }
+
+    public BufferedImage getEnemyFightModel() {
+        return model[2];
+    }
+
+    public void setMiniModel(BufferedImage miniModel) {
+        if (miniModel != null)
+            this.model[0] = miniModel;
+        else System.err.println("Mini model cannot be null.");
+    }
+
+    public void setAllyFightModel(BufferedImage AllyFightModel) {
+        if (AllyFightModel != null) 
+            this.model[1] = AllyFightModel;
+        else System.err.println("Fight model cannot be null.");
+    }
+
+    public void setEnemyFightModel(BufferedImage EnemyFightModel) {
+        if (EnemyFightModel != null)
+            this.model[2] = EnemyFightModel;
+        else System.err.println("Fight model cannot be null.");
     }
 
     public PokemonSound getSound(int soundIndex) {

@@ -18,7 +18,7 @@ public class MenuWithSelection {
     private final int drawSize = 32;
 
     private boolean visible = false;
-    private Font font;
+    protected Font font;
     private Image selectionArrow;
 
     // Constructor for 1D array
@@ -43,7 +43,7 @@ public class MenuWithSelection {
         initAssets();
     }
 
-    private void initAssets() {
+    protected void initAssets() {
         borderImage = new ImageIcon("TileGambar/MenuBorder1.png").getImage();
         selectionArrow = new ImageIcon("TileGambar/Arrow_Selection_1.png").getImage();
         try {
@@ -158,13 +158,13 @@ public class MenuWithSelection {
 
     public void moveLeft() {
         if (isGrid) {
-            selectedCol = (selectedCol - 1 + gridOptions[0].length);
+            selectedCol = (selectedCol - 1 + gridOptions[0].length) % gridOptions[0].length;
         }
     }
 
     public void moveRight() {
         if (isGrid) {
-            selectedCol = (selectedCol + 1);
+            selectedCol = (selectedCol + 1) % gridOptions[0].length;
         }
     }
 
@@ -211,10 +211,15 @@ public class MenuWithSelection {
         selectedCol = 0;
     }
 
+
+    protected String[] getOptions() { return options; }
+    protected String[][] getGridOptions() { return gridOptions; }
     protected Image getSelectionArrow() { return selectionArrow; }
     protected int getX() { return x; }
     protected int getY() { return y; }
     protected int getWidth() { return width; }
     protected int getHeight() { return height; }
+    protected int getSelectedRow() { return selectedRow; }
+    protected int getSelectedCol() { return selectedCol; }
     protected Font getFont() { return font; }
 }
