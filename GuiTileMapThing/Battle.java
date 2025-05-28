@@ -1,19 +1,16 @@
 package GuiTileMapThing;
 
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 
 public class Battle extends MenuWithSelection {
     protected Pokemon playerPokemons[] = new Pokemon[4];
     protected Pokemon enemyPokemon;
     public Battle(String[][] gridOptions, int x, int y, int width, int height, Pokemon[] playerPokemons, Pokemon enemyPokemon) {
-        super(gridOptions, x, y, width, height);
+        super(gridOptions, x, y, width, height,28f);
         if (playerPokemons.length != 4) throw new IllegalArgumentException("playerPokemons must have 4 elements");
         if (enemyPokemon == null) throw new IllegalArgumentException("enemyPokemon cannot be null");
         this.playerPokemons = playerPokemons;
@@ -269,7 +266,7 @@ public class Battle extends MenuWithSelection {
 
     public void drawBattleMenuSelection(Graphics2D g2, String[][] gridOptions, String chatText, int x, int y) {
         TextBox chatBox = new TextBox();
-        MenuWithSelection optionBox = new MenuWithSelection(gridOptions, x, y, 400, 534);
+        MenuWithSelection optionBox = new MenuWithSelection(gridOptions, x, y, 400, 534,28f);
         
         optionBox.setVisible(true);
 

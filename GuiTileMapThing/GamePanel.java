@@ -3,7 +3,6 @@ package GuiTileMapThing;
 import PlayerNPCgitu.Player;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,8 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
     int normalFPS = 60;
     int transitionFPS = 180;
     int currentFPS = normalFPS;
-    private int mainMenuWidth = 140;
-    private int mainMenuHeight = 290;
+    private boolean isNewGame;
     private int transitionStep = 0;
     private int transitionTimer = 0;
     private final int transitionSpeed = 4;
@@ -50,7 +48,9 @@ public class GamePanel extends JPanel implements Runnable {
     private Image splashLogo, mainMenuBG, titleScreenImage;
     private Font pokemonFont;
     private MenuWithSelection mainMenu;
+    private MenuWithSelection nameSelect;
     private TextBox textBox;
+    private SaveSlot saveSlot;
 
     public GamePanel() {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -58,12 +58,21 @@ public class GamePanel extends JPanel implements Runnable {
         addKeyListener(keyI);
         setFocusable(true);
         requestFocusInWindow();
+        saveSlot = new SaveSlot();
         splashLogo = new ImageIcon("pokemon_logo.png").getImage();
         mainMenuBG = new ImageIcon("bg_menu.png").getImage();
         titleScreenImage = new ImageIcon("TileGambar/FilkomEd_title2.png").getImage();
-        String[][] menuOptions = { { "New Game", "Load Game" }, { "Settings", "Test" } };
-        mainMenu = new MenuWithSelection(menuOptions, mainMenuWidth, mainMenuHeight, 300, 150);
+        String[] menuOptions = { "New Game", "Load Game" ,"Settings" };
+        mainMenu = new MenuWithSelection(menuOptions, 140,290,28f);
         mainMenu.setVisible(false);
+        String [][] alphabetOptions = 
+        {{"a", "b", "c", "d", "e", "f"},
+         {"g", "h", "i", "j", "k", "l"},
+         {"m", "n", "o", "p", "q", "r"},
+         {"s", "t", "u", "v", "w", "x"},
+         {"y", "z", "1", "2", "3", "4"},
+         {"5", "6", "7", "8", "9", "?"}};
+        nameSelect = new MenuWithSelection(alphabetOptions, 40, 100,28f);
         textBox = new TextBox();
         textBox.setText("Selamat datang di dunia petualangan!sssssssssssssssssssssssssssssssssssssssss");
         try {
@@ -75,14 +84,6 @@ public class GamePanel extends JPanel implements Runnable {
             pokemonFont = new Font("Arial", Font.BOLD, 12);
         }
         startGameThread();
-    }
-
-    public int getMainMenuWidth() {
-        return mainMenuWidth;
-    }
-
-    public int getMainMenuHeight() {
-        return mainMenuHeight;
     }
 
     public void startGameThread() {
@@ -143,14 +144,40 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 if (keyI.enterPressed) {
                     String selected = mainMenu.select();
-                    System.out.println("Selected: " + selected);
-                    if (selected.equals("New Game")) {
-                        currentState = GameState.OVERWORLD;
+                    if (selected.equals("New Game") || selected.equals("Load Game")) {
+                    isNewGame = selected.equals("New Game"); 
+                    currentState = GameState.SAVESLOT;
                     }
                     keyI.enterPressed = false;
                 }
                 break;
-
+            case SAVESLOT :
+            if (keyI.enterPressed) {
+                currentState = GameState.NAMINGPLAYER;
+            }
+                break;
+            case NAMINGPLAYER :
+            nameSelect.setVisible(true);
+                 if (keyI.upPressed) {
+                    nameSelect.moveUp();
+                    keyI.upPressed = false;
+                }
+                if (keyI.downPressed) {
+                    nameSelect.moveDown();
+                    keyI.downPressed = false;
+                }
+                if(keyI.leftPressed) {
+                    nameSelect.moveLeft();
+                    keyI.leftPressed = false;
+                }
+                if(keyI.rightPressed) {
+                    nameSelect.moveRight();
+                    keyI.rightPressed = false;
+                }
+                if(keyI.spacePressed){
+                    currentState = GameState.OVERWORLD;
+                }
+                break;
             case OVERWORLD:
                 player.update();
                 if (keyI.spacePressed) {
@@ -234,6 +261,12 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.setFont(pokemonFont);
                 mainMenu.draw(g2);
                 g2.setComposite(originalComposite);
+                break;
+            case SAVESLOT:
+                saveSlot.draw(g2);
+                break;
+            case NAMINGPLAYER:
+                nameSelect.draw(g2);
                 break;
 
             case OVERWORLD:

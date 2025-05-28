@@ -1,10 +1,8 @@
 package PlayerNPCgitu;
 
-import Pokemon.PokemonBasics.PokemonAllType.*;
-import Pokemon.PokemonBasics.PokemonBehavior.*;
-
 import GuiTileMapThing.GamePanel;
 import GuiTileMapThing.KeyInput;
+import Pokemon.PokemonBasics.PokemonAllType.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,8 +34,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        worldX = 256;
-        worldY = 256;
+        worldX = 900;
+        worldY = 680;
         speed = 2;
     }
 
@@ -100,7 +98,7 @@ public class Player extends Entity {
                     break;
             }
         }
-        g2.drawImage(playerImage, screenX, screenY, 64, 64, null); // draws the image at (x,y), scaled to 32x32
+        g2.drawImage(playerImage, screenX, screenY, 48, 48, null); // draws the image at (x,y), scaled to 32x32
     }
 
     public void addPokemonToBag(Pokemon pokemon) {

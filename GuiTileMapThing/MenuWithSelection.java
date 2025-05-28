@@ -1,4 +1,5 @@
 package GuiTileMapThing;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -12,33 +13,32 @@ public class MenuWithSelection {
     private int selectedRow = 0;
     private int selectedCol = 0;
 
-    private int x, y, width, height;
+    private int x, y;
     private Image borderImage;
-    private final int borderSize = 16;
-    private final int drawSize = 32;
-
+    private final int borderTileSize = 16;
+    private final int drawTileSize = 32;
     private boolean visible = false;
+
+    private float fontSize;
     protected Font font;
     private Image selectionArrow;
 
-    // Constructor for 1D array
-    public MenuWithSelection(String[] options, int x, int y, int width, int height) {
+    // Constructor for 1D menu
+    public MenuWithSelection(String[] options, int x, int y, float fontSize) {
         this.options = options;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.fontSize = fontSize;
         this.isGrid = false;
         initAssets();
     }
 
-    // Constructor for 2D array (grid menu)
-    public MenuWithSelection(String[][] gridOptions, int x, int y, int width, int height) {
+
+    public MenuWithSelection(String[][] gridOptions, int x, int y, float fontSize) {
         this.gridOptions = gridOptions;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.fontSize = fontSize;
         this.isGrid = true;
         initAssets();
     }
@@ -47,9 +47,8 @@ public class MenuWithSelection {
         borderImage = new ImageIcon("TileGambar/MenuBorder1.png").getImage();
         selectionArrow = new ImageIcon("TileGambar/Arrow_Selection_1.png").getImage();
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File("Font/Pokemon_Jadul.ttf")).deriveFont(28f);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
+            font = Font.createFont(Font.TRUETYPE_FONT, new File("Font/Pokemon_Jadul.ttf")).deriveFont(fontSize);
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
             font = new Font("Arial", Font.BOLD, 12);
@@ -58,74 +57,82 @@ public class MenuWithSelection {
 
     public void draw(Graphics2D g2) {
         if (!visible) return;
+
         g2.setFont(font);
         g2.setColor(Color.BLACK);
+        FontMetrics fm = g2.getFontMetrics(font);
 
+        int textHeight = fm.getHeight();
+        int padding = textHeight;
+        int lineSpacing = textHeight + 10;
+        int extraSpaceX = (int)(20 * (fontSize/28f));
         if (isGrid) {
             int rows = gridOptions.length;
             int cols = gridOptions[0].length;
-            int cellHeight = 60;
-            int padding = 40;
+            int colSpacing = 40;
 
-            FontMetrics fm = g2.getFontMetrics(font);
             int[] colWidths = new int[cols];
             for (int col = 0; col < cols; col++) {
                 int maxWidth = 0;
                 for (int row = 0; row < rows; row++) {
-                    int strWidth = fm.stringWidth(gridOptions[row][col]);
-                    if (strWidth > maxWidth) {
-                        maxWidth = strWidth;
+                    if (gridOptions[row].length > col) {
+                        maxWidth = Math.max(maxWidth, fm.stringWidth(gridOptions[row][col]));
                     }
                 }
-                colWidths[col] = maxWidth + padding;
+                colWidths[col] = maxWidth;
             }
 
-            int totalMenuWidth = 0;
-            for (int colWidth : colWidths) {
-                totalMenuWidth += colWidth;
-            }
+            int contentWidth = colSpacing * (cols - 1);
+            for (int w : colWidths) contentWidth += w;
 
-            int totalHeight = rows * cellHeight + 20;
-            drawBorder(g2, x, y, totalMenuWidth, totalHeight);
+            int totalWidth = contentWidth + 2 * padding + extraSpaceX;
+            int totalHeight = rows * lineSpacing + 2 * padding;
 
-            int currentX = x + 40;
+            drawBorder(g2, x, y, totalWidth, totalHeight);
+
+            int startX = x + padding + extraSpaceX;
             for (int col = 0; col < cols; col++) {
                 for (int row = 0; row < rows; row++) {
-                    int textX = currentX;
-                    int textY = y + 60 + row * cellHeight;
-                    g2.drawString(gridOptions[row][col], textX, textY);
-                    if (row == selectedRow && col == selectedCol && selectionArrow != null) {
-                        int arrowY = textY - 24;
-                        g2.drawImage(selectionArrow, textX - 30, arrowY, 24, 24, null);
+                    if (gridOptions[row].length > col) {
+                        String text = gridOptions[row][col];
+                        int textX = startX;
+                        int textY = y + padding + row * lineSpacing + fm.getAscent();
+
+                        g2.drawString(text, textX, textY);
+                        if (row == selectedRow && col == selectedCol && selectionArrow != null) {
+                            g2.drawImage(selectionArrow, textX - 30, textY - 24, 24, 24, null);
+                        }
                     }
                 }
-                currentX += colWidths[col];
+                startX += colWidths[col] + colSpacing;
             }
 
         } else {
-            int cellHeight = 60;
-            int menuHeight = cellHeight * options.length + 20;
-            drawBorder(g2, x, y, width, menuHeight);
+            int maxWidth = 0;
+            for (String option : options) {
+                maxWidth = Math.max(maxWidth, fm.stringWidth(option));
+            }
+
+            int totalWidth = maxWidth + 2 * padding + extraSpaceX ;
+            int totalHeight = options.length * lineSpacing + 2 * padding;
+
+            drawBorder(g2, x, y, totalWidth, totalHeight);
 
             for (int i = 0; i < options.length; i++) {
-                int textY = y + 60 + i * cellHeight;
-                g2.drawString(options[i], x + 40, textY);
+                int textX = x + padding + extraSpaceX;
+                int textY = y + padding + i * lineSpacing + fm.getAscent();
+                g2.drawString(options[i], textX, textY);
+
                 if (i == selectedRow && selectionArrow != null) {
-                    int arrowY = textY - 24;
-                    g2.drawImage(selectionArrow, x + 10, arrowY, 24, 24, null);
+                    g2.drawImage(selectionArrow, textX - 30, textY - 24, 24, 24, null);
                 }
             }
         }
     }
 
     protected void drawBorder(Graphics2D g2, int x, int y, int width, int height) {
-        int b = borderSize;
-        int d = drawSize;
-
-        int innerX = x + d;
-        int innerY = y + d;
-        int innerW = width - 2 * d;
-        int innerH = height - 2 * d;
+        int b = borderTileSize;
+        int d = drawTileSize;
 
         g2.drawImage(borderImage, x, y, x + d, y + d, 0, 0, b, b, null);
         g2.drawImage(borderImage, x + width - d, y, x + width, y + d, b * 2, 0, b * 3, b, null);
@@ -140,62 +147,26 @@ public class MenuWithSelection {
         g2.drawImage(borderImage, x + d, y + d, x + width - d, y + height - d, b, b, b * 2, b * 2, null);
     }
 
-    public void moveUp() {
-        if (isGrid) {
-            selectedRow = (selectedRow - 1 + gridOptions.length) % gridOptions.length;
-        } else {
-            selectedRow = (selectedRow - 1 + options.length) % options.length;
-        }
-    }
-
-    public void moveDown() {
-        if (isGrid) {
-            selectedRow = (selectedRow + 1) % gridOptions.length;
-        } else {
-            selectedRow = (selectedRow + 1) % options.length;
-        }
-    }
-
-    public void moveLeft() {
-        if (isGrid) {
-            selectedCol = (selectedCol - 1 + gridOptions[0].length) % gridOptions[0].length;
-        }
-    }
-
-    public void moveRight() {
-        if (isGrid) {
-            selectedCol = (selectedCol + 1) % gridOptions[0].length;
-        }
-    }
+    // Navigation
+    public void moveUp() { selectedRow = (selectedRow - 1 + getRowCount()) % getRowCount(); }
+    public void moveDown() { selectedRow = (selectedRow + 1) % getRowCount(); }
+    public void moveLeft() { if (isGrid) selectedCol = (selectedCol - 1 + getColCount()) % getColCount(); }
+    public void moveRight() { if (isGrid) selectedCol = (selectedCol + 1) % getColCount(); }
 
     public String select() {
         return isGrid ? gridOptions[selectedRow][selectedCol] : options[selectedRow];
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
+    // Utility + accessors
+    public void setVisible(boolean visible) { this.visible = visible; }
+    public boolean isVisible() { return visible; }
+    public int getSelectedIndex() { return selectedRow; }
 
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public int getSelectedIndex() {
-        return selectedRow;
-    }
-
-    public void setFont(Font font) {
-        this.font = font;
-    }
+    public void setFont(Font font) { this.font = font; }
 
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
     }
 
     public void setOptions(String[] options) {
@@ -211,14 +182,20 @@ public class MenuWithSelection {
         selectedCol = 0;
     }
 
+    private int getRowCount() {
+        return isGrid ? gridOptions.length : options.length;
+    }
 
+    private int getColCount() {
+        return isGrid ? gridOptions[0].length : 1;
+    }
+
+    // Protected Getters
     protected String[] getOptions() { return options; }
     protected String[][] getGridOptions() { return gridOptions; }
     protected Image getSelectionArrow() { return selectionArrow; }
     protected int getX() { return x; }
     protected int getY() { return y; }
-    protected int getWidth() { return width; }
-    protected int getHeight() { return height; }
     protected int getSelectedRow() { return selectedRow; }
     protected int getSelectedCol() { return selectedCol; }
     protected Font getFont() { return font; }
