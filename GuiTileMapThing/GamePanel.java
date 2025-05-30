@@ -15,10 +15,10 @@ class BattlePanel extends JPanel {
 
 public class GamePanel extends JPanel implements Runnable {
     public final int oriTileSize = 16;
-    public final int scale = 4;
+    public final int scale = 2;
     public final int tileSize = oriTileSize * scale;
-    public final int maxScreenCol = 8;
-    public final int maxScreenRow = 8;
+    public final int maxScreenCol =16;
+    public final int maxScreenRow = 16;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
     public final int maxWorldC = 20;
@@ -41,6 +41,8 @@ public class GamePanel extends JPanel implements Runnable {
     TileManager tileManager = new TileManager(this);
     Player player = new Player(this, keyI);
     private GameState currentState = GameState.SPLASH;
+    private BattleState battleState = BattleState.BATTLE_DECISION;
+    private OverworldState overworldstate = OverworldState.OVERWORLD_ROAM;
     private int splashTimer = 0;
     private final int splashDuration = 180;
     private int mainMenuFadeTimer = 0;
@@ -51,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
     private MenuWithSelection nameSelect;
     private TextBox textBox;
     private SaveSlot saveSlot;
+    private boolean shouldShowInitialText = true;
 
     public GamePanel() {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -74,7 +77,6 @@ public class GamePanel extends JPanel implements Runnable {
          {"5", "6", "7", "8", "9", "?"}};
         nameSelect = new MenuWithSelection(alphabetOptions, 40, 100,28f);
         textBox = new TextBox();
-        textBox.setText("Selamat datang di dunia petualangan!sssssssssssssssssssssssssssssssssssssssss");
         try {
             pokemonFont = Font.createFont(Font.TRUETYPE_FONT, new File("Font/Pokemon_Jadul.ttf")).deriveFont(28f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -174,21 +176,26 @@ public class GamePanel extends JPanel implements Runnable {
                     nameSelect.moveRight();
                     keyI.rightPressed = false;
                 }
-                if(keyI.spacePressed){
+                if(keyI.enterPressed){
                     currentState = GameState.OVERWORLD;
                 }
                 break;
             case OVERWORLD:
-                player.update();
-                if (keyI.spacePressed) {
-                    keyI.spacePressed = false;
-                    currentState = GameState.BATTLETRANSITION;
-                    currentFPS = transitionFPS;
-                    transitionStep = 0;
-                    transitionTimer = 0;
-                }
-                break;
 
+            player.update();
+            if (keyI.Ppressed) {
+                if (textBox.isVisible()) {
+                textBox.nextPage();
+                keyI.Ppressed = false;
+            } 
+        }
+            if(keyI.spacePressed){
+                currentState = GameState.BATTLETRANSITION;
+                currentFPS = transitionFPS;
+                transitionStep = 0;
+                transitionTimer = 0;
+            }
+            break;
             case BATTLETRANSITION:
                 if (!isOpeningPhase) {
                     transitionTimer++;
@@ -222,7 +229,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-
+        
         switch (currentState) {
             case SPLASH:
                 float progress = Math.min(1.0f, (float) splashTimer / splashDuration);
@@ -272,13 +279,19 @@ public class GamePanel extends JPanel implements Runnable {
             case OVERWORLD:
                 tileManager.draw(g2);
                 player.draw(g2);
-                textBox.draw(g2, getWidth(), getHeight());
-                if (keyI.spacePressed) {
-                    keyI.spacePressed = false;
-                    textBox.setText("Hello world,text goes here");
-                }
+                if (shouldShowInitialText) {
+        String myDialogue = "Hello player! This is the first part of the text on page 1." +
+                    "%%PAGEBREAK%%" +
+                    "This text will start on a brand new page, page 2." +
+                    " Even if page 1 had more space.%%PAGEBREAK%%And this is page 3.";
+textBox.setText(myDialogue, g2);
+        shouldShowInitialText = false;
+    }
 
-                break;
+    if (textBox.isVisible()) {
+        textBox.draw(g2, screenWidth, screenHeight);
+    }
+    break;
 
             case BATTLETRANSITION:
                 tileManager.draw(g2);
@@ -307,7 +320,7 @@ public class GamePanel extends JPanel implements Runnable {
 
                 Pokemon pokemon = new Pokemon("SNORLAX", PokemonType.NORMAL, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
                 Pokemon[] pokemons = {pokemon, pokemon, pokemon, pokemon};
-                Battle battle = new Battle(gridOptions, 20, 20, 200, 100, pokemons, pokemon);
+                Battle battle = new Battle(gridOptions, 20, 20, pokemons, pokemon);
                 
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
@@ -318,13 +331,42 @@ public class GamePanel extends JPanel implements Runnable {
                 BufferedImage tempEnemyFightModel = battle.scaleImage(pokemon.getEnemyFightModel(), 2.0);
                 pokemon.setAllyFightModel(tempAllyFightModel);
                 pokemon.setEnemyFightModel(tempEnemyFightModel);
+                switch(battleState){
+                    case BATTLE_DECISION:
                 battle.drawAllyPokemonHpBar(g2, pokemon, 290, 320, 130, 20);
                 battle.drawEnemyPokemonHpBar(g2, pokemon, 50, 100, 130, 20);
                 battle.drawPokemonSpriteWithIndex(g2, pokemon, 2,  350,  30); // 300 20
                 battle.drawPokemonSpriteWithIndex(g2, pokemon, 1, 60,  230); // 60 180
+                battle.drawBattleMenuSelection(g2,new String[][]{{"Fight","PkMn"}, {"Bag","Run"}}, 260,370);
+                if(keyI.ePressed){
+                    switch(battle.optionBox.select()){
+                        case "Fight":
+                        battleState = BattleState.BATTLE_SELECTMOVE;
+                        break;
+                        case "PkMn" :
+                        battleState = BattleState.BATTLE_SWITCH;
+                        break;
+                        case "Bag" :
+                        battleState = BattleState.BATTLE_ITEM;
+                        break;
+                        case "Run" : 
+                        battleState = BattleState.BATTLE_RUN;
+                        break;
+                    }
+                }
                 break;
+                    case BATTLE_ITEM:
+                    break;
+                    case BATTLE_SELECTMOVE:
+                    break;
+                    case BATTLE_SWITCH:
+                    break;
+                    case BATTLE_RUN:
+                    break;
         }
+    }
         g2.dispose();
+        
     }
 
     public void startBattle(Graphics g) {

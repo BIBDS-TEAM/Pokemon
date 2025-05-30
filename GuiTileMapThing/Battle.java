@@ -9,8 +9,11 @@ import java.awt.image.BufferedImage;
 public class Battle extends MenuWithSelection {
     protected Pokemon playerPokemons[] = new Pokemon[4];
     protected Pokemon enemyPokemon;
-    public Battle(String[][] gridOptions, int x, int y, int width, int height, Pokemon[] playerPokemons, Pokemon enemyPokemon) {
-        super(gridOptions, x, y, width, height,28f);
+    public MenuWithSelection optionBox;
+    public MenuWithSelection MovesBox;
+    public MenuWithSelectionWithAdd itemBagBox;
+    public Battle(String[][] gridOptions, int x, int y, Pokemon[] playerPokemons, Pokemon enemyPokemon) {
+        super(gridOptions, x, y,28f);
         if (playerPokemons.length != 4) throw new IllegalArgumentException("playerPokemons must have 4 elements");
         if (enemyPokemon == null) throw new IllegalArgumentException("enemyPokemon cannot be null");
         this.playerPokemons = playerPokemons;
@@ -44,26 +47,17 @@ public class Battle extends MenuWithSelection {
         playerPokemons[index] = tmp;
     }
 
-    public void draw() {
-        int defaultPokemonHpBarWidth = 130;
-        int defaultPokemonHpBarHeight = 20;
-        int AllyPokemonHpBarXPos = 290;
-        int AllyPokemonHpBarYPos = 320;
-        int EnemyPokemonHpBarXPos = 50;
-        int EnemyPokemonHpBarYPos = 100;
-        // make all components in 1 draw so it's easier to maintain
-    }
-
+    @Override
     public void draw(Graphics2D g2) {
         String[][] gridOptions = getGridOptions();
         int rows = gridOptions.length;
         int cols = gridOptions[0].length;
 
-        int cellWidth = getWidth() / cols;
-        int cellHeight = getHeight() / rows;
+        int cellWidth = 200 / cols;
+        int cellHeight = 100 / rows;
         int padding = 40;
 
-        drawBorder(g2, getX(), getY(), getWidth() + padding, getHeight() + padding);
+        drawBorder(g2, getX(), getY(), 200 + padding, 100 + padding);
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
@@ -263,16 +257,24 @@ public class Battle extends MenuWithSelection {
         g2.setFont(font.deriveFont(font.PLAIN, 18f));
         g2.drawString(pokemon.getName(), x + 15 + hpBarWidth - pokemonNameWidth, barPosY - nameAndLvlPadding - 20);
     }
-
-    public void drawBattleMenuSelection(Graphics2D g2, String[][] gridOptions, String chatText, int x, int y) {
+    public void drawBattleTextBox(Graphics2D g2){
         TextBox chatBox = new TextBox();
-        MenuWithSelection optionBox = new MenuWithSelection(gridOptions, x, y, 400, 534,28f);
-        
+        chatBox.show();
+        chatBox.draw(g2, 512, 512);
+    }
+    public void drawBattleMenuSelection(Graphics2D g2, String[][] gridOptions, int x, int y) {
+        optionBox = new MenuWithSelection(gridOptions, x, y,20f);
         optionBox.setVisible(true);
-
         optionBox.draw(g2);
-        chatBox.setText(chatText);
-        chatBox.draw(g2, x, y, 400, 534);
-        optionBox.drawBorder(g2, x, y, optionBox.getWidth(), optionBox.getHeight());
+    }
+    public void drawBattleMovesSelection(Graphics2D g2, String[][] gridOptions, int x, int y){
+        MovesBox = new MenuWithSelection(gridOptions, x, y,20f);
+        MovesBox.setVisible(true);
+        MovesBox.draw(g2);
+    }
+    public void drawBattleBagItemSelection(Graphics2D g2, String[][] itemBagList, int x, int y){
+        itemBagBox = new MenuWithSelectionWithAdd(itemBagList[0], itemBagList[1], x, y, 16f);
+        itemBagBox.setVisible(true);
+        itemBagBox.draw(g2);
     }
 }

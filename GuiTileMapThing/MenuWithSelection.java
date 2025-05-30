@@ -147,7 +147,6 @@ public class MenuWithSelection {
         g2.drawImage(borderImage, x + d, y + d, x + width - d, y + height - d, b, b, b * 2, b * 2, null);
     }
 
-    // Navigation
     public void moveUp() { selectedRow = (selectedRow - 1 + getRowCount()) % getRowCount(); }
     public void moveDown() { selectedRow = (selectedRow + 1) % getRowCount(); }
     public void moveLeft() { if (isGrid) selectedCol = (selectedCol - 1 + getColCount()) % getColCount(); }
@@ -157,7 +156,6 @@ public class MenuWithSelection {
         return isGrid ? gridOptions[selectedRow][selectedCol] : options[selectedRow];
     }
 
-    // Utility + accessors
     public void setVisible(boolean visible) { this.visible = visible; }
     public boolean isVisible() { return visible; }
     public int getSelectedIndex() { return selectedRow; }
