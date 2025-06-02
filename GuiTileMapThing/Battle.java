@@ -7,12 +7,16 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 public class Battle extends MenuWithSelection {
-    protected Pokemon playerPokemons[] = new Pokemon[4];
+    protected Pokemon playerPokemons[] = new Pokemon[6];
     protected Pokemon enemyPokemon;
+    protected Pokemon wild;
+    private boolean isNpcBattle;
     public MenuWithSelection optionBox;
     public MenuWithSelection MovesBox;
     public MenuWithSelectionWithAdd itemBagBox;
+    private String[][] menuSelectDecision = new String[][]{{"Fight","PkMn"}, {"Bag","Run"}};
     public Battle(String[][] gridOptions, int x, int y, Pokemon[] playerPokemons, Pokemon enemyPokemon) {
+
         super(gridOptions, x, y,28f);
         if (playerPokemons.length != 4) throw new IllegalArgumentException("playerPokemons must have 4 elements");
         if (enemyPokemon == null) throw new IllegalArgumentException("enemyPokemon cannot be null");
@@ -83,7 +87,6 @@ public class Battle extends MenuWithSelection {
         if (index > 2) throw new IllegalArgumentException("Invalid index: " + index);
 
         if (sprite != null) {
-            // Optional: Set rendering hints only if you're scaling or transforming.
             try {
                 g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
@@ -148,13 +151,10 @@ public class Battle extends MenuWithSelection {
 
         g2.setColor(Color.BLACK);
 
-        // Thicker left vertical bar
         g2.fillRect(paddingX, paddingY, 6, borderHeight);
 
-        // Thicker bottom horizontal bar
         g2.fillRect(paddingX + 2, paddingY + borderHeight - 1, borderWidth, 6);
 
-        // Thicker right vertical bar
         g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 7, 4, 3);
         g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 4, 10, 3);
         g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 1, 15, 3);
@@ -262,8 +262,8 @@ public class Battle extends MenuWithSelection {
         chatBox.show();
         chatBox.draw(g2, 512, 512);
     }
-    public void drawBattleMenuSelection(Graphics2D g2, String[][] gridOptions, int x, int y) {
-        optionBox = new MenuWithSelection(gridOptions, x, y,20f);
+    public void drawBattleMenuSelection(Graphics2D g2, int x, int y) {
+        optionBox = new MenuWithSelection(menuSelectDecision, x, y,20f);
         optionBox.setVisible(true);
         optionBox.draw(g2);
     }
@@ -278,3 +278,5 @@ public class Battle extends MenuWithSelection {
         itemBagBox.draw(g2);
     }
 }
+
+    

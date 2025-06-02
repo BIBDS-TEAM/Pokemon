@@ -20,6 +20,8 @@ public class Pokemon {
     protected int spAtk;
     protected int spDef;
     protected int spd;
+    protected MajorStatus majorStatus;
+    protected MinorStatus[] minorStatus;
     // index 0 for miniModel and 1 for fightModel
     protected BufferedImage[] model = new BufferedImage[3];
     protected String miniModelPath;

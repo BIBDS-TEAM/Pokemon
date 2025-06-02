@@ -28,6 +28,9 @@ public class TileManager {
             boolean isSpecialTile = (i < specialTiles.length) ? specialTiles[i] : false;
 
             tiles[i] = new Tile(tileImage, isSpecialTile);
+            if(i == 3){
+                tiles[i].setEncounterable(true);
+            }
         }
     } catch (IOException e) {
         System.err.println("Error loading tile image: " + e.getMessage());
@@ -83,7 +86,7 @@ public class TileManager {
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
             if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX + 1 &&
+                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
 

@@ -9,11 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
 
-class BattlePanel extends JPanel {
-
-}
-
 public class GamePanel extends JPanel implements Runnable {
+    //game screen
     public final int oriTileSize = 16;
     public final int scale = 2;
     public final int tileSize = oriTileSize * scale;
@@ -25,10 +22,14 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxWorldR = 20;
     public final int worldWidth = tileSize * maxWorldC;
     public final int worldHeight = tileSize * maxWorldR;
+    //tile checks
     public CollisionCheck cc = new CollisionCheck(this);
+    public EncounterCheck eCheck = new EncounterCheck(this);
+    //fps game loop
     int normalFPS = 60;
     int transitionFPS = 180;
     int currentFPS = normalFPS;
+    //default time for transitions etc
     private boolean isNewGame;
     private int transitionStep = 0;
     private int transitionTimer = 0;
@@ -36,17 +37,21 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean isOpeningPhase = false;
     private int openingStep = 0;
     private final int openingSpeed = 2;
+    //other classes
     KeyInput keyI = new KeyInput();
     Thread gameThread;
     TileManager tileManager = new TileManager(this);
     Player player = new Player(this, keyI);
+    //gameSTATES
     private GameState currentState = GameState.SPLASH;
     private BattleState battleState = BattleState.BATTLE_DECISION;
-    private OverworldState overworldstate = OverworldState.OVERWORLD_ROAM;
+    public OverworldState overworldState = OverworldState.OVERWORLD_ROAM;
+    //opening transition ???
     private int splashTimer = 0;
     private final int splashDuration = 180;
     private int mainMenuFadeTimer = 0;
     private final int mainMenuFadeDuration = 60;
+    //import + gambar + grafik ?
     private Image splashLogo, mainMenuBG, titleScreenImage;
     private Font pokemonFont;
     private MenuWithSelection mainMenu;
@@ -181,20 +186,25 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 break;
             case OVERWORLD:
-
-            player.update();
-            if (keyI.Ppressed) {
-                if (textBox.isVisible()) {
-                textBox.nextPage();
-                keyI.Ppressed = false;
-            } 
-        }
-            if(keyI.spacePressed){
-                currentState = GameState.BATTLETRANSITION;
-                currentFPS = transitionFPS;
-                transitionStep = 0;
-                transitionTimer = 0;
-            }
+                switch(overworldState){
+                    case OVERWORLD_ROAM:
+                    player.update(true);
+                    if(keyI.spacePressed){
+                        currentState = GameState.BATTLETRANSITION;
+                        currentFPS = transitionFPS;
+                        transitionStep = 0;
+                        transitionTimer = 0;
+                    }
+                    break;
+                    case OVERWORLD_INTERACTION:
+                    player.update(false);
+                    if (keyI.Ppressed) {
+                        if (textBox.isVisible()) {
+                            textBox.nextPage();
+                            keyI.Ppressed = false;
+                        } 
+                    }
+                }
             break;
             case BATTLETRANSITION:
                 if (!isOpeningPhase) {
@@ -219,10 +229,6 @@ public class GamePanel extends JPanel implements Runnable {
             case BATTLE:
 
                 break;
-        }
-
-        if (currentState == GameState.OVERWORLD) {
-            player.update();
         }
     }
 
@@ -337,7 +343,7 @@ textBox.setText(myDialogue, g2);
                 battle.drawEnemyPokemonHpBar(g2, pokemon, 50, 100, 130, 20);
                 battle.drawPokemonSpriteWithIndex(g2, pokemon, 2,  350,  30); // 300 20
                 battle.drawPokemonSpriteWithIndex(g2, pokemon, 1, 60,  230); // 60 180
-                battle.drawBattleMenuSelection(g2,new String[][]{{"Fight","PkMn"}, {"Bag","Run"}}, 260,370);
+                battle.drawBattleMenuSelection(g2, 260,370);
                 if(keyI.ePressed){
                     switch(battle.optionBox.select()){
                         case "Fight":

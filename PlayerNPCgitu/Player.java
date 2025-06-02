@@ -36,19 +36,22 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = 900;
         worldY = 680;
-        speed = 2;
+        speed = 4;
     }
 
-    public void update() {
+    public void update(boolean walk) {
 
         direction = keyI.getCurrentDirection();
 
         if (direction == null) {
             return;
         }
+        if (walk == true) {
+            gp.eCheck.cekTile(this);
+        }
         collisionOn = false;
         gp.cc.cekTile(this);
-        if (!collisionOn) {
+        if (!collisionOn && walk) {
             switch (direction) {
                 case "up":
                     worldY -= speed;
@@ -66,8 +69,6 @@ public class Player extends Entity {
                     break;
             }
         }
-
-        System.out.println("Player Position -> X: " + worldX + ", Y: " + worldY);
     }
 
     public void loadPlayer() {

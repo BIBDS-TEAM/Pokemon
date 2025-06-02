@@ -28,10 +28,6 @@ public class CollisionCheck {
                 eTopR = (eTopWY - entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileManager.mapTileNum[eTopR][eLeftC];
                 tileNum2 = gp.tileManager.mapTileNum[eTopR][eRightC];
-                System.out.println(
-                        "Checked Top at tiles: (" + eLeftC + "," + eTopR + ") and (" + eRightC + "," + eTopR + ")");
-                System.out.println("TileNum1 : " + tileNum1 + isCollision(tileNum1));
-                System.out.println("TileNum2 : " + tileNum2 + isCollision(tileNum2));
                 if (isCollision(tileNum1) || isCollision(tileNum2)) {
                     entity.collisionOn = true;
                 }
@@ -41,10 +37,6 @@ public class CollisionCheck {
                 eBottomR = (eBottomWY + entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileManager.mapTileNum[eBottomR][eLeftC];
                 tileNum2 = gp.tileManager.mapTileNum[eBottomR][eRightC];
-                System.out.println("Checked Bottom at tiles: (" + eLeftC + "," + eBottomR + ") and (" + eRightC + ","
-                        + eBottomR + ")");
-                System.out.println("TileNum1 : " + tileNum1 + isCollision(tileNum1));
-                System.out.println("TileNum2 : " + tileNum2 + isCollision(tileNum2));
                 if (isCollision(tileNum1) || isCollision(tileNum2)) {
                     entity.collisionOn = true;
                 }
@@ -54,10 +46,6 @@ public class CollisionCheck {
                 eLeftC = (eLeftWX - entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileManager.mapTileNum[eTopR][eLeftC];
                 tileNum2 = gp.tileManager.mapTileNum[eBottomR][eLeftC];
-                System.out.println(
-                        "Checked Left at tiles: (" + eLeftC + "," + eTopR + ") and (" + eLeftC + "," + eBottomR + ")");
-                System.out.println("TileNum1 : " + tileNum1 + isCollision(tileNum1));
-                System.out.println("TileNum2 : " + tileNum2 + isCollision(tileNum2));
                 if (isCollision(tileNum1) || isCollision(tileNum2)) {
                     entity.collisionOn = true;
                 }
@@ -67,10 +55,6 @@ public class CollisionCheck {
                 eRightC = (eRightWX + entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileManager.mapTileNum[eTopR][eRightC];
                 tileNum2 = gp.tileManager.mapTileNum[eBottomR][eRightC];
-                System.out.println("Checked Right at tiles: (" + eRightC + "," + eTopR + ") and (" + eRightC + ","
-                        + eBottomR + ")");
-                System.out.println("TileNum1 : " + tileNum1 + isCollision(tileNum1));
-                System.out.println("TileNum2 : " + tileNum2 + isCollision(tileNum2));
                 if (isCollision(tileNum1) || isCollision(tileNum2)) {
                     entity.collisionOn = true;
                 }
