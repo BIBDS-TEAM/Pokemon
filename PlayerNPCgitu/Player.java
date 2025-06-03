@@ -8,8 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 
 public class Player extends Entity {
+    private Clip footstepClip;
+    private boolean isWalkingSoundPlaying = false;
+    private boolean isInteracting = false;
     GamePanel gp;
     KeyInput keyI;
     public final int screenX, screenY;
@@ -39,37 +43,33 @@ public class Player extends Entity {
         speed = 4;
     }
 
-    public void update(boolean walk) {
+    public void update() {
+    direction = keyI.getCurrentDirection();
 
-        direction = keyI.getCurrentDirection();
+    boolean isMoving = direction != null &&
+                       (keyI.upPressed || keyI.downPressed || keyI.leftPressed || keyI.rightPressed) &&
+                       !isInteracting;
 
-        if (direction == null) {
-            return;
-        }
-        if (walk == true) {
-            gp.eCheck.cekTile(this);
-        }
+    if (isMoving) {
+        gp.eCheck.cekTile(this);
         collisionOn = false;
         gp.cc.cekTile(this);
-        if (!collisionOn && walk) {
+
+        if (!collisionOn) {
             switch (direction) {
-                case "up":
-                    worldY -= speed;
-                    break;
-                case "down":
-                    worldY += speed;
-                    break;
-                case "left":
-                    worldX -= speed;
-                    break;
-                case "right":
-                    worldX += speed;
-                    break;
-                default:
-                    break;
+                case "up": worldY -= speed; break;
+                case "down": worldY += speed; break;
+                case "left": worldX -= speed; break;
+                case "right": worldX += speed; break;
             }
+            startFootstepSound();
+        } else {
+            stopFootstepSound(); // hitting wall
         }
+    } else {
+        stopFootstepSound(); // idle
     }
+}
 
     public void loadPlayer() {
         try {
@@ -99,7 +99,7 @@ public class Player extends Entity {
                     break;
             }
         }
-        g2.drawImage(playerImage, screenX, screenY, 48, 48, null); // draws the image at (x,y), scaled to 32x32
+        g2.drawImage(playerImage, screenX, screenY, 48, 48, null); 
     }
 
     public void addPokemonToBag(Pokemon pokemon) {
@@ -110,4 +110,31 @@ public class Player extends Entity {
             }
         }
     }
+    private void startFootstepSound() {
+    if (isWalkingSoundPlaying) return;
+
+    System.out.println("Startin sound");
+    try {
+        File audioFile = new File("../Pokemon/audioSave/footsteps.wav"); 
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+        footstepClip = AudioSystem.getClip();
+        footstepClip.open(audioStream);
+        footstepClip.loop(Clip.LOOP_CONTINUOUSLY);
+        footstepClip.start();
+        isWalkingSoundPlaying = true;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+private void stopFootstepSound() {
+    if (footstepClip != null && footstepClip.isRunning()) {
+        System.out.println("Stoppin sound");
+        footstepClip.stop();
+        footstepClip.flush();
+        footstepClip.close();
+        footstepClip = null;
+    }
+    isWalkingSoundPlaying = false;
+}
 }

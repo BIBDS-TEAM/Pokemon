@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -38,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     private int openingStep = 0;
     private final int openingSpeed = 2;
     //other classes
+    private static Clip clip;
     KeyInput keyI = new KeyInput();
     Thread gameThread;
     TileManager tileManager = new TileManager(this);
@@ -59,6 +61,8 @@ public class GamePanel extends JPanel implements Runnable {
     private TextBox textBox;
     private SaveSlot saveSlot;
     private boolean shouldShowInitialText = true;
+    //
+    private boolean isOpeningPlayed;
 
     public GamePanel() {
         setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -128,6 +132,11 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         switch (currentState) {
             case SPLASH:
+            if(!isOpeningPlayed){
+                Thread audioThread = new Thread(() -> playSound("../Pokemon/audioSave/Open.wav"));
+                audioThread.start();
+                isOpeningPlayed =true;
+            }
                 splashTimer++;
                 if (splashTimer >= splashDuration) {
                     currentState = GameState.MAINMENU;
@@ -183,12 +192,15 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 if(keyI.enterPressed){
                     currentState = GameState.OVERWORLD;
+                    stopSound();
+                    isOpeningPlayed =false;
+
                 }
                 break;
             case OVERWORLD:
                 switch(overworldState){
                     case OVERWORLD_ROAM:
-                    player.update(true);
+                    player.update();
                     if(keyI.spacePressed){
                         currentState = GameState.BATTLETRANSITION;
                         currentFPS = transitionFPS;
@@ -197,7 +209,7 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                     break;
                     case OVERWORLD_INTERACTION:
-                    player.update(false);
+                    player.update();
                     if (keyI.Ppressed) {
                         if (textBox.isVisible()) {
                             textBox.nextPage();
@@ -381,6 +393,29 @@ textBox.setText(myDialogue, g2);
         g2.setColor(Color.LIGHT_GRAY);
         g2.fillRect(0, 0, getWidth(), getHeight());
         
+    }
+    public static void playSound(String filePath) {
+        try {
+            File audioFile = new File(filePath);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
 
+            AudioFormat format = audioStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+
+            clip = (Clip) AudioSystem.getLine(info);
+            clip.open(audioStream);
+            clip.start();
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void stopSound() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();
+            clip.close();
+        }
     }
 }
+
