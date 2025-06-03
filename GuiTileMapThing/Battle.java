@@ -1,5 +1,6 @@
 package GuiTileMapThing;
 
+import Font.FontLoader;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import java.awt.Color;
 import java.awt.Font;
@@ -12,8 +13,8 @@ public class Battle{
     protected Pokemon enemyPokemon[];
     protected Pokemon wildPokemon;
     private boolean isNpcBattle;
-    
-    protected Font font;
+    private FontLoader fl;
+    protected Font font = fl.loadFont();
    
     public MenuWithSelection optionBox;
     public MenuWithSelection MovesBox;
@@ -123,7 +124,12 @@ public class Battle{
         // drawBackground(g2);
 
         // Draw enemy Pokemon and its HP bar
-        Pokemon currentEnemy = isNpcBattle ? wildPokemon : (enemyPokemon != null && enemyPokemon[0] != null ? enemyPokemon[0] : null);
+        Pokemon currentEnemy = null;
+            if (isNpcBattle) {
+            currentEnemy = wildPokemon;
+        } else if (enemyPokemon != null && enemyPokemon[0] != null) {
+            currentEnemy = enemyPokemon[0];
+        }
         if (currentEnemy != null) {
             drawPokemonSpriteWithIndex(g2, currentEnemy, 2); // 2 for enemy
             drawEnemyPokemonHpBar(g2, 130, 20); // Example width/height
