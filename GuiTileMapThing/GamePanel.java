@@ -336,9 +336,10 @@ textBox.setText(myDialogue, g2);
                 String snorlaxAllyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
                 String snorlaxMiniModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
 
-                Pokemon pokemon = new Pokemon("SNORLAX", PokemonType.NORMAL, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
+                PokemonType[] pokemonType = {PokemonType.NORMAL, PokemonType.FIRE};
+                Pokemon pokemon = new Pokemon("SNORLAX", pokemonType, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
                 Pokemon[] pokemons = {pokemon, pokemon, pokemon, pokemon};
-                Battle battle = new Battle(gridOptions, 20, 20, pokemons, pokemon);
+                Battle battle = new Battle(pokemons, pokemons);
                 
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
@@ -353,8 +354,8 @@ textBox.setText(myDialogue, g2);
                     case BATTLE_DECISION:
                 battle.drawAllyPokemonHpBar(g2, pokemon, 130, 20);
                 battle.drawEnemyPokemonHpBar(g2, pokemon, 130, 20);
-                battle.drawPokemonSpriteWithIndex(g2, pokemon, 2,  350,  30); // 300 20
-                battle.drawPokemonSpriteWithIndex(g2, pokemon, 1, 60,  230); // 60 180
+                battle.drawPokemonSpriteWithIndex(g2, pokemon, 2); // ENEMY
+                battle.drawPokemonSpriteWithIndex(g2, pokemon, 1); // ALLY
                 battle.drawBattleMenuSelection(g2, 260,370);
                 if(keyI.ePressed){
                     switch(battle.optionBox.select()){

@@ -30,6 +30,9 @@ public class Battle{
     private int enemyPokemonSpriteX = 60;
     private int enemyPokemonSpriteY = 230;
 
+    private int battleMenuSelectionX = 260;
+    private int battleMenuSelectionY = 260;
+
     public Battle(Pokemon[] playerPokemons, Pokemon[] enemyPokemon) {
         if (playerPokemons.length != 6) throw new IllegalArgumentException("playerPokemons must have 6 elements");
         if (enemyPokemon == null) throw new IllegalArgumentException("enemyPokemon cannot be null");
@@ -89,10 +92,32 @@ public class Battle{
     }
 
     public void draw(Graphics2D g2) {
-        
-    }
+        // Implementation for drawing the entire battle scene would go here.
+        // For example, drawing background, sprites, HP bars, menus etc.
+        // This method needs to be called from your game loop.
 
+        // Example (order matters for layering):
+        // drawBackground(g2);
+
+        // Draw enemy Pokemon and its HP bar
+        Pokemon currentEnemy = isNpcBattle ? wildPokemon : (enemyPokemon != null && enemyPokemon[0] != null ? enemyPokemon[0] : null);
+        if (currentEnemy != null) {
+            drawPokemonSpriteWithIndex(g2, currentEnemy, 2); // 2 for enemy
+            drawEnemyPokemonHpBar(g2, currentEnemy, 100, 10); // Example width/height
+        }
+
+        // Draw player's Pokemon and its HP bar
+        Pokemon currentPlayerPkmn = getMainPokemon();
+        if (currentPlayerPkmn != null) {
+            drawPokemonSpriteWithIndex(g2, currentPlayerPkmn, 1); // 1 for ally
+            drawAllyPokemonHpBar(g2, currentPlayerPkmn, 100, 10); // Example width/height
+        }
+        
+        drawBattleTextBox(g2);
+        drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY); // x, y would be screen coordinates for the menu
+    }
     public void drawPokemonSpriteWithIndex(Graphics2D g2, Pokemon pokemon, int index) {
+        // 1 for ally, 2 for enemy
         int pokemonPosX, pokemonPosY;
         BufferedImage sprite = null;
         if (index == 1) {
@@ -278,22 +303,30 @@ public class Battle{
     }
 
     public void flickeringSprite(Graphics2D g2, Pokemon pokemon, String pokemonAlliance) {
-        int pokemonSpriteX = 0, pokemonSpriteY = 0;
-        if (pokemonAlliance.toLowerCase().equals("ally")) {
-            pokemonSpriteX = allyPokemonSpriteX;
-            pokemonSpriteY = allyPokemonSpriteY;
-        } else if (pokemonAlliance.toLowerCase().equals("enemy")) {
-            pokemonSpriteX = enemyPokemonSpriteX;
-            pokemonSpriteY = enemyPokemonSpriteY;
-        } else {
-            throw new IllegalArgumentException("Invalid pokemon alliance: " + pokemonAlliance);
+        if (g2 == null) throw new NullPointerException("Graphics2D g2 cannot be null");
+        if (pokemon == null) {
+            // System.out.println("Warning: Attempted to flicker a null Pokemon.");
+            return;
         }
+        if (pokemonAlliance == null) throw new IllegalArgumentException("pokemonAlliance cannot be null");
+
+        // FIX: Determine the correct index for drawPokemonSpriteWithIndex
+        int spriteIndex;
+        if (pokemonAlliance.equalsIgnoreCase("ally")) {
+            spriteIndex = 1; // Ally Pokemon
+        } else if (pokemonAlliance.equalsIgnoreCase("enemy")) {
+            spriteIndex = 2; // Enemy Pokemon
+        } else {
+            throw new IllegalArgumentException("Invalid pokemon alliance for flickering: " + pokemonAlliance + ". Must be 'ally' or 'enemy'.");
+        }
+
+        // Flicker logic: show sprite for 500ms, hide for 500ms
         long millis = System.currentTimeMillis() % 1000;
         if (millis < 500) {
-            drawPokemonSpriteWithIndex(g2, pokemon, 1, pokemonSpriteX, pokemonSpriteY);
-        } else {
-            drawPokemonSpriteWithIndex(g2, pokemon, 0, pokemonSpriteX, pokemonSpriteY);
+            // FIX: Call drawPokemonSpriteWithIndex with the correct signature and determined index
+            drawPokemonSpriteWithIndex(g2, pokemon, spriteIndex);
         }
+        // Else (millis >= 500), do nothing to achieve the "off" state of the flicker.
     }
 
     public void drawBattleTextBox(Graphics2D g2){
