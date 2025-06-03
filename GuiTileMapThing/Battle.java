@@ -8,8 +8,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 public class Battle{
-    protected Pokemon playerPokemons[] = new Pokemon[6];
-    protected Pokemon enemyPokemon[] = new Pokemon[6];
+    protected Pokemon playerPokemons[];
+    protected Pokemon enemyPokemon[];
     protected Pokemon wildPokemon;
     private boolean isNpcBattle;
     
@@ -19,6 +19,14 @@ public class Battle{
     public MenuWithSelection MovesBox;
     public MenuWithSelectionWithAdd itemBagBox;
     private String[][] menuSelectDecision = new String[][]{{"Fight","PkMn"}, {"Bag","Run"}};
+    private BattleState[] state = new BattleState[]{BattleState.BATTLE_DECISION, 
+        BattleState.BATTLE_SELECTMOVE, 
+        BattleState.BATTLE_ALLYMOVE, 
+        BattleState.BATTLE_ENEMYMOVE, 
+        BattleState.BATTLE_SWITCH, 
+        BattleState.BATTLE_ITEM, 
+        BattleState.BATTLE_RUN
+    };
 
     private final int allyPokemonHpBarX = 290;
     private final int allyPokemonHpBarY = 320;
@@ -34,7 +42,7 @@ public class Battle{
     private int battleMenuSelectionY = 260;
 
     public Battle(Pokemon[] playerPokemons, Pokemon[] enemyPokemon) {
-        if (playerPokemons.length != 6) throw new IllegalArgumentException("playerPokemons must have 6 elements");
+        if (playerPokemons.length < 1) throw new IllegalArgumentException("playerPokemons cannot be null");
         if (enemyPokemon == null) throw new IllegalArgumentException("enemyPokemon cannot be null");
         isNpcBattle = false;
         this.playerPokemons = playerPokemons;
@@ -86,9 +94,24 @@ public class Battle{
     }
 
     public void changeMainPokemon(int index) {
+        if (index < 0 || index > 5) throw new IllegalArgumentException("index must be between 0 and 5");
+        if (playerPokemons[index] == null) throw new IllegalArgumentException("Pokemon at index " + index + " is null");
+        if (playerPokemons[index].getHp() <= 0) throw new IllegalArgumentException("Pokemon at index " + index + " has 0 HP");
+
         Pokemon tmp = playerPokemons[0];
         playerPokemons[0] = playerPokemons[index];
         playerPokemons[index] = tmp;
+    }
+
+    public boolean isBattleDone() {
+        for (Pokemon pokemon : playerPokemons) {
+            if (pokemon.getHp() > 0) return false;
+        }
+        if (isNpcBattle && wildPokemon.getHp() > 0) return false;
+        for (Pokemon pokemon : enemyPokemon) {
+            if (pokemon != null && pokemon.getHp() > 0) return false;
+        }
+        return true;
     }
 
     public void draw(Graphics2D g2) {
@@ -103,14 +126,14 @@ public class Battle{
         Pokemon currentEnemy = isNpcBattle ? wildPokemon : (enemyPokemon != null && enemyPokemon[0] != null ? enemyPokemon[0] : null);
         if (currentEnemy != null) {
             drawPokemonSpriteWithIndex(g2, currentEnemy, 2); // 2 for enemy
-            drawEnemyPokemonHpBar(g2, currentEnemy, 100, 10); // Example width/height
+            drawEnemyPokemonHpBar(g2, 130, 20); // Example width/height
         }
 
         // Draw player's Pokemon and its HP bar
         Pokemon currentPlayerPkmn = getMainPokemon();
         if (currentPlayerPkmn != null) {
             drawPokemonSpriteWithIndex(g2, currentPlayerPkmn, 1); // 1 for ally
-            drawAllyPokemonHpBar(g2, currentPlayerPkmn, 100, 10); // Example width/height
+            drawAllyPokemonHpBar(g2, 130, 20); // Example width/height
         }
         
         drawBattleTextBox(g2);
@@ -144,7 +167,7 @@ public class Battle{
         }
     }
 
-    public BufferedImage scaleImage(BufferedImage originalImage, double scale) {
+    public static BufferedImage scaleImage(BufferedImage originalImage, double scale) {
         if (originalImage == null || scale <= 0) {
             throw new IllegalArgumentException("Original image cannot be null.");
         }
@@ -175,10 +198,12 @@ public class Battle{
      * @param width width of the HP bar
      * @param height height of the HP bar
      */
-    public void drawEnemyPokemonHpBar(Graphics2D g2, Pokemon pokemon, int width, int height) {
+    public void drawEnemyPokemonHpBar(Graphics2D g2, int width, int height) {
+        Pokemon pokemon = isNpcBattle ? wildPokemon : (enemyPokemon != null && enemyPokemon[0] != null ? enemyPokemon[0] : null);
+
         if (pokemon == null) {
             throw new NullPointerException("pokemon cannot be null");
-        }
+        } 
 
         float hpRatio = (float) pokemon.getHp() / pokemon.getMaxHp();
 
@@ -240,7 +265,9 @@ public class Battle{
      * @param width the width of the HP bar
      * @param height the height of the HP bar
      */
-    public void drawAllyPokemonHpBar(Graphics2D g2, Pokemon pokemon, int width, int height) {
+    public void drawAllyPokemonHpBar(Graphics2D g2, int width, int height) {
+        Pokemon pokemon = playerPokemons[0];
+
         float hpRatio = (float) pokemon.getHp() / pokemon.getMaxHp();
 
         Color barColor = hpRatio > 0.5 ? Color.GREEN : hpRatio > 0.2 ? Color.YELLOW : Color.RED;

@@ -1,7 +1,7 @@
 package Pokemon;
 
 public class PokemonData {
-    public String type;
+    public String type[];
     public int id;
     public int maxHp;
     public int atk;
