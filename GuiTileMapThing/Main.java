@@ -15,7 +15,7 @@ public class Main {
             frame.getContentPane().setBackground(Color.BLACK);
             JPanel outerPanel = new JPanel(new GridBagLayout());
             outerPanel.setBackground(Color.BLACK);
-            
+             
             GamePanel gamePanel = new GamePanel();
             outerPanel.add(gamePanel);
             frame.add(outerPanel, BorderLayout.CENTER);

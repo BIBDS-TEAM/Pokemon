@@ -1,5 +1,6 @@
 package GuiTileMapThing;
 
+import java.awt.FontFormatException;
 import PlayerNPCgitu.Player;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
@@ -330,9 +331,9 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
 
             case BATTLE:
-                String snorlaxEnemyFightModelPath = "..\\Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ENEMY.png";
-                String snorlaxAllyFightModelPath = "..\\Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
-                String snorlaxMiniModelPath = "..\\Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
+                String snorlaxEnemyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ENEMY.png";
+                String snorlaxAllyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
+                String snorlaxMiniModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
 
                 PokemonType[] pokemonType = { PokemonType.NORMAL, PokemonType.FIRE };
                 Pokemon pokemon = new Pokemon("SNORLAX", pokemonType, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath,
@@ -346,12 +347,14 @@ public class GamePanel extends JPanel implements Runnable {
                 Battle battle = new Battle(pokemons, pokemons);
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
+                battle.optionBox.draw(g2);
+                battle.draw(g2);
                 // g2.setColor(Color.BLACK);
                 // g2.setFont(new Font("Arial", Font.BOLD, 20));
                 // g2.drawString("Battle Start!", 100, 100);
                 switch (battleState) {
                     case BATTLE_DECISION:
-                        battle.optionBox.draw(g2);
+                        
                         if (keyI.ePressed) {
                             switch (battle.optionBox.select()) {
                                 case "Fight":

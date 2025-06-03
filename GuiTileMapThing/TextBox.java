@@ -1,5 +1,6 @@
 package GuiTileMapThing;
 
+import java.awt.FontFormatException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
