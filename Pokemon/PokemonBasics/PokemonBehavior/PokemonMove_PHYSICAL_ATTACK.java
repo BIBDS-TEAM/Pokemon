@@ -1,6 +1,6 @@
 package Pokemon.PokemonBasics.PokemonBehavior;
 
-import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +69,17 @@ public class PokemonMove_PHYSICAL_ATTACK extends PokemonMove {
 
         int attackerAtk = attacker.getAtk();
         int defenderDef = defender.getDef();
+        PokemonType[] attackerTypes = attacker.getType();
+        PokemonType[] defenderTypes = defender.getType();
+
+        double multiplier = 1.0;
+        for (PokemonType attackerType : attackerTypes) {
+            for (PokemonType defenderType : defenderTypes) {
+                multiplier *= PokemonMultiplier.getAttackMultiplier(attackerType, defenderType);
+            }
+        }
         int damage = (int) ((2 * attacker.getLvl() / 5 + 2) * (attackerAtk * power)
-                * PokemonMultiplier.getAttackMultiplier(attacker.getType(), defender.getType())
+                * multiplier
                 / ((defenderDef > 0 ? defenderDef : 1) * 50.0 / 2 + 2.0));
 
         defender.setHp(defender.getHp() - damage);

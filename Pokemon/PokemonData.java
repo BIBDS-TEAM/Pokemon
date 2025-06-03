@@ -2,7 +2,7 @@ package Pokemon;
 
 public class PokemonData {
     public String type;
-    public int lvl;
+    public int id;
     public int maxHp;
     public int atk;
     public int def;

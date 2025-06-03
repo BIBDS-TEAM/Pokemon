@@ -339,8 +339,8 @@ textBox.setText(myDialogue, g2);
                 pokemon.setEnemyFightModel(tempEnemyFightModel);
                 switch(battleState){
                     case BATTLE_DECISION:
-                battle.drawAllyPokemonHpBar(g2, pokemon, 290, 320, 130, 20);
-                battle.drawEnemyPokemonHpBar(g2, pokemon, 50, 100, 130, 20);
+                battle.drawAllyPokemonHpBar(g2, pokemon, 130, 20);
+                battle.drawEnemyPokemonHpBar(g2, pokemon, 130, 20);
                 battle.drawPokemonSpriteWithIndex(g2, pokemon, 2,  350,  30); // 300 20
                 battle.drawPokemonSpriteWithIndex(g2, pokemon, 1, 60,  230); // 60 180
                 battle.drawBattleMenuSelection(g2, 260,370);

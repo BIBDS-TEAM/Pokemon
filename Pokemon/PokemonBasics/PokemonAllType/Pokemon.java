@@ -11,7 +11,7 @@ import javax.imageio.*;
 
 public class Pokemon {
     protected String name;
-    protected PokemonType type;
+    protected PokemonType[] type = new PokemonType[2];
     protected int lvl;
     protected int maxHp;
     protected int hp;
@@ -68,7 +68,7 @@ public class Pokemon {
         g.drawImage(model[modelIndex], 0, 0, null);
     }
 
-    public Pokemon(String name, PokemonType type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd) {
+    public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd) {
         this.name = name;
         this.type = type;
         this.lvl = lvl;
@@ -81,7 +81,7 @@ public class Pokemon {
         this.spd = spd;
     }
 
-    public Pokemon(String name, PokemonType type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
+    public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
             String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath) {
         this.name = name;
         this.type = type;
@@ -111,11 +111,11 @@ public class Pokemon {
         this.name = name;
     }
 
-    public PokemonType getType() {
+    public PokemonType[] getType() {
         return type;
     }
 
-    public void setType(PokemonType type) {
+    public void setType(PokemonType[] type) {
         this.type = type;
     }
 
