@@ -1,76 +1,66 @@
 package PlayerNPCgitu;
 
 import GuiTileMapThing.GamePanel;
+import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import javax.imageio.ImageIO;
 
 public class NPC extends Entity {
-    GamePanel gp;
+    protected GamePanel gp;
+    protected String name;
+    protected String spriteFolder;
+    protected Pokemon[] pokemonList = new Pokemon[6];
+    protected String dialogue;
 
-    public NPC(GamePanel gp) {
+    public NPC(GamePanel gp, String name, int worldX, int worldY, String direction, String spriteFolder) {
         this.gp = gp;
-        solidArea = new Rectangle(4, 4, 24, 24);
-        setDefaultValues();
-        loadNPCImages();
+        this.name = name;
+        this.worldX = worldX;
+        this.worldY = worldY;
+        this.direction = direction;
+        this.spriteFolder = spriteFolder;
+        this.solidArea = new Rectangle(4, 0, 28, 28);
+        this.dialogue = "Hello player! This is the first part of the text on page 1. "
+                      + "%%PAGEBREAK%% "
+                      + "This text will start on a brand new page, page 2. "
+                      + "Even if page 1 had more space. "
+                      + "%%PAGEBREAK%% "
+                      + "And this is page 3.";
+        loadSprites();
+        setDefaultArea();
+    }
+    public String getDialog(){
+        return dialogue;
+    }
+    public boolean haveDialogue() {
+        return dialogue != null;
     }
 
-    public void setDefaultValues() {
-        worldX = 1000;
-        worldY = 680;
-        direction = "down";
-    }
-
-    private void loadNPCImages() {
+    protected void loadSprites() {
         try {
-            up0 = ImageIO.read(new File("TileGambar/NPC_up.png"));
-            down0 = ImageIO.read(new File("TileGambar/NPC_down.png"));
-            left0 = ImageIO.read(new File("TileGambar/NPC_left.png"));
-            right0 = ImageIO.read(new File("TileGambar/NPC_right.png"));
+            up0 = ImageIO.read(new File("TileGambar/" + spriteFolder + "_up.png"));
+            down0 = ImageIO.read(new File("TileGambar/" + spriteFolder + "_down.png"));
+            left0 = ImageIO.read(new File("TileGambar/" + spriteFolder + "_left.png"));
+            right0 = ImageIO.read(new File("TileGambar/" + spriteFolder + "_right.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void update() {
-        // Placeholder for future NPC AI or animation
-    }
-
-    public void draw(Graphics2D g2) {
-        int screenX = worldX - gp.player.worldX + gp.player.screenX;
-        int screenY = worldY - gp.player.worldY + gp.player.screenY;
-
-        BufferedImage img;
-switch (direction) {
-    case "up":
-        img = up0;
-        break;
-    case "down":
-        img = down0;
-        break;
-    case "left":
-        img = left0;
-        break;
-    case "right":
-        img = right0;
-        break;
-    default:
-        img = null; // or some other default value
-}
-
-        if (img != null) {
-            g2.drawImage(img, screenX, screenY, 32, 32, null);
-        }
+    public void setPokemonList(Pokemon[] pokemonList) {
+        this.pokemonList = pokemonList;
     }
 
     public boolean isPlayerInRange() {
+        if (gp.player == null) return false;
+
         int playerX = gp.player.worldX;
         int playerY = gp.player.worldY;
 
-        return (Math.abs(worldX - playerX) == 32 && worldY == playerY) || // left/right
-               (Math.abs(worldY - playerY) == 32 && worldX == playerX);   // up/down
+        return (Math.abs(worldX - playerX) == gp.tileSize && worldY == playerY) || 
+               (Math.abs(worldY - playerY) == gp.tileSize && worldX == playerX);
     }
 
     public void interact() {
@@ -83,8 +73,41 @@ switch (direction) {
             } else {
                 direction = dy > 0 ? "down" : "up";
             }
+            if (dialogue != null) {
+                gp.textBox.setText(dialogue, gp.g2);
+            }
+        }
+    }
 
-            System.out.println("NPC: Hello, traveler!");
+    public void draw(Graphics2D g2) {
+        int screenX = worldX - gp.player.worldX + gp.player.screenX;
+        int screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+        BufferedImage spriteToDraw = null;
+
+        switch (direction) {
+            case "up":
+                spriteToDraw = up0;
+                break;
+            case "down":
+                spriteToDraw = down0;
+                break;
+            case "left":
+                spriteToDraw = left0;
+                break;
+            case "right":
+                spriteToDraw = right0;
+                break;
+            default:
+                spriteToDraw = down0;
+                break;
+        }
+
+        if (spriteToDraw != null) {
+            g2.drawImage(spriteToDraw, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        } else {
+            g2.setColor(Color.RED);
+            g2.fillRect(screenX, screenY, gp.tileSize, gp.tileSize);
         }
     }
 }

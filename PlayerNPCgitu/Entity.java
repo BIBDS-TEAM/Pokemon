@@ -7,9 +7,14 @@ public class Entity {
 
     public BufferedImage up0,up1,up2,down0,down1,down2,left0,left1,right0,right1;
     public String direction;
-
     public int spriteCounter =0;
     public int spriteNum = 1;
     public Rectangle solidArea;
+    public int defaultSolidAreaX;
+    public int defaultSolidAreaY;
     public boolean collisionOn =false;
+    public void setDefaultArea(){
+        defaultSolidAreaX = solidArea.x;
+        defaultSolidAreaY = solidArea.y;
+    }
 }

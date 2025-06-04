@@ -35,6 +35,7 @@ public class Player extends Entity {
 
         setDefaultValues();
         loadPlayer();
+        setDefaultArea();
     }
 
     public void setDefaultValues() {
@@ -63,7 +64,7 @@ public class Player extends Entity {
         gp.eCheck.cekTile(this);
         collisionOn = false;
         gp.cc.cekTile(this);
-        
+        gp.cc.checkEntity(this,gp.npcList);
         spriteCounter++;
         if (spriteCounter > 10) {
             spriteCounter = 0;
