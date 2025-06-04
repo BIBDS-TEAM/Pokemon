@@ -14,6 +14,9 @@ public class MenuWithSelection {
     private int selectedRow = 0;
     private int selectedCol = 0;
 
+    private int additionalXPadding = 0;
+    private int additionalYPadding = 0;
+
     private int x, y;
     private Image borderImage;
     private final int borderTileSize = 16;
@@ -41,6 +44,17 @@ public class MenuWithSelection {
         this.y = y;
         this.fontSize = fontSize;
         this.isGrid = true;
+        initAssets();
+    }
+
+    public MenuWithSelection(String[][] gridOptions, int x, int y, float fontSize, int additionalXPadding, int additionalYPadding) {
+        this.gridOptions = gridOptions;
+        this.x = x;
+        this.y = y;
+        this.fontSize = fontSize;
+        this.isGrid = true;
+        this.additionalXPadding = additionalXPadding;
+        this.additionalYPadding = additionalYPadding;
         initAssets();
     }
 
@@ -86,8 +100,8 @@ public class MenuWithSelection {
             int contentWidth = colSpacing * (cols - 1);
             for (int w : colWidths) contentWidth += w;
 
-            int totalWidth = contentWidth + 2 * padding + extraSpaceX;
-            int totalHeight = rows * lineSpacing + 2 * padding;
+            int totalWidth = contentWidth + 2 * padding + extraSpaceX + additionalXPadding;
+            int totalHeight = rows * lineSpacing + 2 * padding + additionalYPadding;
 
             drawBorder(g2, x, y, totalWidth, totalHeight);
 
@@ -114,8 +128,8 @@ public class MenuWithSelection {
                 maxWidth = Math.max(maxWidth, fm.stringWidth(option));
             }
 
-            int totalWidth = maxWidth + 2 * padding + extraSpaceX ;
-            int totalHeight = options.length * lineSpacing + 2 * padding;
+            int totalWidth = maxWidth + 2 * padding + extraSpaceX + additionalXPadding;
+            int totalHeight = options.length * lineSpacing + 2 * padding + additionalYPadding;
 
             drawBorder(g2, x, y, totalWidth, totalHeight);
 

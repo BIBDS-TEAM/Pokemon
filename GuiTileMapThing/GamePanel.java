@@ -44,11 +44,11 @@ public class GamePanel extends JPanel implements Runnable {
     KeyInput keyI = new KeyInput();
     Thread gameThread;
     TileManager tileManager = new TileManager(this);
-    Player player = new Player(this, keyI);
+    public Player player = new Player(this, keyI);
     Battle battle;
     // gameSTATES
     private GameState currentState = GameState.SPLASH;
-    private BattleState battleState = BattleState.BATTLE_DECISION;
+    BattleState battleState = BattleState.BATTLE_DECISION;
     public OverworldState overworldState = OverworldState.OVERWORLD_ROAM;
     // opening transition ???
     private int splashTimer = 0;
@@ -220,7 +220,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 break;
             case BATTLETRANSITION:
-                
+
                 if (!isOpeningPhase) {
                     transitionTimer++;
                     if (transitionTimer >= transitionSpeed) {
@@ -238,28 +238,72 @@ public class GamePanel extends JPanel implements Runnable {
                         currentFPS = normalFPS;
                     }
                 }
+
+                String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png"; 
+                String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
+                String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
+
+                PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
+                // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
+                // Snorlax is only Normal.
+                // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
+
+                Pokemon playerPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
+                        snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
+                // Scale models if necessary (consider doing this once when Pokemon is loaded,
+                // not every battle start)
+                playerPokemon.setAllyFightModel(Battle.scaleImage(playerPokemon.getAllyFightModel(), 2.0));
+                playerPokemon.setEnemyFightModel(Battle.scaleImage(playerPokemon.getEnemyFightModel(), 2.0));
+
+                Pokemon enemyPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
+                        snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
+                enemyPokemon.setAllyFightModel(Battle.scaleImage(enemyPokemon.getAllyFightModel(), 2.0));
+                enemyPokemon.setEnemyFightModel(Battle.scaleImage(enemyPokemon.getEnemyFightModel(), 2.0));
+
+                Pokemon[] playerCards = { playerPokemon }; // Example for wild battle constructor
+                // Pokemon[] enemyCards = { enemyPokemon }; // Example for trainer battle
+
+                // Assuming a wild battle for this Snorlax example:
+                this.battle = new Battle(playerCards, playerCards);
+                // Or for a trainer battle:
+                // this.battle = new Battle(playerCards, enemyCards);
+
+                battleState = BattleState.BATTLE_DECISION; // Reset battle state
+
                 break;
             case OVERWORLDTRANSITION:
             case BATTLE:
-            if (this.battle == null) { // Safety check
-                     System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
-                     currentState = GameState.OVERWORLD;
-                     return;
+                if (this.battle == null) { // Safety check
+                    System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
+                    currentState = GameState.OVERWORLD;
+                    return;
                 }
                 if (battleState == BattleState.BATTLE_DECISION && this.battle.optionBox != null) { //
-                    if (keyI.upPressed) { this.battle.menuSelectionMoveUp(); keyI.upPressed = false; } //
-                    if (keyI.downPressed) { this.battle.menuSelectionMoveDown(); keyI.downPressed = false; } //
-                    if (keyI.leftPressed) { this.battle.menuSelectionMoveLeft(); keyI.leftPressed = false; } //
-                    if (keyI.rightPressed) { this.battle.menuSelectionMoveRight(); keyI.rightPressed = false; } //
+                    if (keyI.upPressed) {
+                        this.battle.menuOptionBoxMoveUp();
+                        keyI.upPressed = false;
+                    } //
+                    if (keyI.downPressed) {
+                        this.battle.menuOptionBoxMoveDown();
+                        keyI.downPressed = false;
+                    } //
+                    if (keyI.leftPressed) {
+                        this.battle.menuOptionBoxMoveLeft();
+                        keyI.leftPressed = false;
+                    } //
+                    if (keyI.rightPressed) {
+                        this.battle.menuOptionBoxMoveRight();
+                        keyI.rightPressed = false;
+                    } //
 
                     if (keyI.enterPressed) { //
-                        keyI.enterPressed = false; 
+                        keyI.enterPressed = false;
                         String selectedOption = this.battle.optionBox.select(); //
-                        System.out.println("Battle action selected: " + selectedOption); 
-                        
+                        System.out.println("Battle action selected: " + selectedOption);
+
                         if (selectedOption.equalsIgnoreCase("Fight")) { //
                             battleState = BattleState.BATTLE_SELECTMOVE; //
-                            this.battle.optionBox.setVisible(false); 
+                            this.battle.optionBox.setVisible(false);
                             // Next, you would show the moves selection menu
                         } else if (selectedOption.equalsIgnoreCase("Bag")) { //
                             System.out.println("Bag selected - This feature is not ready yet!");
@@ -277,7 +321,8 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
                 // Add logic for other battle states (BATTLE_SELECTMOVE, BATTLE_ALLYMOVE, etc.)
-                // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE && this.battle.MovesBox != null) { ... }
+                // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE &&
+                // this.battle.MovesBox != null) { ... }
                 break;
         }
     }
@@ -372,27 +417,12 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
 
             case BATTLE:
-                
-                String snorlaxEnemyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ENEMY.png";
-                String snorlaxAllyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
-                String snorlaxMiniModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
-
-                PokemonType[] pokemonType = { PokemonType.NORMAL, PokemonType.FIRE };
-                Pokemon pokemon = new Pokemon("SNORLAX", pokemonType, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath,
-                        snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
-
-                BufferedImage tempAllyFightModel = Battle.scaleImage(pokemon.getAllyFightModel(), 2.0);
-                BufferedImage tempEnemyFightModel = Battle.scaleImage(pokemon.getEnemyFightModel(), 2.0);
-                pokemon.setAllyFightModel(tempAllyFightModel);
-                pokemon.setEnemyFightModel(tempEnemyFightModel);
-
-                Pokemon[] pokemons = { pokemon, pokemon, pokemon, pokemon, pokemon, pokemon };
-
-                battle = new Battle(pokemons, pokemons);
-
                 if (this.battle == null) { // Safety check
                     g2.setColor(Color.RED);
-                    if (pokemonFont!=null) g2.setFont(pokemonFont.deriveFont(20f)); else g2.setFont(new Font("Arial", Font.BOLD, 20));
+                    if (pokemonFont != null)
+                        g2.setFont(pokemonFont.deriveFont(20f));
+                    else
+                        g2.setFont(new Font("Arial", Font.BOLD, 20));
                     g2.drawString("Error: Battle not initialized!", 50, getHeight() / 2);
                     return;
                 }
@@ -407,10 +437,6 @@ public class GamePanel extends JPanel implements Runnable {
                 // g2.drawString("Battle Start!", 100, 100);
                 switch (battleState) {
                     case BATTLE_DECISION:
-                        if (this.battle.optionBox != null) {
-                            this.battle.optionBox.setVisible(true); // Ensure it's visible
-                            this.battle.optionBox.draw(g2); //
-                        }
                         if (keyI.ePressed) {
                             switch (battle.optionBox.select()) {
                                 case "Fight":

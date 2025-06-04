@@ -34,6 +34,10 @@ public class Battle {
 
     private TextBox battleTextBox;
 
+    private String currentDialogMessage = "";
+    private boolean hasNewDialogMessage = false;
+    private boolean firstMessage = true;
+
     // Coordinates for UI elements
     private final int allyPokemonHpBarX = 290;
     private final int allyPokemonHpBarY = 320;
@@ -45,8 +49,8 @@ public class Battle {
     private int enemyPokemonSpriteX = 60;
     private int enemyPokemonSpriteY = 230;
 
-    private int battleMenuSelectionX = 260;
-    private int battleMenuSelectionY = 380;
+    private int battleMenuSelectionX = 225;
+    private int battleMenuSelectionY = 363;
 
     private int battleTextBoxX = 50;
     private int battleTextBoxY = 360;
@@ -102,7 +106,7 @@ public class Battle {
             e.printStackTrace();
             font = new Font("Arial", Font.PLAIN, 16); // Fallback font
         }
-        optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f);
+        optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 40, 20);
         // MovesBox and itemBagBox can be initialized when needed or here if always
         // shown initially.
         this.optionBox.setVisible(false); // GamePanel will control visibility
@@ -170,8 +174,8 @@ public class Battle {
             g2.drawString("No Ally", allyPokemonSpriteX + 10, allyPokemonSpriteY + 30);
         }
 
-        drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
         drawBattleTextBox(g2, currentBattleState, panelWidth, panelHeight);
+        drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
     }
 
     public void drawPokemonSpriteWithIndex(Graphics2D g2, Pokemon pokemon, int index) {
@@ -414,37 +418,60 @@ public class Battle {
         return scaledImage;
     }
 
+    // In Battle.java
+    public void setNewDialog(String message, Graphics2D g2) {
+        this.currentDialogMessage = message;
+        this.hasNewDialogMessage = true; // Flag that the TextBox needs to be updated
+        this.battleTextBox.setText(message, g2);
+        if (this.battleTextBox != null) {
+            this.battleTextBox.show(); // Make sure textbox becomes visible when a new message is set
+        }
+    }
+
     public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {
         if (this.battleTextBox == null) {
             this.battleTextBox = new TextBox(); // Should be initialized in constructor
         }
 
-        String textToShow = "";
-        Pokemon activePlayerPokemon = getMainPlayerPokemon(); // Get active Pokemon for the prompt
-
-        if (battleState == BattleState.BATTLE_DECISION) {
-            if (activePlayerPokemon != null && activePlayerPokemon.getName() != null) {
-                textToShow = "What will " + activePlayerPokemon.getName().toUpperCase() + " do?";
-            } else {
-                textToShow = "Select an action."; // Fallback if Pokemon is null
-            }
+        Pokemon activePlayerPokemon = getMainPlayerPokemon();
+        String decisionPrompt = "";
+        if (activePlayerPokemon != null && activePlayerPokemon.getName() != null) {
+            decisionPrompt = "What will " + activePlayerPokemon.getName().toUpperCase() + " do?";
         } else {
-            // Placeholder for other battle states (e.g., after a move is used)
-            // This part will need to be updated with actual dialogue from battle events.
-            // For example: if (lastEventMessage != null) textToShow = lastEventMessage;
-            textToShow = "..."; // Default for non-decision states
+            decisionPrompt = "Select an action.";
         }
 
-        this.battleTextBox.setText(textToShow, g2); // g2 is needed for FontMetrics by TextBox
-        this.battleTextBox.show(); // Make sure it's marked as visible
-        this.battleTextBox.draw(g2, panelWidth, panelHeight);
+        if (hasNewDialogMessage) {
+            this.battleTextBox.setText(this.currentDialogMessage, g2);
+            hasNewDialogMessage = false; // Reset the flag as the new message is now set
+        } else if (battleState == BattleState.BATTLE_DECISION) {
+            // If it's decision time and the current text box isn't already showing the
+            // decision prompt,
+            // or if the previous message in the textbox is fully typed out.
+            // This ensures the prompt reappears correctly.
+            boolean isTextBoxDisplayingPrompt = false;
+            if (!this.battleTextBox.pages.isEmpty()) { // Accessing 'pages' directly isn't ideal, better to have a
+                                                       // getter in TextBox
+                isTextBoxDisplayingPrompt = this.battleTextBox.pages.get(0).equals(decisionPrompt);
+            }
+
+            if (!isTextBoxDisplayingPrompt || (this.battleTextBox.isDoneTyping() && this.battleTextBox.isLastPage())) {
+                this.battleTextBox.setText(decisionPrompt, g2);
+            }
+        }
+        // Always attempt to draw if it's supposed to be visible.
+        // TextBox.draw() itself checks its 'visible' flag.
+        // Visibility should be managed by show()/hide() or when new text is set.
+        if (this.battleTextBox.isVisible()) {
+            this.battleTextBox.draw(g2, panelWidth, panelHeight);
+        }
     }
 
     public void drawBattleMenuSelection(Graphics2D g2, int x, int y) {
         if (optionBox == null) {
             optionBox = new MenuWithSelection(menuSelectDecision, x, y, 20f);
         }
-        
+
         optionBox.setPosition(x, y);
         optionBox.setVisible(true);
         optionBox.draw(g2);
@@ -471,10 +498,11 @@ public class Battle {
             battleTextBox.show(); // Ensure it's visible
         }
     }
-    
+
     public void drawBattleBagItemSelection(Graphics2D g2, String[] itemNames, String[] itemQuantities) {
         if (itemBagBox == null) {
-            itemBagBox = new MenuWithSelectionWithAdd(itemNames, itemQuantities, battleMenuSelectionX, battleMenuSelectionY, 16f);
+            itemBagBox = new MenuWithSelectionWithAdd(itemNames, itemQuantities, battleMenuSelectionX,
+                    battleMenuSelectionY, 16f);
         } else {
             itemBagBox.setOptions(itemNames);
             itemBagBox.setAdditionalInfo(itemQuantities);
@@ -484,8 +512,23 @@ public class Battle {
         itemBagBox.draw(g2);
     }
 
-    public void menuSelectionMoveUp() { if (optionBox != null) optionBox.moveUp(); }
-    public void menuSelectionMoveDown() { if (optionBox != null) optionBox.moveDown(); }
-    public void menuSelectionMoveLeft() { if (optionBox != null) optionBox.moveLeft(); }
-    public void menuSelectionMoveRight() { if (optionBox != null) optionBox.moveRight(); }
+    public void menuOptionBoxMoveUp() {
+        if (optionBox != null)
+            optionBox.moveUp();
+    }
+
+    public void menuOptionBoxMoveDown() {
+        if (optionBox != null)
+            optionBox.moveDown();
+    }
+
+    public void menuOptionBoxMoveLeft() {
+        if (optionBox != null)
+            optionBox.moveLeft();
+    }
+
+    public void menuOptionBoxMoveRight() {
+        if (optionBox != null)
+            optionBox.moveRight();
+    }
 }

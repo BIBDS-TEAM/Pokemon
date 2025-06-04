@@ -21,7 +21,7 @@ public class TextBox {
     private long lastCharTime = 0;
     private final int charDelay = 30;
 
-    private ArrayList<String> pages = new ArrayList<>();
+    protected ArrayList<String> pages = new ArrayList<>();
     private int currentPageIndex = 0;
     private String displayedText = "";
 
@@ -46,6 +46,39 @@ public class TextBox {
                 font = new Font("Arial", Font.PLAIN, 16);
             }
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+
+        } catch (IOException | FontFormatException e) {
+            System.err.println("Failed to load assets for TextBox. Using fallback font.");
+            e.printStackTrace();
+            font = new Font("Arial", Font.PLAIN, 16);
+        }
+
+        if (borderImage == null) {
+            System.err.println("TextBox border image is null. Drawing will use a simple fallback border.");
+        }
+    }
+
+    public TextBox(Font font) {
+        this.font = font;
+        try {
+            InputStream borderStream = getClass().getResourceAsStream("/TileGambar/MenuBorder1.png");
+            if (borderStream != null) {
+                borderImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(borderStream.readAllBytes())).getImage();
+            } else {
+                System.err.println("TextBox Error: Could not load border image resource /TileGambar/MenuBorder1.png");
+            }
+
+            if (font == null) {
+                InputStream fontStream = getClass().getResourceAsStream("/Font/Pokemon_Jadul.ttf");
+            if (fontStream != null) {
+                font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(16f);
+            } else {
+                System.err.println("TextBox Error: Could not load font resource /Font/Pokemon_Jadul.ttf. Using fallback.");
+                font = new Font("Arial", Font.PLAIN, 16);
+            }
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+            }
+            
 
         } catch (IOException | FontFormatException e) {
             System.err.println("Failed to load assets for TextBox. Using fallback font.");

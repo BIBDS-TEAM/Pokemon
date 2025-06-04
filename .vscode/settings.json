@@ -1,6 +1,6 @@
 {
   "java.project.referencedLibraries": [
-    "../Pokemon/gson-2.13.1.jar",
+    "../Pokemon/*.jar",
     "resources/**/*.ttf"
   ]
 }

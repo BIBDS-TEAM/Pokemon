@@ -1,0 +1,1191 @@
+MOVE: Absorb
+TYPE: GRASS
+CATEGORY: Special
+POWER: 20
+ACCURACY: 100
+PP: 25
+EFFECT: User recovers half the HP inflicted on opponent.
+---
+MOVE: Acid
+TYPE: POISON
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 30
+EFFECT: May lower opponent's Special Defense.
+---
+MOVE: Acid Armor
+TYPE: POISON
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: Sharply raises user's Defense.
+---
+MOVE: Agility
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Sharply raises user's Speed.
+---
+MOVE: Amnesia
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: Sharply raises user's Special Defense.
+---
+MOVE: Aurora Beam
+TYPE: ICE
+CATEGORY: Special
+POWER: 65
+ACCURACY: 100
+PP: 20
+EFFECT: May lower opponent's Attack.
+---
+MOVE: Barrage
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 15
+ACCURACY: 85
+PP: 20
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Barrier
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: Sharply raises user's Defense.
+---
+MOVE: Bide
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: N/A
+PP: 10
+EFFECT: User takes damage for two turns then strikes back double.
+---
+MOVE: Bind
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 15
+ACCURACY: 85
+PP: 20
+EFFECT: Traps opponent, damaging them for 4-5 turns.
+---
+MOVE: Bite
+TYPE: DARK
+CATEGORY: Physical
+POWER: 60
+ACCURACY: 100
+PP: 25
+EFFECT: May cause flinching.
+---
+MOVE: Blizzard
+TYPE: ICE
+CATEGORY: Special
+POWER: 110
+ACCURACY: 70
+PP: 5
+EFFECT: May freeze opponent.
+---
+MOVE: Body Slam
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 85
+ACCURACY: 100
+PP: 15
+EFFECT: May paralyze opponent.
+---
+MOVE: Bone Club
+TYPE: GROUND
+CATEGORY: Physical
+POWER: 65
+ACCURACY: 85
+PP: 20
+EFFECT: May cause flinching.
+---
+MOVE: Bonemerang
+TYPE: GROUND
+CATEGORY: Physical
+POWER: 50
+ACCURACY: 90
+PP: 10
+EFFECT: Hits twice in one turn.
+---
+MOVE: Bubble
+TYPE: WATER
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 30
+EFFECT: May lower opponent's Speed.
+---
+MOVE: Bubble Beam
+TYPE: WATER
+CATEGORY: Special
+POWER: 65
+ACCURACY: 100
+PP: 20
+EFFECT: May lower opponent's Speed.
+---
+MOVE: Clamp
+TYPE: WATER
+CATEGORY: Physical
+POWER: 35
+ACCURACY: 85
+PP: 15
+EFFECT: Traps opponent, damaging them for 4-5 turns.
+---
+MOVE: Comet Punch
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 18
+ACCURACY: 85
+PP: 15
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Confuse Ray
+TYPE: GHOST
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 10
+EFFECT: Confuses opponent.
+---
+MOVE: Confusion
+TYPE: PSYCHIC
+CATEGORY: Special
+POWER: 50
+ACCURACY: 100
+PP: 25
+EFFECT: May confuse opponent.
+---
+MOVE: Constrict
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 10
+ACCURACY: 100
+PP: 35
+EFFECT: May lower opponent's Speed by one stage.
+---
+MOVE: Conversion
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Changes user's type to that of its first move.
+---
+MOVE: Counter
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 100
+PP: 20
+EFFECT: When hit by a Physical Attack, user strikes back with 2x power.
+---
+MOVE: Crabhammer
+TYPE: WATER
+CATEGORY: Physical
+POWER: 100
+ACCURACY: 90
+PP: 10
+EFFECT: High critical hit ratio.
+---
+MOVE: Cut
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 50
+ACCURACY: 95
+PP: 30
+EFFECT: N/A
+---
+MOVE: Defense Curl
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 40
+EFFECT: Raises user's Defense.
+---
+MOVE: Dig
+TYPE: GROUND
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 100
+PP: 10
+EFFECT: Digs underground on first turn, attacks on second. Can also escape caves.
+---
+MOVE: Disable
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 20
+EFFECT: Opponent can't use its last attack for a few turns.
+---
+MOVE: Dizzy Punch
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 70
+ACCURACY: 100
+PP: 10
+EFFECT: May confuse opponent.
+---
+MOVE: Double Kick
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: 30
+ACCURACY: 100
+PP: 30
+EFFECT: Hits twice in one turn.
+---
+MOVE: Double Slap
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 15
+ACCURACY: 85
+PP: 10
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Double Team
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 15
+EFFECT: Raises user's Evasiveness.
+---
+MOVE: Double-Edge
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 120
+ACCURACY: 100
+PP: 15
+EFFECT: User receives recoil damage.
+---
+MOVE: Dragon Rage
+TYPE: DRAGON
+CATEGORY: Special
+POWER: N/A
+ACCURACY: 100
+PP: 10
+EFFECT: Always inflicts 40 HP.
+---
+MOVE: Dream Eater
+TYPE: PSYCHIC
+CATEGORY: Special
+POWER: 100
+ACCURACY: 100
+PP: 15
+EFFECT: User recovers half the HP inflicted on a sleeping opponent.
+---
+MOVE: Drill Peck
+TYPE: FLYING
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 100
+PP: 20
+EFFECT: N/A
+---
+MOVE: Earthquake
+TYPE: GROUND
+CATEGORY: Physical
+POWER: 100
+ACCURACY: 100
+PP: 10
+EFFECT: Power is doubled if opponent is underground from Dig.
+---
+MOVE: Egg Bomb
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 100
+ACCURACY: 75
+PP: 10
+EFFECT: N/A
+---
+MOVE: Ember
+TYPE: FIRE
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 25
+EFFECT: May burn opponent.
+---
+MOVE: Explosion
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 250
+ACCURACY: 100
+PP: 5
+EFFECT: User faints.
+---
+MOVE: Fire Blast
+TYPE: FIRE
+CATEGORY: Special
+POWER: 110
+ACCURACY: 85
+PP: 5
+EFFECT: May burn opponent.
+---
+MOVE: Fire Punch
+TYPE: FIRE
+CATEGORY: Physical
+POWER: 75
+ACCURACY: 100
+PP: 15
+EFFECT: May burn opponent.
+---
+MOVE: Fire Spin
+TYPE: FIRE
+CATEGORY: Special
+POWER: 35
+ACCURACY: 85
+PP: 15
+EFFECT: Traps opponent, damaging them for 4-5 turns.
+---
+MOVE: Fissure
+TYPE: GROUND
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 30
+PP: 5
+EFFECT: One-Hit-KO, if it hits.
+---
+MOVE: Flamethrower
+TYPE: FIRE
+CATEGORY: Special
+POWER: 90
+ACCURACY: 100
+PP: 15
+EFFECT: May burn opponent.
+---
+MOVE: Flash
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 20
+EFFECT: Lowers opponent's Accuracy.
+---
+MOVE: Fly
+TYPE: FLYING
+CATEGORY: Physical
+POWER: 90
+ACCURACY: 95
+PP: 15
+EFFECT: Flies up on first turn, attacks on second turn.
+---
+MOVE: Focus Energy
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Increases critical hit ratio.
+---
+MOVE: Fury Attack
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 15
+ACCURACY: 85
+PP: 20
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Fury Swipes
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 18
+ACCURACY: 80
+PP: 15
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Glare
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 30
+EFFECT: Paralyzes opponent.
+---
+MOVE: Growl
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 40
+EFFECT: Lowers opponent's Attack.
+---
+MOVE: Growth
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: Raises user's Attack and Special Attack.
+---
+MOVE: Guillotine
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 30
+PP: 5
+EFFECT: One-Hit-KO, if it hits.
+---
+MOVE: Gust
+TYPE: FLYING
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 35
+EFFECT: Hits Pokémon using Fly/Bounce/Sky Drop with double power.
+---
+MOVE: Harden
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Raises user's Defense.
+---
+MOVE: Haze
+TYPE: ICE
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Resets all stat changes.
+---
+MOVE: Headbutt
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 70
+ACCURACY: 100
+PP: 15
+EFFECT: May cause flinching.
+---
+MOVE: High Jump Kick
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: 130
+ACCURACY: 90
+PP: 10
+EFFECT: If it misses, the user loses half its HP.
+---
+MOVE: Horn Attack
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 65
+ACCURACY: 100
+PP: 25
+EFFECT: N/A
+---
+MOVE: Horn Drill
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 30
+PP: 5
+EFFECT: One-Hit-KO, if it hits.
+---
+MOVE: Hydro Pump
+TYPE: WATER
+CATEGORY: Special
+POWER: 110
+ACCURACY: 80
+PP: 5
+EFFECT: N/A
+---
+MOVE: Hyper Beam
+TYPE: NORMAL
+CATEGORY: Special
+POWER: 150
+ACCURACY: 90
+PP: 5
+EFFECT: User must recharge next turn.
+---
+MOVE: Hyper Fang
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 90
+PP: 15
+EFFECT: May cause flinching.
+---
+MOVE: Hypnosis
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 60
+PP: 20
+EFFECT: Puts opponent to sleep.
+---
+MOVE: Ice Beam
+TYPE: ICE
+CATEGORY: Special
+POWER: 90
+ACCURACY: 100
+PP: 10
+EFFECT: May freeze opponent.
+---
+MOVE: Ice Punch
+TYPE: ICE
+CATEGORY: Physical
+POWER: 75
+ACCURACY: 100
+PP: 15
+EFFECT: May freeze opponent.
+---
+MOVE: Jump Kick
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: 100
+ACCURACY: 95
+PP: 10
+EFFECT: If it misses, the user loses half its HP.
+---
+MOVE: Karate Chop
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: 50
+ACCURACY: 100
+PP: 25
+EFFECT: High critical hit ratio.
+---
+MOVE: Kinesis
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 80
+PP: 15
+EFFECT: Lowers opponent's Accuracy.
+---
+MOVE: Leech Life
+TYPE: BUG
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 100
+PP: 10
+EFFECT: User recovers half the HP inflicted on opponent.
+---
+MOVE: Leech Seed
+TYPE: GRASS
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 90
+PP: 10
+EFFECT: Drains HP from opponent each turn.
+---
+MOVE: Leer
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 30
+EFFECT: Lowers opponent's Defense.
+---
+MOVE: Lick
+TYPE: GHOST
+CATEGORY: Physical
+POWER: 30
+ACCURACY: 100
+PP: 30
+EFFECT: May paralyze opponent.
+---
+MOVE: Light Screen
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Halves damage from Special attacks for 5 turns.
+---
+MOVE: Lovely Kiss
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 75
+PP: 10
+EFFECT: Puts opponent to sleep.
+---
+MOVE: Low Kick
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 100
+PP: 20
+EFFECT: The heavier the opponent, the stronger the attack.
+---
+MOVE: Meditate
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 40
+EFFECT: Raises user's Attack.
+---
+MOVE: Mega Drain
+TYPE: GRASS
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 15
+EFFECT: User recovers half the HP inflicted on opponent.
+---
+MOVE: Mega Kick
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 120
+ACCURACY: 75
+PP: 5
+EFFECT: N/A
+---
+MOVE: Mega Punch
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 85
+PP: 20
+EFFECT: N/A
+---
+MOVE: Metronome
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 10
+EFFECT: User performs almost any move in the game at random.
+---
+MOVE: Mimic
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 10
+EFFECT: Copies the opponent's last move.
+---
+MOVE: Minimize
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 10
+EFFECT: Sharply raises user's Evasiveness.
+---
+MOVE: Mirror Move
+TYPE: FLYING
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: User performs the opponent's last move.
+---
+MOVE: Mist
+TYPE: ICE
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: User's stats cannot be changed for a period of time.
+---
+MOVE: Night Shade
+TYPE: GHOST
+CATEGORY: Special
+POWER: N/A
+ACCURACY: 100
+PP: 15
+EFFECT: Inflicts damage equal to user's level.
+---
+MOVE: Pay Day
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 40
+ACCURACY: 100
+PP: 20
+EFFECT: Money is earned after the battle.
+---
+MOVE: Peck
+TYPE: FLYING
+CATEGORY: Physical
+POWER: 35
+ACCURACY: 100
+PP: 35
+EFFECT: N/A
+---
+MOVE: Petal Dance
+TYPE: GRASS
+CATEGORY: Special
+POWER: 120
+ACCURACY: 100
+PP: 10
+EFFECT: User attacks for 2-3 turns but then becomes confused.
+---
+MOVE: Pin Missile
+TYPE: BUG
+CATEGORY: Physical
+POWER: 25
+ACCURACY: 95
+PP: 20
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Poison Gas
+TYPE: POISON
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 90
+PP: 40
+EFFECT: Poisons opponent.
+---
+MOVE: Poison Powder
+TYPE: POISON
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 75
+PP: 35
+EFFECT: Poisons opponent.
+---
+MOVE: Poison Sting
+TYPE: POISON
+CATEGORY: Physical
+POWER: 15
+ACCURACY: 100
+PP: 35
+EFFECT: May poison the opponent.
+---
+MOVE: Pound
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 40
+ACCURACY: 100
+PP: 35
+EFFECT: N/A
+---
+MOVE: Screech
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 85
+PP: 40
+EFFECT: Sharply lowers opponent's Defense.
+---
+MOVE: Seismic Toss
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 100
+PP: 20
+EFFECT: Inflicts damage equal to user's level.
+---
+MOVE: Self-Destruct
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 200
+ACCURACY: 100
+PP: 5
+EFFECT: User faints.
+---
+MOVE: Sharpen
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 30
+EFFECT: Raises user's Attack.
+---
+MOVE: Sing
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 55
+PP: 15
+EFFECT: Puts opponent to sleep.
+---
+MOVE: Skull Bash
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 130
+ACCURACY: 100
+PP: 10
+EFFECT: Raises Defense on first turn, attacks on second.
+---
+MOVE: Sky Attack
+TYPE: FLYING
+CATEGORY: Physical
+POWER: 140
+ACCURACY: 90
+PP: 5
+EFFECT: Charges on first turn, attacks on second. May cause flinching. High critical hit ratio.
+---
+MOVE: Slam
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 75
+PP: 20
+EFFECT: N/A
+---
+MOVE: Slash
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 70
+ACCURACY: 100
+PP: 20
+EFFECT: High critical hit ratio.
+---
+MOVE: Sleep Powder
+TYPE: GRASS
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 75
+PP: 15
+EFFECT: Puts opponent to sleep.
+---
+MOVE: Sludge
+TYPE: POISON
+CATEGORY: Special
+POWER: 65
+ACCURACY: 100
+PP: 20
+EFFECT: May poison opponent.
+---
+MOVE: Smog
+TYPE: POISON
+CATEGORY: Special
+POWER: 30
+ACCURACY: 70
+PP: 20
+EFFECT: May poison opponent.
+---
+MOVE: Smokescreen
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 20
+EFFECT: Lowers opponent's Accuracy.
+---
+MOVE: Soft-Boiled
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 5
+EFFECT: User recovers half its max HP.
+---
+MOVE: Solar Beam
+TYPE: GRASS
+CATEGORY: Special
+POWER: 120
+ACCURACY: 100
+PP: 10
+EFFECT: Charges on first turn, attacks on second.
+---
+MOVE: Sonic Boom
+TYPE: NORMAL
+CATEGORY: Special
+POWER: N/A
+ACCURACY: 90
+PP: 20
+EFFECT: Always inflicts 20 HP.
+---
+MOVE: Spike Cannon
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 20
+ACCURACY: 100
+PP: 15
+EFFECT: Hits 2-5 times in one turn.
+---
+MOVE: Splash
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 40
+EFFECT: Doesn't do ANYTHING.
+---
+MOVE: Spore
+TYPE: GRASS
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 15
+EFFECT: Puts opponent to sleep.
+---
+MOVE: Stomp
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 65
+ACCURACY: 100
+PP: 20
+EFFECT: May cause flinching.
+---
+MOVE: Strength
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 100
+PP: 15
+EFFECT: N/A
+---
+MOVE: String Shot
+TYPE: BUG
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 95
+PP: 40
+EFFECT: Sharply lowers opponent's Speed.
+---
+MOVE: Struggle
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 50
+ACCURACY: N/A
+PP: N/A
+EFFECT: Only usable when all PP are gone. Hurts the user.
+---
+MOVE: Stun Spore
+TYPE: GRASS
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 75
+PP: 30
+EFFECT: Paralyzes opponent.
+---
+MOVE: Submission
+TYPE: FIGHTING
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 80
+PP: 20
+EFFECT: User receives recoil damage.
+---
+MOVE: Substitute
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 10
+EFFECT: Uses HP to create a decoy that takes hits.
+---
+MOVE: Super Fang
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: N/A
+ACCURACY: 90
+PP: 10
+EFFECT: Always takes off half of the opponent's HP.
+---
+MOVE: Supersonic
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 55
+PP: 20
+EFFECT: Confuses opponent.
+---
+MOVE: Surf
+TYPE: WATER
+CATEGORY: Special
+POWER: 90
+ACCURACY: 100
+PP: 15
+EFFECT: Hits all adjacent Pokémon.
+---
+MOVE: Swift
+TYPE: NORMAL
+CATEGORY: Special
+POWER: 60
+ACCURACY: N/A
+PP: 20
+EFFECT: Ignores Accuracy and Evasiveness.
+---
+MOVE: Swords Dance
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: Sharply raises user's Attack.
+---
+MOVE: Tackle
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 40
+ACCURACY: 100
+PP: 35
+EFFECT: N/A
+---
+MOVE: Tail Whip
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 100
+PP: 30
+EFFECT: Lowers opponent's Defense.
+---
+MOVE: Take Down
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 90
+ACCURACY: 85
+PP: 20
+EFFECT: User receives recoil damage.
+---
+MOVE: Teleport
+TYPE: PSYCHIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 20
+EFFECT: Allows user to flee wild battles; also warps player to last PokéCenter.
+---
+MOVE: Thrash
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 120
+ACCURACY: 100
+PP: 10
+EFFECT: User attacks for 2-3 turns but then becomes confused.
+---
+MOVE: Thunder
+TYPE: ELECTRIC
+CATEGORY: Special
+POWER: 110
+ACCURACY: 70
+PP: 10
+EFFECT: May paralyze opponent.
+---
+MOVE: Thunder Punch
+TYPE: ELECTRIC
+CATEGORY: Physical
+POWER: 75
+ACCURACY: 100
+PP: 15
+EFFECT: May paralyze opponent.
+---
+MOVE: Thunder Shock
+TYPE: ELECTRIC
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 30
+EFFECT: May paralyze opponent.
+---
+MOVE: Thunder Wave
+TYPE: ELECTRIC
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 90
+PP: 20
+EFFECT: Paralyzes opponent.
+---
+MOVE: Thunderbolt
+TYPE: ELECTRIC
+CATEGORY: Special
+POWER: 90
+ACCURACY: 100
+PP: 15
+EFFECT: May paralyze opponent.
+---
+MOVE: Toxic
+TYPE: POISON
+CATEGORY: Status
+POWER: N/A
+ACCURACY: 90
+PP: 10
+EFFECT: Badly poisons opponent.
+---
+MOVE: Transform
+TYPE: NORMAL
+CATEGORY: Status
+POWER: N/A
+ACCURACY: N/A
+PP: 10
+EFFECT: User takes on the form and attacks of the opponent.
+---
+MOVE: Tri Attack
+TYPE: NORMAL
+CATEGORY: Special
+POWER: 80
+ACCURACY: 100
+PP: 10
+EFFECT: May paralyze, burn or freeze opponent.
+---
+MOVE: Twineedle
+TYPE: BUG
+CATEGORY: Physical
+POWER: 25
+ACCURACY: 100
+PP: 20
+EFFECT: Hits twice in one turn. May poison opponent.
+---
+MOVE: Vine Whip
+TYPE: GRASS
+CATEGORY: Physical
+POWER: 45
+ACCURACY: 100
+PP: 25
+EFFECT: N/A
+---
+MOVE: Vise Grip
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 55
+ACCURACY: 100
+PP: 30
+EFFECT: N/A
+---
+MOVE: Water Gun
+TYPE: WATER
+CATEGORY: Special
+POWER: 40
+ACCURACY: 100
+PP: 25
+EFFECT: N/A
+---
+MOVE: Waterfall
+TYPE: WATER
+CATEGORY: Physical
+POWER: 80
+ACCURACY: 100
+PP: 15
+EFFECT: May cause flinching.
+---
+MOVE: Whirlwind
+TYPE: NORMAL
+CATEGORY: Status
+POWER: 0
+ACCURACY: 0
+PP: 20
+EFFECT: In battles, the opponent switches. In the wild, the Pokemon runs
+---
+MOVE: Wing Attack
+TYPE: FLYING
+CATEGORY: Physical
+POWER: 60
+ACCURACY: 100
+PP: 35
+EFFECT: N/A
+---
+MOVE: Withdraw
+TYPE: WATER
+CATEGORY: Status
+POWER: 40
+ACCURACY: 100
+PP: 25
+EFFECT: Raises user's Defense
+---
+MOVE: Wrap
+TYPE: NORMAL
+CATEGORY: Physical
+POWER: 15
+ACCURACY: 90
+PP: 20
+EFFECT: Traps opponent, damaging them for 4-5 turns.

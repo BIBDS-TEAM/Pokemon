@@ -42,12 +42,23 @@ public class NPC extends Entity {
         int screenX = worldX - gp.player.worldX + gp.player.screenX;
         int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-        BufferedImage img = switch (direction) {
-            case "up" -> up0;
-            case "down" -> down0;
-            case "left" -> left0;
-            case "right" -> right0;
-        };
+        BufferedImage img;
+switch (direction) {
+    case "up":
+        img = up0;
+        break;
+    case "down":
+        img = down0;
+        break;
+    case "left":
+        img = left0;
+        break;
+    case "right":
+        img = right0;
+        break;
+    default:
+        img = null; // or some other default value
+}
 
         if (img != null) {
             g2.drawImage(img, screenX, screenY, 32, 32, null);
