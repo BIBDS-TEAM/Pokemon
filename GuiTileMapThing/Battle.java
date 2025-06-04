@@ -36,7 +36,7 @@ public class Battle {
 
     private String currentDialogMessage = "";
     private boolean hasNewDialogMessage = false;
-    private boolean firstMessage = true;
+    private boolean decisionPromptDisplayedThisTurn = false;
 
     // Coordinates for UI elements
     private final int allyPokemonHpBarX = 290;
@@ -175,7 +175,20 @@ public class Battle {
         }
 
         drawBattleTextBox(g2, currentBattleState, panelWidth, panelHeight);
-        drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
+
+        if (currentBattleState == BattleState.BATTLE_DECISION) {
+            // optionBox is drawn only when it's decision time.
+            // Its visibility is managed internally by MenuWithSelection or explicitly by Battle logic.
+            // Ensure optionBox.setVisible(true) is called when BATTLE_DECISION starts.
+            if (optionBox != null) { // Make sure optionBox is initialized
+                 optionBox.setVisible(true); // Ensure it's visible during BATTLE_DECISION
+                 drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
+            }
+        } else {
+            if (optionBox != null) {
+                optionBox.setVisible(false); // Hide optionBox in other states
+            }
+        }
     }
 
     public void drawPokemonSpriteWithIndex(Graphics2D g2, Pokemon pokemon, int index) {
@@ -421,50 +434,86 @@ public class Battle {
     // In Battle.java
     public void setNewDialog(String message, Graphics2D g2) {
         this.currentDialogMessage = message;
-        this.hasNewDialogMessage = true; // Flag that the TextBox needs to be updated
-        this.battleTextBox.setText(message, g2);
+        this.hasNewDialogMessage = true;
         if (this.battleTextBox != null) {
-            this.battleTextBox.show(); // Make sure textbox becomes visible when a new message is set
+            int dialogWidth = battleTextBox.getDefaultWidth(); // Use default full width for dialogs
+            int effectiveTextWidth = dialogWidth - 2 * 16; // 16 is padding from TextBox
+            this.battleTextBox.setText(message, g2, effectiveTextWidth);
+            this.battleTextBox.show();
+        }
+        this.decisionPromptDisplayedThisTurn = false; // A new dialog means the old prompt is no longer the focus
+    }
+
+    public void prepareForNewDecisionPrompt() {
+        this.decisionPromptDisplayedThisTurn = false;
+        if (this.optionBox != null) {
+            this.optionBox.setVisible(true); // Make sure menu is ready
+        }
+         if (this.battleTextBox != null) {
+            // Don't necessarily hide the textbox here, drawBattleTextBox will handle setting the prompt
         }
     }
 
     public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {
         if (this.battleTextBox == null) {
-            this.battleTextBox = new TextBox(); // Should be initialized in constructor
+             // This should ideally be initialized in the constructor or initializeAssets
+            this.battleTextBox = new TextBox();
         }
 
         Pokemon activePlayerPokemon = getMainPlayerPokemon();
-        String decisionPrompt = "";
-        if (activePlayerPokemon != null && activePlayerPokemon.getName() != null) {
-            decisionPrompt = "What will " + activePlayerPokemon.getName().toUpperCase() + " do?";
-        } else {
-            decisionPrompt = "Select an action.";
-        }
+        String decisionPrompt = "What will " +
+                                (activePlayerPokemon != null && activePlayerPokemon.getName() != null ?
+                                 activePlayerPokemon.getName().toUpperCase() : "POKEMON") +
+                                " do?";
 
+        int tbX, tbY, tbWidth, tbHeight;
+        int effectiveTextWidth;
         if (hasNewDialogMessage) {
-            this.battleTextBox.setText(this.currentDialogMessage, g2);
-            hasNewDialogMessage = false; // Reset the flag as the new message is now set
-        } else if (battleState == BattleState.BATTLE_DECISION) {
-            // If it's decision time and the current text box isn't already showing the
-            // decision prompt,
-            // or if the previous message in the textbox is fully typed out.
-            // This ensures the prompt reappears correctly.
-            boolean isTextBoxDisplayingPrompt = false;
-            if (!this.battleTextBox.pages.isEmpty()) { // Accessing 'pages' directly isn't ideal, better to have a
-                                                       // getter in TextBox
-                isTextBoxDisplayingPrompt = this.battleTextBox.pages.get(0).equals(decisionPrompt);
-            }
+            tbWidth = battleTextBox.getDefaultWidth();
+            tbHeight = battleTextBox.getDefaultHeight();
+            tbX = (panelWidth - tbWidth) / 2;
+            tbY = panelHeight - tbHeight - 20; // Standard Y position
+            effectiveTextWidth = tbWidth - 2 * 16; // 16 is padding from TextBox
 
-            if (!isTextBoxDisplayingPrompt || (this.battleTextBox.isDoneTyping() && this.battleTextBox.isLastPage())) {
-                this.battleTextBox.setText(decisionPrompt, g2);
+            this.battleTextBox.setText(this.currentDialogMessage, g2, effectiveTextWidth);
+            this.battleTextBox.show();
+            hasNewDialogMessage = false; // Dialog message overrides prompt state
+            decisionPromptDisplayedThisTurn = false;
+            // decisionPromptDisplayedThisTurn was already set to false in setNewDialog
+        } else if (battleState == BattleState.BATTLE_DECISION) {
+            // Narrow width for the prompt, positioned on the left
+            tbWidth = battleMenuSelectionX - 10; // End before optionBox starts (adjust 10 for spacing)
+            if (tbWidth <= 0) tbWidth = panelWidth / 2; // Fallback if calculation is bad
+            tbHeight = battleTextBox.getDefaultHeight();
+            tbX = 5; // Small padding from left edge
+            tbY = panelHeight - tbHeight - 20; // Standard Y position
+            effectiveTextWidth = tbWidth - 2 * 16; // 16 is padding
+
+            if (!decisionPromptDisplayedThisTurn || !this.battleTextBox.isVisible() ||
+                !this.battleTextBox.getCurrentText().equals(decisionPrompt)) {
+                this.battleTextBox.setText(decisionPrompt, g2, effectiveTextWidth);
+                this.battleTextBox.show();
+                decisionPromptDisplayedThisTurn = true;
             }
+        } else {
+            // Other states might hide the textbox or show specific messages
+            // For now, if not BATTLE_DECISION and no new dialog, assume textbox might be hidden or irrelevant.
+            decisionPromptDisplayedThisTurn = false; // Reset prompt flag if not in decision state
+            // if (battleTextBox.isVisible()) battleTextBox.hide(); // Optionally hide
+            return; // Don't draw if not needed for this state. Or handle specific states.
         }
-        // Always attempt to draw if it's supposed to be visible.
-        // TextBox.draw() itself checks its 'visible' flag.
-        // Visibility should be managed by show()/hide() or when new text is set.
+
         if (this.battleTextBox.isVisible()) {
-            this.battleTextBox.draw(g2, panelWidth, panelHeight);
+            tbWidth += 20;
+
+            this.battleTextBox.draw(g2, tbX, tbY, tbWidth, tbHeight);
         }
+    }
+
+    public void resetTextBoxStateForNewTurn() {
+        this.decisionPromptDisplayedThisTurn = false;
+        this.hasNewDialogMessage = false; // Clear any pending dialog flags too
+        // if (this.battleTextBox != null) this.battleTextBox.hide(); // Optionally hide until explicitly shown
     }
 
     public void drawBattleMenuSelection(Graphics2D g2, int x, int y) {

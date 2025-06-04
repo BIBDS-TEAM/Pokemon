@@ -234,8 +234,17 @@ public class GamePanel extends JPanel implements Runnable {
                 } else {
                     openingStep++;
                     if (openingStep > getHeight() / 2 / openingSpeed) {
+                        // ... (Pokemon creation logic from previous solution) ...
+                        // Example: this.battle = new Battle(playerCards, enemyCards);
+
+                        battleState = BattleState.BATTLE_DECISION;
+                        if (this.battle != null) {
+                            // HIGHLIGHT: Prepare for the initial decision prompt
+                            this.battle.prepareForNewDecisionPrompt();
+                        }
                         currentState = GameState.BATTLE;
                         currentFPS = normalFPS;
+                        isOpeningPhase = false; transitionStep = 0; transitionTimer = 0; openingStep = 0;
                     }
                 }
 
@@ -268,10 +277,22 @@ public class GamePanel extends JPanel implements Runnable {
                 // Or for a trainer battle:
                 // this.battle = new Battle(playerCards, enemyCards);
 
-                battleState = BattleState.BATTLE_DECISION; // Reset battle state
+                battleState = BattleState.BATTLE_DECISION;
+                        // HIGHLIGHT: Reset textbox state when battle starts and it's decision time
+                        if (this.battle != null) {
+                            this.battle.resetTextBoxStateForNewTurn();
+                        }
+                        currentState = GameState.BATTLE;
+                        currentFPS = normalFPS;
+                        // Reset transition flags
+                        isOpeningPhase = false;
+                        transitionStep = 0;
+                        transitionTimer = 0;
+                        openingStep = 0;
 
                 break;
             case OVERWORLDTRANSITION:
+            break;
             case BATTLE:
                 if (this.battle == null) { // Safety check
                     System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
@@ -301,21 +322,26 @@ public class GamePanel extends JPanel implements Runnable {
                         String selectedOption = this.battle.optionBox.select(); //
                         System.out.println("Battle action selected: " + selectedOption);
 
-                        if (selectedOption.equalsIgnoreCase("Fight")) { //
-                            battleState = BattleState.BATTLE_SELECTMOVE; //
+                        this.battle.resetTextBoxStateForNewTurn();
+
+                        if (selectedOption.equalsIgnoreCase("Fight")) {
+                            battleState = BattleState.BATTLE_SELECTMOVE;
                             this.battle.optionBox.setVisible(false);
-                            // Next, you would show the moves selection menu
-                        } else if (selectedOption.equalsIgnoreCase("Bag")) { //
+                            // Potentially show moves selection menu here, which might use the textbox or another UI
+                        } else if (selectedOption.equalsIgnoreCase("Bag")) {
                             System.out.println("Bag selected - This feature is not ready yet!");
-                            battleState = BattleState.BATTLE_ITEM; //
+                            battleState = BattleState.BATTLE_ITEM;
                             this.battle.optionBox.setVisible(false);
-                        } else if (selectedOption.equalsIgnoreCase("Run")) { //
+                        } else if (selectedOption.equalsIgnoreCase("Run")) {
                             System.out.println("Run selected - Attempting to flee!");
-                            currentState = GameState.OVERWORLD; //
+                            // HIGHLIGHT: Add logic for successful/failed run, then potentially a message.
+                            // For now, directly go to overworld.
+                            // this.battle.setNewDialog("Got away safely!", (Graphics2D)getGraphics()); // Example
+                            currentState = GameState.OVERWORLD;
                             // Potentially stop battle music, etc.
-                        } else if (selectedOption.equalsIgnoreCase("PkMn")) { //
+                        } else if (selectedOption.equalsIgnoreCase("PkMn")) {
                             System.out.println("Pokemon selected - Switch Pokemon logic needed.");
-                            battleState = BattleState.BATTLE_SWITCH; //
+                            battleState = BattleState.BATTLE_SWITCH;
                             this.battle.optionBox.setVisible(false);
                         }
                     }
