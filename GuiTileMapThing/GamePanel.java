@@ -45,6 +45,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     TileManager tileManager = new TileManager(this);
     Player player = new Player(this, keyI);
+    Battle battle;
     // gameSTATES
     private GameState currentState = GameState.SPLASH;
     private BattleState battleState = BattleState.BATTLE_DECISION;
@@ -219,6 +220,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 break;
             case BATTLETRANSITION:
+                
                 if (!isOpeningPhase) {
                     transitionTimer++;
                     if (transitionTimer >= transitionSpeed) {
@@ -239,7 +241,43 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
             case OVERWORLDTRANSITION:
             case BATTLE:
+            if (this.battle == null) { // Safety check
+                     System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
+                     currentState = GameState.OVERWORLD;
+                     return;
+                }
+                if (battleState == BattleState.BATTLE_DECISION && this.battle.optionBox != null) { //
+                    if (keyI.upPressed) { this.battle.menuSelectionMoveUp(); keyI.upPressed = false; } //
+                    if (keyI.downPressed) { this.battle.menuSelectionMoveDown(); keyI.downPressed = false; } //
+                    if (keyI.leftPressed) { this.battle.menuSelectionMoveLeft(); keyI.leftPressed = false; } //
+                    if (keyI.rightPressed) { this.battle.menuSelectionMoveRight(); keyI.rightPressed = false; } //
 
+                    if (keyI.enterPressed) { //
+                        keyI.enterPressed = false; 
+                        String selectedOption = this.battle.optionBox.select(); //
+                        System.out.println("Battle action selected: " + selectedOption); 
+                        
+                        if (selectedOption.equalsIgnoreCase("Fight")) { //
+                            battleState = BattleState.BATTLE_SELECTMOVE; //
+                            this.battle.optionBox.setVisible(false); 
+                            // Next, you would show the moves selection menu
+                        } else if (selectedOption.equalsIgnoreCase("Bag")) { //
+                            System.out.println("Bag selected - This feature is not ready yet!");
+                            battleState = BattleState.BATTLE_ITEM; //
+                            this.battle.optionBox.setVisible(false);
+                        } else if (selectedOption.equalsIgnoreCase("Run")) { //
+                            System.out.println("Run selected - Attempting to flee!");
+                            currentState = GameState.OVERWORLD; //
+                            // Potentially stop battle music, etc.
+                        } else if (selectedOption.equalsIgnoreCase("PkMn")) { //
+                            System.out.println("Pokemon selected - Switch Pokemon logic needed.");
+                            battleState = BattleState.BATTLE_SWITCH; //
+                            this.battle.optionBox.setVisible(false);
+                        }
+                    }
+                }
+                // Add logic for other battle states (BATTLE_SELECTMOVE, BATTLE_ALLYMOVE, etc.)
+                // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE && this.battle.MovesBox != null) { ... }
                 break;
         }
     }
@@ -247,6 +285,9 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         switch (currentState) {
             case SPLASH:
@@ -331,6 +372,7 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
 
             case BATTLE:
+                
                 String snorlaxEnemyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ENEMY.png";
                 String snorlaxAllyFightModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
                 String snorlaxMiniModelPath = "Pokemon\\PokemonAssets\\SNORLAX_FIGHTMODEL_ALLY.png";
@@ -338,23 +380,37 @@ public class GamePanel extends JPanel implements Runnable {
                 PokemonType[] pokemonType = { PokemonType.NORMAL, PokemonType.FIRE };
                 Pokemon pokemon = new Pokemon("SNORLAX", pokemonType, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath,
                         snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
-                Pokemon[] pokemons = { pokemon, pokemon, pokemon, pokemon, pokemon, pokemon };
-                
+
                 BufferedImage tempAllyFightModel = Battle.scaleImage(pokemon.getAllyFightModel(), 2.0);
                 BufferedImage tempEnemyFightModel = Battle.scaleImage(pokemon.getEnemyFightModel(), 2.0);
                 pokemon.setAllyFightModel(tempAllyFightModel);
                 pokemon.setEnemyFightModel(tempEnemyFightModel);
-                Battle battle = new Battle(pokemons, pokemons);
+
+                Pokemon[] pokemons = { pokemon, pokemon, pokemon, pokemon, pokemon, pokemon };
+
+                battle = new Battle(pokemons, pokemons);
+
+                if (this.battle == null) { // Safety check
+                    g2.setColor(Color.RED);
+                    if (pokemonFont!=null) g2.setFont(pokemonFont.deriveFont(20f)); else g2.setFont(new Font("Arial", Font.BOLD, 20));
+                    g2.drawString("Error: Battle not initialized!", 50, getHeight() / 2);
+                    return;
+                }
+
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                battle.optionBox.draw(g2);
-                battle.draw(g2);
+                this.battle.draw(g2, battleState, screenWidth, screenHeight);
                 // g2.setColor(Color.BLACK);
                 // g2.setFont(new Font("Arial", Font.BOLD, 20));
                 // g2.drawString("Battle Start!", 100, 100);
                 switch (battleState) {
                     case BATTLE_DECISION:
-                        
+                        if (this.battle.optionBox != null) {
+                            this.battle.optionBox.setVisible(true); // Ensure it's visible
+                            this.battle.optionBox.draw(g2); //
+                        }
                         if (keyI.ePressed) {
                             switch (battle.optionBox.select()) {
                                 case "Fight":

@@ -12,6 +12,7 @@ public abstract class PokemonMove {
     protected int sp;
     protected int minLvl;
     protected String desc;
+    protected String pokemonMoveSoundPath;
 
     public PokemonMove(String moveName, int maxSp, String desc) {
         this.moveName = moveName;
@@ -45,6 +46,17 @@ public abstract class PokemonMove {
         this.desc = desc;
         this.moveType = MoveType;
         this.moveCategory = moveCategory;
+    }
+
+    public PokemonMove(String moveName, int maxSp, String desc, int minLvl, PokemonMoveType MoveType, PokemonMoveCategory moveCategory, String pokemonMoveSoundPath) {
+        this.moveName = moveName;
+        this.maxSp = maxSp;
+        this.sp = maxSp;
+        this.minLvl = minLvl;
+        this.desc = desc;
+        this.moveType = MoveType;
+        this.moveCategory = moveCategory;
+        this.pokemonMoveSoundPath = pokemonMoveSoundPath;
     }
 
     public String getmoveName() {
@@ -109,6 +121,10 @@ public abstract class PokemonMove {
     public abstract Map<String, String> move(Pokemon pokemon);
 
     public abstract Map<String, String> move(Pokemon pokemon, Pokemon pokemon2);
+
+    public void playSound() {
+
+    }
 
     public String toString() {
         return moveName + " " + moveType + " " + sp + " " + desc;
