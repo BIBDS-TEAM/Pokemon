@@ -20,12 +20,6 @@ public class EncounterCheck {
             row >= 0 && row < gp.tileManager.mapTileNum.length) {
 
             int tileNum = gp.tileManager.mapTileNum[row][col];
-            if(isEncounterable(tileNum)){
-                System.out.println("???");
-            }
-            else {
-                System.out.println("kontol");
-            }
             return isEncounterable(tileNum);
         }
 
