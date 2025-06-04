@@ -33,5 +33,4 @@ public class EncounterCheck {
         return gp.tileManager.tiles[tileNum].encounterable;
    }
 
-
 }

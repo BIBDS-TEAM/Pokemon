@@ -1,18 +1,22 @@
 package Pokemon.PokemonBasics.PokemonAllType;
 
 public enum PokemonType {
-    // 0
-    NORMAL,
-    // 1
-    FIRE,
-    // 2
-    WATER,
-    // 3
-    GRASS,
-    // 4
-    ELECTRIC,
-    // 5
-    ICE,
-    // 6
-    ROCK,
+    NORMAL,     // 0
+    FIRE,       // 1
+    WATER,      // 2
+    ELECTRIC,   // 3
+    GRASS,      // 4
+    ICE,        // 5
+    FIGHTING,   // 6
+    POISON,     // 7
+    GROUND,     // 8
+    FLYING,     // 9
+    PSYCHIC,    // 10
+    BUG,        // 11
+    ROCK,       // 12
+    GHOST,      // 13
+    DRAGON,     // 14
+    DARK,       // 15
+    STEEL,      // 16
+    FAIRY       // 17
 }

@@ -109,13 +109,13 @@ true
 054.png
 true
 055.png
-true
+false
 056.png
 true
 057.png
 true
 058.png
-true
+false
 059.png
 true
 060.png

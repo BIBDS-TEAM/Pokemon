@@ -1,6 +1,6 @@
 package GuiTileMapThing;
 
-import java.awt.FontFormatException;
+import PlayerNPCgitu.NPC;
 import PlayerNPCgitu.Player;
 import Pokemon.PokemonReader.*;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
@@ -8,12 +8,12 @@ import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.*;
 import javax.sound.sampled.*;
 import javax.swing.*;
 
@@ -51,7 +51,10 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     TileManager tileManager = new TileManager(this);
     public Player player = new Player(this, keyI);
+    public java.util.List<NPC> npcList = new ArrayList<>();
+    NPC npc = new NPC(this,"Oak",1080,700,"down","Oek" );
     Battle battle;
+    public Graphics2D g2;
     // gameSTATES
     private GameState currentState = GameState.SPLASH;
     BattleState battleState = BattleState.BATTLE_DECISION;
@@ -66,13 +69,14 @@ public class GamePanel extends JPanel implements Runnable {
     private Font pokemonFont;
     private MenuWithSelection mainMenu;
     private MenuWithSelection nameSelect;
-    private TextBox textBox;
+    public TextBox textBox;
     private SaveSlot saveSlot;
     private boolean shouldShowInitialText = true;
     //
     private boolean isOpeningPlayed;
 
     public GamePanel() {
+        npcList.add(npc);
         setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.DARK_GRAY);
         addKeyListener(keyI);
@@ -102,6 +106,7 @@ public class GamePanel extends JPanel implements Runnable {
             pokemonFont = new Font("Arial", Font.BOLD, 12);
         }
         startGameThread();
+
     }
 
     public void startGameThread() {
@@ -213,6 +218,16 @@ public class GamePanel extends JPanel implements Runnable {
                             currentFPS = transitionFPS;
                             transitionStep = 0;
                             transitionTimer = 0;
+                        }
+                        if (keyI.enterPressed) {
+                            for (NPC npc : npcList) {
+                                if (npc.isPlayerInRange() && npc.haveDialogue() ) {
+                                    String dialog = npc.getDialog();  
+                                    textBox.setText(dialog, g2); 
+                                    textBox.setVisible();
+                                    break;  
+                                }
+                            }
                         }
                         break;
                     case OVERWORLD_INTERACTION:
@@ -381,7 +396,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
+        g2 = (Graphics2D) g;
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -434,16 +449,8 @@ public class GamePanel extends JPanel implements Runnable {
 
             case OVERWORLD:
                 tileManager.draw(g2);
+                npc.draw(g2);
                 player.draw(g2);
-                if (shouldShowInitialText) {
-                    String myDialogue = "Hello player! This is the first part of the text on page 1." +
-                            "%%PAGEBREAK%%" +
-                            "This text will start on a brand new page, page 2." +
-                            " Even if page 1 had more space.%%PAGEBREAK%%And this is page 3.";
-                    textBox.setText(myDialogue, g2);
-                    shouldShowInitialText = false;
-                }
-
                 if (textBox.isVisible()) {
                     textBox.draw(g2, screenWidth, screenHeight);
                 }

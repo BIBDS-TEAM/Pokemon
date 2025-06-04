@@ -1,6 +1,7 @@
 package GuiTileMapThing;
 
 import PlayerNPCgitu.Entity;
+import java.util.*;
 
 public class CollisionCheck {
 
@@ -59,6 +60,40 @@ public class CollisionCheck {
                     entity.collisionOn = true;
                 }
                 break;
+        }
+    }
+
+    public void checkEntity(Entity entity, List<? extends Entity> targets) {
+        for (Entity target : targets) {
+            if (target != null && target != entity) {
+                entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                entity.solidArea.y = entity.worldY + entity.solidArea.y;
+                switch (entity.direction) {
+                    case "up":
+                        entity.solidArea.y -= entity.speed;
+                        break;
+                    case "down":
+                        entity.solidArea.y += entity.speed;
+                        break;
+                    case "left":
+                        entity.solidArea.x -= entity.speed;
+                        break;
+                    case "right":
+                        entity.solidArea.x += entity.speed;
+                        break;
+                }
+                target.solidArea.x = target.worldX + target.solidArea.x;
+                target.solidArea.y = target.worldY + target.solidArea.y;
+
+                if (entity.solidArea.intersects(target.solidArea)) {
+                    entity.collisionOn = true;
+                }
+
+                entity.solidArea.x = entity.defaultSolidAreaX;
+                entity.solidArea.y = entity.defaultSolidAreaY;
+                target.solidArea.x = target.defaultSolidAreaX;
+                target.solidArea.y = target.defaultSolidAreaY;
+            }
         }
     }
 
