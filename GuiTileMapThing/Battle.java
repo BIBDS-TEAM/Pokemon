@@ -27,10 +27,11 @@ public class Battle {
     protected Font font;
 
     public MenuWithSelection optionBox;
-    public MenuWithSelection MovesBox;
+    public MenuWithSelection movesBox;
     public MenuWithSelectionWithAdd itemBagBox;
 
     private String[][] menuSelectDecision = new String[][] { { "Fight", "PkMn" }, { "Bag", "Run" } };
+    private String[][] menuSelectMoves;
 
     private TextBox battleTextBox;
 
@@ -184,6 +185,7 @@ public class Battle {
                  optionBox.setVisible(true); // Ensure it's visible during BATTLE_DECISION
                  drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
             }
+        } else if (currentBattleState == BattleState.BATTLE_SELECTMOVE) {
         } else {
             if (optionBox != null) {
                 optionBox.setVisible(false); // Hide optionBox in other states
@@ -438,7 +440,7 @@ public class Battle {
         if (this.battleTextBox != null) {
             int dialogWidth = battleTextBox.getDefaultWidth(); // Use default full width for dialogs
             int effectiveTextWidth = dialogWidth - 2 * 16; // 16 is padding from TextBox
-            this.battleTextBox.setText(message, g2, effectiveTextWidth);
+            this.battleTextBox.setText(message, g2);
             this.battleTextBox.show();
         }
         this.decisionPromptDisplayedThisTurn = false; // A new dialog means the old prompt is no longer the focus
@@ -469,29 +471,16 @@ public class Battle {
         int tbX, tbY, tbWidth, tbHeight;
         int effectiveTextWidth;
         if (hasNewDialogMessage) {
-            tbWidth = battleTextBox.getDefaultWidth();
-            tbHeight = battleTextBox.getDefaultHeight();
-            tbX = (panelWidth - tbWidth) / 2;
-            tbY = panelHeight - tbHeight - 20; // Standard Y position
-            effectiveTextWidth = tbWidth - 2 * 16; // 16 is padding from TextBox
-
-            this.battleTextBox.setText(this.currentDialogMessage, g2, effectiveTextWidth);
+            this.battleTextBox.setText(this.currentDialogMessage, g2);
             this.battleTextBox.show();
             hasNewDialogMessage = false; // Dialog message overrides prompt state
             decisionPromptDisplayedThisTurn = false;
             // decisionPromptDisplayedThisTurn was already set to false in setNewDialog
         } else if (battleState == BattleState.BATTLE_DECISION) {
-            // Narrow width for the prompt, positioned on the left
-            tbWidth = battleMenuSelectionX - 10; // End before optionBox starts (adjust 10 for spacing)
-            if (tbWidth <= 0) tbWidth = panelWidth / 2; // Fallback if calculation is bad
-            tbHeight = battleTextBox.getDefaultHeight();
-            tbX = 5; // Small padding from left edge
-            tbY = panelHeight - tbHeight - 20; // Standard Y position
-            effectiveTextWidth = tbWidth - 2 * 16; // 16 is padding
 
             if (!decisionPromptDisplayedThisTurn || !this.battleTextBox.isVisible() ||
                 !this.battleTextBox.getCurrentText().equals(decisionPrompt)) {
-                this.battleTextBox.setText(decisionPrompt, g2, effectiveTextWidth);
+                this.battleTextBox.setText(decisionPrompt, g2);
                 this.battleTextBox.show();
                 decisionPromptDisplayedThisTurn = true;
             }
@@ -504,9 +493,7 @@ public class Battle {
         }
 
         if (this.battleTextBox.isVisible()) {
-            tbWidth += 20;
-
-            this.battleTextBox.draw(g2, tbX, tbY, tbWidth, tbHeight);
+            this.battleTextBox.draw(g2, panelWidth, panelHeight);
         }
     }
 
@@ -526,16 +513,7 @@ public class Battle {
         optionBox.draw(g2);
     }
 
-    public void drawBattleMovesSelection(Graphics2D g2, String[][] gridOptions, int x, int y) {
-        if (MovesBox == null) {
-            MovesBox = new MenuWithSelection(gridOptions, x, y, 20f);
-        } else {
-            MovesBox.setOptions(gridOptions);
-        }
-        MovesBox.setPosition(x, y);
-        MovesBox.setVisible(true);
-        MovesBox.draw(g2);
-    }
+    
 
     public void executePokemonMove(Graphics2D g2, PokemonMove move, Pokemon pokemon, Pokemon target) {
         // ... logic for move execution...

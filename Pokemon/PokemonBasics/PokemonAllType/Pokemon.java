@@ -213,6 +213,18 @@ public class Pokemon {
         return model[2];
     }
 
+    public PokemonMove getMove(int moveIndex) {
+        if (moveIndex < 0 || moveIndex >= moves.length) {
+            System.err.println("Invalid move index (0 - 3): " + moveIndex);
+            return null;
+        }
+        return moves[moveIndex];
+    }
+
+    public PokemonMove[] getMoves() {
+        return moves;
+    }
+
     public void setMiniModel(BufferedImage miniModel) {
         if (miniModel != null)
             this.model[0] = miniModel;
