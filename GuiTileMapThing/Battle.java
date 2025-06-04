@@ -31,7 +31,7 @@ public class Battle {
     public MenuWithSelectionWithAdd itemBagBox;
 
     private String[][] menuSelectDecision = new String[][] { { "Fight", "PkMn" }, { "Bag", "Run" } };
-    private String[][] menuSelectMoves;
+    private String[] menuSelectMoves;
 
     private TextBox battleTextBox;
 
@@ -107,10 +107,19 @@ public class Battle {
             e.printStackTrace();
             font = new Font("Arial", Font.PLAIN, 16); // Fallback font
         }
+
+        menuSelectMoves = new String[4];
+        for (int i = 0; i < 4; i++) {
+            menuSelectMoves[i] = getMainPlayerPokemon().getMove(i).getmoveName();
+        };
+
+
         optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 40, 20);
+        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMenuSelectionX, battleMenuSelectionY, 20f);
         // MovesBox and itemBagBox can be initialized when needed or here if always
         // shown initially.
         this.optionBox.setVisible(false); // GamePanel will control visibility
+        this.movesBox.setVisible(false);
 
         // HIGHLIGHT: Initialize the battleTextBox
         this.battleTextBox = new TextBox();
@@ -181,11 +190,19 @@ public class Battle {
             // optionBox is drawn only when it's decision time.
             // Its visibility is managed internally by MenuWithSelection or explicitly by Battle logic.
             // Ensure optionBox.setVisible(true) is called when BATTLE_DECISION starts.
+            movesBox.setVisible(false);
+            itemBagBox.setVisible(false);
             if (optionBox != null) { // Make sure optionBox is initialized
                  optionBox.setVisible(true); // Ensure it's visible during BATTLE_DECISION
                  drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
             }
         } else if (currentBattleState == BattleState.BATTLE_SELECTMOVE) {
+            optionBox.setVisible(false);
+            itemBagBox.setVisible(false);
+            if (movesBox != null) {
+                movesBox.setVisible(true);
+                drawBattleMovesBox(g2, battleMenuSelectionX, battleMenuSelectionY);
+            }
         } else {
             if (optionBox != null) {
                 optionBox.setVisible(false); // Hide optionBox in other states
@@ -513,7 +530,15 @@ public class Battle {
         optionBox.draw(g2);
     }
 
-    
+    public void drawBattleMovesBox(Graphics2D g2, int x, int y) {
+        if (movesBox == null) {
+            movesBox = new MenuWithSelection(menuSelectMoves, x, y, 20f);
+        }
+
+        movesBox.setPosition(x, y);
+        movesBox.setVisible(true);
+        movesBox.draw(g2);
+    }
 
     public void executePokemonMove(Graphics2D g2, PokemonMove move, Pokemon pokemon, Pokemon target) {
         // ... logic for move execution...

@@ -68,19 +68,6 @@ public class Pokemon {
         g.drawImage(model[modelIndex], 0, 0, null);
     }
 
-    public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd) {
-        this.name = name;
-        this.type = type;
-        this.lvl = lvl;
-        this.maxHp = maxHp;
-        setHp(maxHp);
-        this.atk = atk;
-        this.def = def;
-        this.spAtk = spAtk;
-        this.spDef = spDef;
-        this.spd = spd;
-    }
-
     public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
             String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath) {
         this.name = name;
@@ -100,6 +87,33 @@ public class Pokemon {
         } catch (IOException e) {
             System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
         }
+    }
+
+    public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
+            String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath, PokemonMove[] moves) {
+        this.name = name;
+        this.type = type;
+        this.lvl = lvl;
+        this.maxHp = maxHp;
+        setHp(maxHp);
+        this.atk = atk;
+        this.def = def;
+        this.spAtk = spAtk;
+        this.spDef = spDef;
+        this.spd = spd;
+        try {
+            model[0] = ImageIO.read(new File(miniModelPath));
+            model[1] = ImageIO.read(new File(AllyFightModelPath));
+            model[2] = ImageIO.read(new File(EnemyFightModelPath));
+        } catch (IOException e) {
+            System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
+        }
+        for (PokemonMove move: moves) {
+            if (move == null) {
+                System.out.println("move is null");
+            }
+        }
+        this.moves = moves;
     }
 
     // setter & getter
@@ -214,7 +228,7 @@ public class Pokemon {
     }
 
     public PokemonMove getMove(int moveIndex) {
-        if (moveIndex < 0 || moveIndex >= moves.length) {
+        if (moveIndex < 0 && moveIndex >= moves.length) {
             System.err.println("Invalid move index (0 - 3): " + moveIndex);
             return null;
         }

@@ -2,12 +2,18 @@ package GuiTileMapThing;
 
 import java.awt.FontFormatException;
 import PlayerNPCgitu.Player;
+import Pokemon.PokemonReader.*;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 
@@ -252,13 +258,33 @@ public class GamePanel extends JPanel implements Runnable {
                 String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
                 String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
 
+                MovesetParser movesetReader = new MovesetParser();
+
+                Map<String, MoveData> moveset = new HashMap<>();
+                
+                try {
+                    moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt", 0, 3);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                PokemonMove[] moves = new PokemonMove[4];
+                int i = 0;
+                for (MoveData moveData : moveset.values()) {
+                    moves[i] = PokemonMove.loadPokemonMoveByType(moveData);
+                    i++;
+                    if (i == 4) {
+                        break;
+                    }
+                }
+
                 PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
                 // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
                 // Snorlax is only Normal.
                 // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
 
                 Pokemon playerPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
-                        snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
+                        snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath, moves);
                 // Scale models if necessary (consider doing this once when Pokemon is loaded,
                 // not every battle start)
                 playerPokemon.setAllyFightModel(Battle.scaleImage(playerPokemon.getAllyFightModel(), 2.0));

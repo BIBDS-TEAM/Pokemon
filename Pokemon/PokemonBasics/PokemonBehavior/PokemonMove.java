@@ -1,6 +1,9 @@
 package Pokemon.PokemonBasics.PokemonBehavior;
 
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
+import Pokemon.PokemonReader.MoveData;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -10,7 +13,6 @@ public abstract class PokemonMove {
     protected PokemonMoveCategory moveCategory;
     protected int maxSp;
     protected int sp;
-    protected int minLvl;
     protected String desc;
     protected String pokemonMoveSoundPath;
 
@@ -21,38 +23,19 @@ public abstract class PokemonMove {
         this.desc = desc;
     }
 
-    public PokemonMove(String moveName, int maxSp, String desc, int minLvl) {
+    public PokemonMove(String moveName, int maxSp, String desc, PokemonMoveType MoveType, PokemonMoveCategory moveCategory) {
         this.moveName = moveName;
         this.maxSp = maxSp;
         this.sp = maxSp;
-        this.minLvl = minLvl;
-        this.desc = desc;
-    }
-
-    public PokemonMove(String moveName, int maxSp, String desc, PokemonMoveType moveType, PokemonMoveCategory moveCategory) {
-        this.moveName = moveName;
-        this.maxSp = maxSp;
-        this.sp = maxSp;
-        this.desc = desc;
-        this.moveType = moveType;
-        this.moveCategory = moveCategory;
-    }
-
-    public PokemonMove(String moveName, int maxSp, String desc, int minLvl, PokemonMoveType MoveType, PokemonMoveCategory moveCategory) {
-        this.moveName = moveName;
-        this.maxSp = maxSp;
-        this.sp = maxSp;
-        this.minLvl = minLvl;
         this.desc = desc;
         this.moveType = MoveType;
         this.moveCategory = moveCategory;
     }
 
-    public PokemonMove(String moveName, int maxSp, String desc, int minLvl, PokemonMoveType MoveType, PokemonMoveCategory moveCategory, String pokemonMoveSoundPath) {
+    public PokemonMove(String moveName, int maxSp, String desc, PokemonMoveType MoveType, PokemonMoveCategory moveCategory, String pokemonMoveSoundPath) {
         this.moveName = moveName;
         this.maxSp = maxSp;
         this.sp = maxSp;
-        this.minLvl = minLvl;
         this.desc = desc;
         this.moveType = MoveType;
         this.moveCategory = moveCategory;
@@ -80,12 +63,6 @@ public abstract class PokemonMove {
         return sp > 0;
     }
 
-    public void isLvlEnough(Pokemon pokemon) {
-        if (pokemon.getLvl() < minLvl) {
-            System.out.println("Lvl not enough");
-        }
-    }
-
     public void useMove() {
         if (!isSpZero()) {
             System.out.println("SP not enough");
@@ -99,6 +76,29 @@ public abstract class PokemonMove {
     }
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+    
+    public static PokemonMove loadPokemonMoveByType(MoveData moveData) {
+        PokemonMove move = null;
+        String moveType = moveData.type.name();
+        if (moveType.equals("ATTACK")) {
+            new PokemonMove_PHYSICAL_ATTACK(moveData.moveName, moveData.sp, moveData.description, moveData.power, moveData.accuracy, (moveData.type), (moveData.category));
+        } else if (moveType.equals("SPECIAL_ATTACK")) {
+            new PokemonMove_SPECIAL_SPATTACK(moveData.moveName, moveData.sp, moveData.description, moveData.power, moveData.accuracy, (moveData.type), (moveData.category));
+        } else if (moveType.equals("BUFF")) {
+            if (!moveData.isBuffInPercent) new PokemonMove_STATUS_BUFF(moveData.moveName, moveData.sp, moveData.description, moveData.buffValueInt, moveData.affectedAttribute, moveData.isBuffInPercent);
+            else new PokemonMove_STATUS_BUFF(moveData.moveName, moveData.sp, moveData.description, (int)moveData.buffValuePercent, moveData.affectedAttribute, moveData.isBuffInPercent);
+        } else if (moveType.equals("DEBUFF")) {
+            new PokemonMove_STATUS_DEBUFF(moveData.moveName, moveData.sp, moveData.description, moveData.affectedAttribute, moveData.isBuffInPercent, moveData.buffValuePercent, moveData.accuracy);
+        } else if (moveType.equals("DEFENSE")) {
+            if (moveData.isBuffInPercent) new PokemonMove_STATUS_DEFENSE_by_flat(moveData.moveName, moveData.sp, moveData.description, moveData.buffValueInt);
+            else new PokemonMove_STATUS_DEFENSE_by_percentage(moveData.moveName, moveData.sp, moveData.description, moveData.buffValuePercent);
+        } else if (moveType.equals("RUN")) {
+            new PokemonMove_RUN(moveData.moveName, moveData.sp, moveData.description, (moveData.type), (moveData.category));
+        } else {
+            System.out.println("Invalid move type: " + moveType);
+        }
+        return move;
     }
 
     public Map<String, String> useMoveInfo() {

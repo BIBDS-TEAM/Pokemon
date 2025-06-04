@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class PokemonMove_RUN extends PokemonMove {
-    public PokemonMove_RUN(String moveName, int maxSp, String desc, int minLvl, PokemonMoveType moveType, PokemonMoveCategory moveCategory) {
-        super(moveName, maxSp, desc, minLvl, moveType, moveCategory);
+    public PokemonMove_RUN(String moveName, int maxSp, String desc, PokemonMoveType moveType, PokemonMoveCategory moveCategory) {
+        super(moveName, maxSp, desc, moveType, moveCategory);
     }
 
     public Map<String, String> move() {

@@ -10,9 +10,9 @@ public class PokemonMove_PHYSICAL_ATTACK extends PokemonMove {
     protected int power;
     protected double accuracy;
 
-    public PokemonMove_PHYSICAL_ATTACK(String moveName, int maxSp, String desc, int minLvl, int power, double accuracy,
+    public PokemonMove_PHYSICAL_ATTACK(String moveName, int maxSp, String desc, int power, double accuracy,
             PokemonMoveType moveType, PokemonMoveCategory moveCategory) {
-        super(moveName, maxSp, desc, minLvl, moveType, moveCategory);
+        super(moveName, maxSp, desc, moveType, moveCategory);
         this.power = power;
         this.accuracy = accuracy;
     }

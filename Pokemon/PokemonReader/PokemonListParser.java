@@ -6,10 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-class PokemonListParser {
+public class PokemonListParser {
     public static Map<String, PokemonData> loadPokemonFromTxt(String filePath) throws IOException {
         Map<String, PokemonData> pokemonMap = new HashMap<>();
         BufferedReader reader = new BufferedReader(new FileReader(filePath));

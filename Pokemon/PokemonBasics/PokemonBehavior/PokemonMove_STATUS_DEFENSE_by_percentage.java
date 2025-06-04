@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class PokemonMove_STATUS_DEFENSE_by_percentage extends PokemonMove {
     protected double defIncPercent;
     
-    public PokemonMove_STATUS_DEFENSE_by_percentage(String moveName, int maxSp, String desc, int defIncPercent) {
+    public PokemonMove_STATUS_DEFENSE_by_percentage(String moveName, int maxSp, String desc, double defIncPercent) {
         super(moveName, maxSp, desc);
         moveCategory = PokemonMoveCategory.STATUS;
         moveType = PokemonMoveType.DEFENSE;

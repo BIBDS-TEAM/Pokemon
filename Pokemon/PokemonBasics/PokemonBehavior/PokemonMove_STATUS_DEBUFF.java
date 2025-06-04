@@ -11,8 +11,8 @@ public class PokemonMove_STATUS_DEBUFF extends PokemonMove {
     protected double debuffValue;
     protected double accuracy;
 
-    public PokemonMove_STATUS_DEBUFF(String moveName, int maxSp, String desc, int minLvl, String debuffType, boolean isDebuffInPercent, double debuffValue, double accuracy) {
-        super(moveName, maxSp, desc, minLvl);
+    public PokemonMove_STATUS_DEBUFF(String moveName, int maxSp, String desc, String debuffType, boolean isDebuffInPercent, double debuffValue, double accuracy) {
+        super(moveName, maxSp, desc);
         this.debuffType = debuffType.toUpperCase();
         this.isDebuffInPercent = isDebuffInPercent;
         setDebuffQ(debuffValue);

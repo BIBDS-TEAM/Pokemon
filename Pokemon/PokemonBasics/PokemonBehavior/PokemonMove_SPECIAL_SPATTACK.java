@@ -9,9 +9,9 @@ public class PokemonMove_SPECIAL_SPATTACK extends PokemonMove {
     protected int power;
     protected double accuracy;
 
-    public PokemonMove_SPECIAL_SPATTACK(String moveName, int maxSp, String desc, int power, double accuracy, int minLvl,
+    public PokemonMove_SPECIAL_SPATTACK(String moveName, int maxSp, String desc, int power, double accuracy,
             PokemonMoveType moveType, PokemonMoveCategory moveCategory) {
-        super(moveName, maxSp, desc, minLvl, moveType, moveCategory);
+        super(moveName, maxSp, desc, moveType, moveCategory);
         this.power = power;
         this.accuracy = accuracy;
     }
