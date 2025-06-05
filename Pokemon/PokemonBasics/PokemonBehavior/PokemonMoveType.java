@@ -1,18 +1,22 @@
 package Pokemon.PokemonBasics.PokemonBehavior;
 
 public enum PokemonMoveType {
-    // 0
-    ATTACK,
-    // 2
-    SPECIAL_ATTACK,
-    // 3
-    DEFENSE,
-    // 4
-    SPECIAL_DEFENSE,
-    // 5
-    DEBUFF,
-    // 6
-    BUFF,
-    // 7
-    RUN
+    NORMAL,
+    FIGHTING,
+    FLYING,
+    POISON,
+    GROUND,
+    ROCK,
+    BUG,
+    GHOST,
+    STEEL,
+    FIRE,
+    WATER,
+    GRASS,
+    ELECTRIC,
+    PSYCHIC,
+    ICE,
+    DRAGON,
+    DARK,
+    FAIRY
 }

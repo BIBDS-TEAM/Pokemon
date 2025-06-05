@@ -34,13 +34,25 @@ public class PokemonMove {
         this.moveName = moveData.moveName;
         this.moveCategory = moveData.category;
         this.moveType = moveData.type;
-        String moveCategory = String.valueOf(moveData.category);
-        if (moveCategory.equals("Physical") || moveCategory.equals("Special")) {
+        String moveCategory = String.valueOf(moveData.category).toUpperCase();
+        if (moveCategory.equals("PHYSICAL") || moveCategory.equals("SPECIAL")) {
             setPower(moveData.power);
             setAccuracy(moveData.accuracy);
+        } else {
+            setPower(0);
+            setAccuracy(0);
         }
         setDesc(moveData.description);
         setEffect(moveData.effect);
+    }
+
+    public PokemonMove(MoveData moveData) {
+        loadPokemonMoveByType(moveData);
+    }
+
+    public PokemonMove(String moveName, MoveData moveData) {
+        loadPokemonMoveByType(moveData);
+        this.moveName = moveName;
     }
 
     public PokemonMove(String moveName, PokemonMoveCategory moveCategory, String pokemonMoveSoundPath) {
@@ -220,8 +232,7 @@ public class PokemonMove {
         }
     }
 
-    public Pokemon[] moves(Pokemon user, Pokemon target) {
-        Pokemon[] result = new Pokemon[2];
+    public Pokemon[] move(Pokemon user, Pokemon target) {
         if (isSpZero()) {
             System.out.println("SP not enough");
             return new Pokemon[] { user, target };

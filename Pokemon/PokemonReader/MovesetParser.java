@@ -1,6 +1,9 @@
 package Pokemon.PokemonReader;
 
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
+import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;  // changed from PokemonMoveType
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -43,10 +46,10 @@ public class MovesetParser {
                         currentMove.moveName = value;
                         break;
                     case "type":
-                        currentMove.type = PokemonType.valueOf(value.toUpperCase());
+                        currentMove.type = PokemonMoveType.valueOf(value.toUpperCase());
                         break;
                     case "category":
-                        currentMove.category = PokemonMoveCategory.valueOf(value.toLowerCase());
+                        currentMove.category = PokemonMoveCategory.valueOf(value.toUpperCase());
                         break;
                     case "power":
                         currentMove.power = value.equalsIgnoreCase("null") ? null : Integer.parseInt(value);
@@ -72,5 +75,24 @@ public class MovesetParser {
 
         reader.close();
         return movesetMap;
+    }
+
+    public static void main(String[] args) {
+        try {
+            Map<String, MoveData> movesetMap = loadMovesetFromTxt("Pokemon\\PokemonReader\\PokemonMoveSetList.txt");
+            for (Map.Entry<String, MoveData> entry : movesetMap.entrySet()) {
+                MoveData moveData = entry.getValue();
+                System.out.println("Move Name: " + moveData.moveName);
+                System.out.println("Move Type: " + moveData.type);
+                System.out.println("Move Category: " + moveData.category);
+                System.out.println("Move Power: " + moveData.power);
+                System.out.println("Move Accuracy: " + moveData.accuracy);
+                System.out.println("Move PP: " + moveData.sp);
+                System.out.println("Move Effect: " + moveData.effect);
+                System.out.println("--------------------------------------------------");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

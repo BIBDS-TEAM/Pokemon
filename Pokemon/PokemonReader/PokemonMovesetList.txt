@@ -246,7 +246,7 @@ type: fire
 category: special
 power: 35
 accuracy: 0.85
-pp: 15.
+pp: 15
 ---
 name: Fissure
 type: ground
@@ -767,14 +767,6 @@ power: null
 accuracy: 0.95
 pp: 40
 effect: Speed - 1
----
-name: Struggle
-type: normal
-category: physical
-power: 50
-accuracy: 1.0
-pp: null
-effect: User takes recoil damage. Used when no PP left.
 ---
 name: StunSpore
 type: grass

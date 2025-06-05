@@ -2,7 +2,13 @@ package GuiTileMapThing;
 
 import PlayerNPCgitu.NPC;
 import PlayerNPCgitu.Player;
+import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
+import Pokemon.PokemonReader.MoveData;
+import Pokemon.PokemonReader.MovesetParser;
+
+import java.util.Map.Entry;
 import java.awt.*;
 import java.awt.FontFormatException;
 import java.io.File;
@@ -113,7 +119,7 @@ public class GamePanel extends JPanel implements Runnable {
         String[] menuOptions = { "New Game", "Load Game", "Settings" };
         mainMenu = new MenuWithSelection(menuOptions, 140, 290, 28f);
         mainMenu.setVisible(false);
-        nameSelect = new MenuWithSelection(alphabetOptions, 20, 160, 24f);
+        nameSelect = new MenuWithSelection(alphabetOptions, 20, 160, 24f, 490.0, 340);
         String[] yesNo = {"Yes", "No"};
         confirmation = new MenuWithSelection(yesNo, 420, 320, 24f);
         textBox = new TextBox();
@@ -407,60 +413,61 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
 
-                // String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png";
-                // String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
-                // String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
+                String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png";
+                String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
+                String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
 
-                // MovesetParser movesetReader = new MovesetParser();
+                MovesetParser movesetReader = new MovesetParser();
 
-                // Map<String, MoveData> moveset = new HashMap<>();
+                Map<String, MoveData> moveset = new HashMap<>();
 
-                // try {
-                // moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt");
-                // } catch (IOException e) {
-                // e.printStackTrace();
-                // }
-                // ArrayList<String> movesetNames = new ArrayList<>(moveset.keySet());
+                try {
+                moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt");
+                } catch (IOException e) {
+                e.printStackTrace();
+                }
 
-                // // Inside GamePanel.java, update() method, BATTLETRANSITION case
+                // Inside GamePanel.java, update() method, BATTLETRANSITION case
 
-                // PokemonMove[] moves = new PokemonMove[4];
-                // for (int j = 0; j < moves.length; j++) {
-                // // Correctly assign the returned PokemonMove object
-                // moves[j] = PokemonMove.loadPokemonMoveByType(moveset.get(movesetNames.get(j))); // Changed line
-                // System.out.println("moves[" + j + "]: " + (moves[j] != null ? moves[j].toString() : "null -> " + moveset.get(movesetNames.get(j)))); // For debugging
-                // if (moves[j] == null) {
-                // System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and PokemonMove.java. MoveData: " + moveset.get(movesetNames.get(j)));
-                // // Consider assigning a default move like "Struggle" or skipping
-                // // For example, to prevent nulls, you could assign a basic move:
-                // // moves[j] = new PokemonMove_PHYSICAL_ATTACK("Struggle", 1, "A desperate attack.", 50, 1.0, PokemonMoveType.ATTACK, PokemonMoveCategory.PHYSICAL);
-                // }
-                // }
+                PokemonMove[] moves = new PokemonMove[4];
+                int ind = 0;
+                for (Entry<String, MoveData> entry : moveset.entrySet()) {
+                    MoveData moveData = entry.getValue();
+                    moves[ind] = new PokemonMove(entry.getKey(),moveData);
+                    if (ind < 3) break;
+                    ind++;
+                }
 
-                // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
-                // // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
-                // // Snorlax is only Normal.
-                // // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
+                PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
+                // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
+                // Snorlax is only Normal.
+                // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
 
-                // Pokemon playerPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
-                // snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath, moves);
-                // // Scale models if necessary (consider doing this once when Pokemon is loaded,
-                // // not every battle start)
-                // playerPokemon.setAllyFightModel(Battle.scaleImage(playerPokemon.getAllyFightModel(), 2.0));
-                // playerPokemon.setEnemyFightModel(Battle.scaleImage(playerPokemon.getEnemyFightModel(), 2.0));
+                Pokemon playerPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
+                snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath, moves);
+                // Scale models if necessary (consider doing this once when Pokemon is loaded,
+                // not every battle start)
+                playerPokemon.setAllyFightModel(Battle.scaleImage(playerPokemon.getAllyFightModel(), 2.0));
+                playerPokemon.setEnemyFightModel(Battle.scaleImage(playerPokemon.getEnemyFightModel(), 2.0));
 
-                // Pokemon enemyPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
-                // snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
-                // enemyPokemon.setAllyFightModel(Battle.scaleImage(enemyPokemon.getAllyFightModel(), 2.0));
-                // enemyPokemon.setEnemyFightModel(Battle.scaleImage(enemyPokemon.getEnemyFightModel(), 2.0));
+                Pokemon enemyPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60, snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath, moves);
+                enemyPokemon.setAllyFightModel(Battle.scaleImage(enemyPokemon.getAllyFightModel(), 2.0));
+                enemyPokemon.setEnemyFightModel(Battle.scaleImage(enemyPokemon.getEnemyFightModel(), 2.0));
 
-                // Pokemon[] playerCards = { playerPokemon }; // Example for wild battle constructor
-                // // Pokemon[] enemyCards = { enemyPokemon }; // Example for trainer battle
+                Pokemon[] playerCards = { playerPokemon }; // Example for wild battle constructor
+                // Pokemon[] enemyCards = { enemyPokemon }; // Example for trainer battle
 
-                // // Assuming a wild battle for this Snorlax example:
-                // this.battle = new Battle(playerCards, playerCards);
-                // // Or for a trainer battle:
-                // // this.battle = new Battle(playerCards, enemyCards);
+                for (int i = 0; i < enemyPokemon.getMoves().length; i++) {
+                    if (enemyPokemon.getMoves()[i] != null) {
+                        System.out.println("Move " + i + ": " + enemyPokemon.getMoves()[i].getMoveName());
+                    } else {
+                        System.out.println("Move " + i + ": null");
+                    }
+                }
+                // Assuming a wild battle for this Snorlax example:
+                this.battle = new Battle(playerCards, playerCards);
+                // Or for a trainer battle:
+                // this.battle = new Battle(playerCards, enemyCards);
 
                 battleState = BattleState.BATTLE_DECISION;
                 // HIGHLIGHT: Reset textbox state when battle starts and it's decision time
@@ -478,7 +485,8 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
             case OVERWORLDTRANSITION:
                 break;
-            case BATTLE:
+            case BATTLE:     
+                ArrayList<String> messages = new ArrayList<String>();
                 switch (battleState) {
                     case BATTLE_DECISION:
                         if (this.battle == null) { // Safety check
@@ -552,6 +560,10 @@ public class GamePanel extends JPanel implements Runnable {
                                 this.battle.movesBox.moveRight();
                                 keyI.rightPressed = false;
                             }
+                            if (keyI.escPressed) {
+                                keyI.escPressed = false;
+                                battleState = BattleState.BATTLE_DECISION;
+                            }
                             if (keyI.enterPressed) {
                                 keyI.enterPressed = false;
                                 this.battle.movesBox.select();
@@ -567,15 +579,32 @@ public class GamePanel extends JPanel implements Runnable {
                                     }
                                 }
 
-                                selectedMoveInfo = battle.executeAttemptedMove(selectedMove);
-
-                                if (selectedMoveInfo.containsKey("error")) {
-                                    System.out.println("Error: " + selectedMoveInfo.get("error"));
+                                if (selectedMove == null) {
+                                    System.out.println("Error: Selected move not found in player's moves.");
                                     battleState = BattleState.BATTLE_DECISION;
+                                    return;
                                 }
+
+                                messages = battle.executeAttemptedMove(selectedMove, this.battle.getMainPlayerPokemon(), this.battle.getMainEnemyPokemon());
 
                                 battleState = BattleState.BATTLE_ALLYMOVE;
                             }
+                        }
+                        break;
+                    case BATTLE_ALLYMOVE:
+                        break;
+                    case BATTLE_ENEMYMOVE:
+                        break;
+                    case BATTLE_SWITCH:
+                        if (keyI.escPressed) {
+                            keyI.escPressed = false;
+                            battleState = BattleState.BATTLE_DECISION;
+                        }
+                        break;
+                    case BATTLE_ITEM:
+                        if (keyI.escPressed) {
+                            keyI.escPressed = false;
+                            battleState = BattleState.BATTLE_DECISION;
                         }
                         break;
                     // Add logic for item selection in the BATTLE_ITEM state

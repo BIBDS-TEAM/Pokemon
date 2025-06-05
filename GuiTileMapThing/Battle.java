@@ -3,8 +3,13 @@ package GuiTileMapThing;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
-import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
 
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.awt.FontFormatException;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,8 +18,11 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.awt.GraphicsEnvironment; // Required for font registration
+import java.awt.AlphaComposite;
 
 // It's good practice to have ImageIO import if you were to load images directly here,
 // but Pokemon class seems to handle its own image loading.
@@ -56,12 +64,26 @@ public class Battle {
     private int battleMenuSelectionY = 363;
 
     private int battleMoveSelectionX = 235;
-    private int battleMoveSelectionY = 350;
+    private int battleMoveSelectionY = 348;
 
     private int battleTextBoxX = 50;
     private int battleTextBoxY = 360;
     private int battleTextBoxWidth = 512;
     private int battleTextBoxHeight = 128;
+
+    private int battleMoveSelectionWidth = 350;
+    private int battleMoveSelectionHeight = 150;
+    
+    private float currentFlickerOpacity = 1.0f;
+    private int currentFlickerXOffset = 0;
+    private long lastFlickerStateUpdateTime = 0;
+    private final int FLICKER_STATE_UPDATE_INTERVAL = 100; // ms, how often shake/opacity changes
+    private boolean flickerShakeToggle = false; // Toggles between -AMOUNT and +AMOUNT
+    private boolean flickerOpacityToggle = false; // Toggles between LOW and HIGH opacity
+
+    private final int FLICKER_SHAKE_AMOUNT = 20;
+    private final float FLICKER_LOW_OPACITY = 0.4f; // 1.0f (normal) - 0.6f (60% reduction)
+    private final float FLICKER_HIGH_OPACITY = 1.0f;
 
     // Constructor for NPC Trainer battles
     public Battle(Pokemon[] playerPokemons, Pokemon[] enemyPokemon) {
@@ -114,13 +136,22 @@ public class Battle {
         }
 
         menuSelectMoves = new String[4];
-        for (int i = 0; i < 4; i++) {
-            menuSelectMoves[i] = getMainPlayerPokemon().getMove(i).getMoveName();
-        };
+        Pokemon mainPlayerPoke = getMainPlayerPokemon();
+        if (mainPlayerPoke != null) {
+            for (int i = 0; i < 4; i++) {
+                 if(mainPlayerPoke.getMove(i) != null){
+                    menuSelectMoves[i] = mainPlayerPoke.getMove(i).getMoveName();
+                 } else {
+                    menuSelectMoves[i] = "-"; // Placeholder for empty move slot
+                 }
+            }
+        } else {
+             for (int i = 0; i < 4; i++) menuSelectMoves[i] = "-"; // All placeholders if no Pokemon
+        }
 
 
-        optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 40, 20);
-        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMoveSelectionX, battleMoveSelectionY, 14f, 90, 35);
+        optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 45, 50);
+        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMoveSelectionX, battleMoveSelectionY, 14f, 285.0, 145);
         // MovesBox and itemBagBox can be initialized when needed or here if always
         // shown initially.
         this.optionBox.setVisible(false); // GamePanel will control visibility
@@ -166,6 +197,23 @@ public class Battle {
             // Wild battle
             return this.wildPokemon;
         }
+    }
+
+    public void setMainEnemyPokemon(Pokemon pokemon) {
+        if (enemyPokemon != null && enemyPokemon.length > 0 && enemyPokemon[0] != null) {
+            enemyPokemon[0] = pokemon;
+        }
+        if (wildPokemon != null) {
+            wildPokemon = pokemon;
+        }
+        System.err.println("Warning: There are no main Enemy pokemon to set");
+    }
+
+    public void setMainPlayerPokemon(Pokemon pokemon) {
+        if (playerPokemons != null && playerPokemons.length > 0 && playerPokemons[0] != null) {
+            playerPokemons[0] = pokemon;
+        }
+        System.err.println("Warning: There are no main Player pokemon to set");
     }
 
     public void update() {
@@ -421,12 +469,8 @@ public class Battle {
         g2.drawString("Lv." + pokemonToDraw.getLvl(), allyPokemonHpBarX + width - 30, barPosY - nameAndLvlPadding - 4);
     }
 
-    // Other methods like flickeringSprite, drawBattleMenuSelection, etc. remain
-    // largely the same
-    // but ensure they use the correctly determined Pokemon objects.
     public void flickeringSprite(Graphics2D g2, Pokemon pokemon, String pokemonAlliance) {
-        if (g2 == null)
-            throw new NullPointerException("Graphics2D g2 cannot be null");
+        if (g2 == null) throw new NullPointerException("Graphics2D g2 cannot be null");
         if (pokemon == null) {
             return;
         }
@@ -436,11 +480,63 @@ public class Battle {
                     "Invalid pokemon alliance for flickering: " + pokemonAlliance + ". Must be 'ally' or 'enemy'.");
         }
 
-        int spriteIndex = pokemonAlliance.equalsIgnoreCase("ally") ? 1 : 2;
+        long currentTime = System.currentTimeMillis();
 
-        long millis = System.currentTimeMillis() % 1000;
-        if (millis < 500) {
-            drawPokemonSpriteWithIndex(g2, pokemon, spriteIndex);
+        // Update flicker state (shake and opacity) periodically
+        if (currentTime - lastFlickerStateUpdateTime > FLICKER_STATE_UPDATE_INTERVAL) {
+            flickerShakeToggle = !flickerShakeToggle;
+            flickerOpacityToggle = !flickerOpacityToggle;
+
+            currentFlickerXOffset = flickerShakeToggle ? FLICKER_SHAKE_AMOUNT : -FLICKER_SHAKE_AMOUNT;
+            currentFlickerOpacity = flickerOpacityToggle ? FLICKER_HIGH_OPACITY : FLICKER_LOW_OPACITY;
+
+            lastFlickerStateUpdateTime = currentTime;
+        }
+
+        // Determine overall visibility (the "blink" effect)
+        // Sprite is visible for 250ms, then invisible for 250ms (500ms cycle)
+        boolean isSpriteCurrentlyVisible = (currentTime % 500) < 250;
+
+        if (!isSpriteCurrentlyVisible) {
+            return; // Don't draw if in the "off" part of the blink
+        }
+
+        // Determine sprite image and base position
+        int basePosX, basePosY;
+        BufferedImage sprite = null;
+        if (pokemonAlliance.equalsIgnoreCase("ally")) {
+            sprite = pokemon.getAllyFightModel();
+            basePosX = allyPokemonSpriteX;
+            basePosY = allyPokemonSpriteY;
+        } else { // enemy
+            sprite = pokemon.getEnemyFightModel();
+            basePosX = enemyPokemonSpriteX;
+            basePosY = enemyPokemonSpriteY;
+        }
+
+        if (sprite != null) {
+            Graphics2D g2dCopy = (Graphics2D) g2.create();
+
+            // Apply opacity
+            g2dCopy.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, currentFlickerOpacity));
+
+            // Apply X offset for shaking and draw
+            g2dCopy.drawImage(sprite, basePosX + currentFlickerXOffset, basePosY, null);
+
+            g2dCopy.dispose();
+        } else {
+            // Fallback for null sprite
+            System.err.println("Warning: Sprite for " + pokemon.getName() + " (" + pokemonAlliance + ") is null in flickeringSprite.");
+            // Optional: Draw a placeholder like in drawPokemonSpriteWithIndex if sprite is null
+            g2.setColor(Color.GRAY);
+            int placeholderX = pokemonAlliance.equalsIgnoreCase("ally") ? allyPokemonSpriteX : enemyPokemonSpriteX;
+            int placeholderY = pokemonAlliance.equalsIgnoreCase("ally") ? allyPokemonSpriteY : enemyPokemonSpriteY;
+            // Also apply flicker offset to placeholder
+            g2.fillRect(placeholderX + currentFlickerXOffset, placeholderY, 64, 64);
+            g2.setColor(Color.BLACK);
+            Font placeholderFont = (font != null) ? font.deriveFont(Font.BOLD, 20f) : new Font("Arial", Font.BOLD, 20);
+            g2.setFont(placeholderFont);
+            g2.drawString("?", placeholderX + currentFlickerXOffset + 28, placeholderY + 38);
         }
     }
 
@@ -489,9 +585,67 @@ public class Battle {
         }
     }
 
-    public Map<String, String> executeAttemptedMove(PokemonMove move) {
-        PokemonMoveType moveType = move.getMoveType();
+    public ArrayList<String> executeAttemptedMove(PokemonMove move, Pokemon user, Pokemon target) {
+        // 1 for ally and 2 for enemy
+        Pokemon[] pokemonTemp = new Pokemon[2];
         
+        ArrayList<String> messages = new ArrayList<String>();
+
+        int dmgToUser, dmgToTarget, buffToUser = 0;
+        String buffedStats = "";
+
+        PokemonMoveCategory moveType = move.getMoveCategory();
+
+        pokemonTemp = move.move(user, target);
+
+        dmgToUser = (user.getHp() - pokemonTemp[0].getHp());
+        dmgToTarget = (target.getHp() - pokemonTemp[1].getHp());
+
+        if (pokemonTemp[0].getHp() - user.getHp() > 0) {
+            buffToUser = (pokemonTemp[0].getHp() - user.getHp());
+            buffedStats = "hp";
+        } else if (pokemonTemp[0].getAtk() - user.getAtk() > 0) {
+            buffToUser = (pokemonTemp[0].getAtk() - user.getAtk());
+            buffedStats = "atk";
+        } else if (pokemonTemp[0].getDef() - user.getDef() > 0) {
+            buffToUser = (pokemonTemp[0].getDef() - user.getDef());
+            buffedStats = "def";
+        } else if (pokemonTemp[0].getSpd() - user.getSpd() > 0) {
+            buffToUser = (pokemonTemp[0].getSpd() - user.getSpd());
+            buffedStats = "spd";
+        }
+
+        if (moveType == PokemonMoveCategory.PHYSICAL || moveType == PokemonMoveCategory.SPECIAL) {
+            if (dmgToTarget > 0) {
+                messages.add(user.getName() + " dealt " + dmgToTarget + " damage to " + target.getName());
+            } else {
+                messages.add(user.getName() + " attack's failed and dealt no damage to " + target.getName());
+            }
+            if (dmgToUser > 0) {
+                messages.add(user.getName() + " self damage " + dmgToUser);
+            }
+        } else if (moveType == PokemonMoveCategory.STATUS) {
+            if (dmgToTarget > 0) {
+                messages.add(user.getName() + " used " + move.getMoveName() + " on " + target.getName() + " and inflicted " + dmgToTarget + " damage");
+            }
+            if (dmgToUser > 0) {
+                messages.add(user.getName() + " self damage " + dmgToUser);
+            }
+            switch (buffedStats) {
+                case "hp" -> messages.add(user.getName() + " recovered " + buffToUser + " hp");
+                case "atk" -> messages.add(user.getName() + "'s attack increased by " + buffToUser);
+                case "def" -> messages.add(user.getName() + "'s defence increased by " + buffToUser);
+                case "spd" -> messages.add(user.getName() + "'s speed increased by " + buffToUser);
+                default -> {
+                    System.out.println("No buff");
+                }
+            }
+        }
+
+        setMainPlayerPokemon(pokemonTemp[0]);
+        setMainEnemyPokemon(pokemonTemp[1]);
+        
+        return messages;
     }
 
     public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {
@@ -534,7 +688,6 @@ public class Battle {
             // For now, if not BATTLE_DECISION and no new dialog, assume textbox might be hidden or irrelevant.
             decisionPromptDisplayedThisTurn = false; // Reset prompt flag if not in decision state
             // if (battleTextBox.isVisible()) battleTextBox.hide(); // Optionally hide
-            return; // Don't draw if not needed for this state. Or handle specific states.
         }
 
         if (this.battleTextBox.isVisible()) {
@@ -562,7 +715,6 @@ public class Battle {
         if (movesBox == null) {
             movesBox = new MenuWithSelection(menuSelectMoves, x, y, 14f);
         }
-
         movesBox.setPosition(x, y);
         movesBox.setVisible(true);
         movesBox.draw(g2);

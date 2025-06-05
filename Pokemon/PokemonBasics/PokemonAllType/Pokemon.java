@@ -78,11 +78,6 @@ public class Pokemon {
         } catch (IOException e) {
             System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
         }
-        for (PokemonMove move: moves) {
-            if (move == null) {
-                System.out.println("move is null");
-            }
-        }
         this.moves = moves;
     }
 

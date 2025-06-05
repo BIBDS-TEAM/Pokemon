@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "MovesetParser",
+      "request": "launch",
+      "mainClass": "Pokemon.PokemonReader.MovesetParser",
+      "projectName": "Pokemon_392edb65"
+    },
+    {
+      "type": "java",
       "name": "Main",
       "request": "launch",
       "mainClass": "GuiTileMapThing.Main",
