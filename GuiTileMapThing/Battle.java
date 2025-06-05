@@ -96,15 +96,6 @@ public class Battle {
         initializeAssets();
     }
 
-    public Pokemon getMainPlayerPokemon() {
-        if (playerPokemons == null || playerPokemons.length < 1 || playerPokemons[0] == null) {
-            throw new IllegalArgumentException(
-                
-            )
-        }
-        return playerPokemons[0];
-    }
-
     public TextBox getBattleTextBox() {
         return battleTextBox;
     } // Getter method for battleTextBox
