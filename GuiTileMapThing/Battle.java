@@ -1,10 +1,11 @@
 package GuiTileMapThing;
 
-import java.awt.FontFormatException;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
 
+import java.awt.FontFormatException;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -20,8 +21,8 @@ import java.awt.GraphicsEnvironment; // Required for font registration
 // import javax.imageio.ImageIO;
 
 public class Battle {
-    protected Pokemon playerPokemons[];
-    protected Pokemon enemyPokemon[]; // For NPC trainer battles
+    protected static Pokemon playerPokemons[];
+    protected static Pokemon enemyPokemon[]; // For NPC trainer battles
     protected Pokemon wildPokemon; // For wild Pokemon encounters
     private boolean isNpcBattle; // Distinguishes between NPC trainer and wild battle
 
@@ -93,6 +94,15 @@ public class Battle {
         this.isNpcBattle = false; // This is a wild Pokemon battle
         this.enemyPokemon = null;
         initializeAssets();
+    }
+
+    public Pokemon getMainPlayerPokemon() {
+        if (playerPokemons == null || playerPokemons.length < 1 || playerPokemons[0] == null) {
+            throw new IllegalArgumentException(
+                
+            )
+        }
+        return playerPokemons[0];
     }
 
     public TextBox getBattleTextBox() {

@@ -28,26 +28,22 @@ public class PokemonMove_STATUS_DEFENSE_by_percentage extends PokemonMove {
 
     public Map<String, String> move(Pokemon pokemon) {
         Map<String, String> response = new HashMap<>();
-        if (isSpZero()) {
-            System.out.println("SP not enough");
-            
-            response.put("moveName", moveName);
-            response.put("moveType", moveType.toString());
-            response.put("sp", String.valueOf(sp));
-            response.put("desc", desc);
+        response.put("moveName", moveName);
+        response.put("moveType", moveType.toString());
+        response.put("sp", String.valueOf(sp));
+        response.put("desc", desc);
+
+        if (!isSpZero()) {
             response.put("message", "SP not enough");
             response.put("flag", "false");
             return response;
         }
         useMove();
-        pokemon.setDef((int)(pokemon.getDef() * (1 + defIncPercent / 100.0)));
-        System.out.println(pokemon.getName() + " used " + moveName + " and increased its DEF by " + defIncPercent + "%!");
-
-        response.put("moveName", moveName);
-        response.put("moveType", moveType.toString());
-        response.put("sp", String.valueOf(sp));
-        response.put("desc", desc);
-        response.put("message", pokemon.getName() + " used " + moveName + " and increased its DEF by " + defIncPercent + "%!");
+        // Calculate boost based on base defense (pokemon.def, not pokemon.getDef())
+        int boostAmount = (int)(pokemon.getDef() * (defIncPercent / 100.0)); 
+        pokemon.applyTemporaryDefenseBoost(boostAmount, 1); // Apply temporary boost for 1 turn
+        
+        response.put("message", pokemon.getName() + " used " + moveName + " and greatly increased its DEF by " + defIncPercent + "% for 1 turn!");
         response.put("flag", "true");
         return response;
     }

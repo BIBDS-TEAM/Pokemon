@@ -6,6 +6,13 @@
       "name": "Main",
       "request": "launch",
       "mainClass": "GuiTileMapThing.Main",
+      "projectName": "Pokemon_392edb65"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "GuiTileMapThing.Main",
       "projectName": "Pokemon_96940454"
     },
     {

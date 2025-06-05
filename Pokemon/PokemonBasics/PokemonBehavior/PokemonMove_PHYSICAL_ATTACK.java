@@ -9,6 +9,7 @@ import java.util.Random;
 public class PokemonMove_PHYSICAL_ATTACK extends PokemonMove {
     protected int power;
     protected double accuracy;
+    protected PokemonMoveType type;
 
     public PokemonMove_PHYSICAL_ATTACK(String moveName, int maxSp, String desc, int power, double accuracy,
             PokemonMoveType moveType, PokemonMoveCategory moveCategory) {

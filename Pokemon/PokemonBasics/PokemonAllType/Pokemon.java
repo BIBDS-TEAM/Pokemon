@@ -33,6 +33,9 @@ public class Pokemon {
     protected PokemonSound[] sound = new PokemonSound[10];
     protected PokemonMove[] moves = new PokemonMove[4];
 
+    private int temporaryDefenseBoost = 0;
+    private int defenseBoostTurns = 0;
+
     public void print() {
         System.out.println(("Name: " + name));
         System.out.println("Type: " + type);
@@ -171,7 +174,7 @@ public class Pokemon {
     }
 
     public int getDef() {
-        return def;
+        return def + temporaryDefenseBoost;
     }
 
     public void setDef(int def) {
@@ -200,6 +203,22 @@ public class Pokemon {
 
     public void setSpd(int spd) {
         this.spd = spd;
+    }
+
+    public void applyTemporaryDefenseBoost(int amount, int turns) {
+        this.temporaryDefenseBoost = amount;
+        this.defenseBoostTurns = turns;
+        System.out.println(this.name + "'s defense was greatly boosted for " + turns + " turn(s)!");
+    }
+
+    public void decrementDefenseBoostTurns() {
+        if (this.defenseBoostTurns > 0) {
+            this.defenseBoostTurns--;
+            if (this.defenseBoostTurns == 0) {
+                this.temporaryDefenseBoost = 0;
+                System.out.println(this.name + "'s temporary defense boost wore off.");
+            }
+        }
     }
 
     public void setModel(String filePath, int modelIndex) {

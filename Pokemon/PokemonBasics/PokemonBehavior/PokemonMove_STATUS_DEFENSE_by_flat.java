@@ -27,20 +27,23 @@ public class PokemonMove_STATUS_DEFENSE_by_flat extends PokemonMove {
 
     public Map<String, String> move(Pokemon pokemon) {
         Map<String, String> response = new HashMap<String, String>();
-        if (isSpZero()) {
-            System.out.println("SP not enough");
-            response.put("error", "SP not enough");
+        response.put("moveName", moveName);
+        response.put("moveType", moveType.toString());
+        response.put("sp", String.valueOf(sp));
+        response.put("desc", desc);
+
+        if (!isSpZero()) {
+            response.put("message", "SP not enough");
+            response.put("flag", "false");
             return response;
-        } else {
-            useMove();
-            pokemon.setDef((int)(pokemon.getDef() + defIncFlat));
-            response.put("MoveName", moveName);
-            response.put("MoveType", moveType.toString());
-            response.put("sp", String.valueOf(sp));
-            response.put("desc", desc);
-            System.out.println(pokemon.getName() + " used " + moveName + " and increased its DEF by " + defIncFlat + "!");
-            return response;
-        }
+        } 
+        useMove();
+        // Apply temporary boost for 1 turn
+        pokemon.applyTemporaryDefenseBoost(defIncFlat, 1); 
+        
+        response.put("message", pokemon.getName() + " used " + moveName + " and greatly increased its DEF for 1 turn!");
+        response.put("flag", "true");
+        return response;
     }
 
     public Map<String, String> move(Pokemon user, Pokemon target) {

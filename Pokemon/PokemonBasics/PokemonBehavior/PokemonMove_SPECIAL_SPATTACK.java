@@ -8,6 +8,7 @@ import java.util.Random;
 public class PokemonMove_SPECIAL_SPATTACK extends PokemonMove {
     protected int power;
     protected double accuracy;
+    protected PokemonMoveType type;
 
     public PokemonMove_SPECIAL_SPATTACK(String moveName, int maxSp, String desc, int power, double accuracy,
             PokemonMoveType moveType, PokemonMoveCategory moveCategory) {
@@ -19,7 +20,7 @@ public class PokemonMove_SPECIAL_SPATTACK extends PokemonMove {
     public int getPower() {
         return power;
     }
-
+    
     public void setPower(int power) {
         if (power > 0)
             this.power = power;

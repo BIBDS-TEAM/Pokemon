@@ -6,6 +6,7 @@ import Pokemon.PokemonReader.*;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
 
 import java.awt.*;
 import java.awt.FontFormatException;
@@ -74,6 +75,11 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean isOpeningPlayed;
     private PokemonMove selectedMove = null;
     private Map<String, String> selectedMoveInfo = new HashMap<>();
+
+    private Map<String, String> allyMoveResult = new HashMap<>();
+    private Map<String, String> enemyMoveResult = new HashMap<>();
+    private boolean allyMoveExecuted = false;
+    private boolean enemyMoveExecuted = false;
 
     public GamePanel() {
         npcList.add(npc);
@@ -221,11 +227,11 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                         if (keyI.enterPressed) {
                             for (NPC npc : npcList) {
-                                if (npc.isPlayerInRange() && npc.haveDialogue() ) {
-                                    String dialog = npc.getDialog();  
-                                    textBox.setText(dialog, g2); 
+                                if (npc.isPlayerInRange() && npc.haveDialogue()) {
+                                    String dialog = npc.getDialog();
+                                    textBox.setText(dialog, g2);
                                     textBox.setVisible();
-                                    break;  
+                                    break;
                                 }
                             }
                         }
@@ -265,18 +271,21 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                         currentState = GameState.BATTLE;
                         currentFPS = normalFPS;
-                        isOpeningPhase = false; transitionStep = 0; transitionTimer = 0; openingStep = 0;
+                        isOpeningPhase = false;
+                        transitionStep = 0;
+                        transitionTimer = 0;
+                        openingStep = 0;
                     }
                 }
 
-                String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png"; 
+                String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png";
                 String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
                 String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
 
                 MovesetParser movesetReader = new MovesetParser();
 
                 Map<String, MoveData> moveset = new HashMap<>();
-                
+
                 try {
                     moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt");
                 } catch (IOException e) {
@@ -290,16 +299,22 @@ public class GamePanel extends JPanel implements Runnable {
                 for (int j = 0; j < moves.length; j++) {
                     // Correctly assign the returned PokemonMove object
                     moves[j] = PokemonMove.loadPokemonMoveByType(moveset.get(movesetNames.get(j))); // Changed line
-                    System.out.println("moves[" + j + "]: " + (moves[j] != null ? moves[j].toString() : "null -> " + moveset.get(movesetNames.get(j)))); // For debugging
+                    System.out.println("moves[" + j + "]: "
+                            + (moves[j] != null ? moves[j].toString() : "null -> " + moveset.get(movesetNames.get(j)))); // For
+                                                                                                                         // debugging
                     if (moves[j] == null) {
-                        System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and PokemonMove.java. MoveData: " + moveset.get(movesetNames.get(j)));
+                        System.err.println("Warning: Pokemon move at index " + j
+                                + " is null after loading. Check MovesetList.txt and PokemonMove.java. MoveData: "
+                                + moveset.get(movesetNames.get(j)));
                         // Consider assigning a default move like "Struggle" or skipping
                         // For example, to prevent nulls, you could assign a basic move:
-                        // moves[j] = new PokemonMove_PHYSICAL_ATTACK("Struggle", 1, "A desperate attack.", 50, 1.0, PokemonMoveType.ATTACK, PokemonMoveCategory.PHYSICAL);
+                        // moves[j] = new PokemonMove_PHYSICAL_ATTACK("Struggle", 1, "A desperate
+                        // attack.", 50, 1.0, PokemonMoveType.ATTACK, PokemonMoveCategory.PHYSICAL);
                     }
                 }
 
-                PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
+                PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes
+                                                                                      // PokemonType[]
                 // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
                 // Snorlax is only Normal.
                 // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
@@ -325,29 +340,31 @@ public class GamePanel extends JPanel implements Runnable {
                 // this.battle = new Battle(playerCards, enemyCards);
 
                 battleState = BattleState.BATTLE_DECISION;
-                        // HIGHLIGHT: Reset textbox state when battle starts and it's decision time
-                        if (this.battle != null) {
-                            this.battle.resetTextBoxStateForNewTurn();
-                        }
-                        currentState = GameState.BATTLE;
-                        currentFPS = normalFPS;
-                        // Reset transition flags
-                        isOpeningPhase = false;
-                        transitionStep = 0;
-                        transitionTimer = 0;
-                        openingStep = 0;
+                // HIGHLIGHT: Reset textbox state when battle starts and it's decision time
+                if (this.battle != null) {
+                    this.battle.resetTextBoxStateForNewTurn();
+                }
+                currentState = GameState.BATTLE;
+                currentFPS = normalFPS;
+                // Reset transition flags
+                isOpeningPhase = false;
+                transitionStep = 0;
+                transitionTimer = 0;
+                openingStep = 0;
 
                 break;
             case OVERWORLDTRANSITION:
-            break;
+                break;
             case BATTLE:
+                if (this.battle == null) { // Safety check
+                    System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
+                    currentState = GameState.OVERWORLD;
+                    return;
+                }
+                battle.update();
                 switch (battleState) {
                     case BATTLE_DECISION:
-                        if (this.battle == null) { // Safety check
-                            System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
-                            currentState = GameState.OVERWORLD;
-                            return;
-                        }
+
                         if (this.battle.optionBox != null) { //
                             if (keyI.upPressed) {
                                 this.battle.menuOptionBoxMoveUp();
@@ -377,14 +394,17 @@ public class GamePanel extends JPanel implements Runnable {
                                     System.out.println("Fight selected - Starting battle!");
                                     battleState = BattleState.BATTLE_SELECTMOVE;
                                     this.battle.optionBox.setVisible(false);
-                                    // Potentially show moves selection menu here, which might use the textbox or another UI
+                                    // Potentially show moves selection menu here, which might use the textbox or
+                                    // another UI
                                 } else if (selectedOption.equalsIgnoreCase("Bag")) {
                                     System.out.println("Bag selected - This feature is not ready yet!");
                                     battleState = BattleState.BATTLE_ITEM;
                                     this.battle.optionBox.setVisible(false);
                                 } else if (selectedOption.equalsIgnoreCase("Run")) {
                                     System.out.println("Run selected - Attempting to flee!");
-
+                                    battle.getMainPlayerPokemon().decrementDefenseBoostTurns(); // Clear any active
+                                                                                                // buffs
+                                    battle.getMainEnemyPokemon().decrementDefenseBoostTurns();
                                     currentState = GameState.OVERWORLD;
                                     // Potentially stop battle music, etc.
                                 } else if (selectedOption.equalsIgnoreCase("PkMn")) {
@@ -395,7 +415,7 @@ public class GamePanel extends JPanel implements Runnable {
                             }
                         }
                         break;
-                    
+
                     case BATTLE_SELECTMOVE:
                         if (this.battle.movesBox != null) {
                             if (keyI.upPressed) {
@@ -440,12 +460,92 @@ public class GamePanel extends JPanel implements Runnable {
                             }
                         }
                         break;
-                        // Add logic for item selection in the BATTLE_ITEM state
+                    case BATTLE_ALLYMOVE:
+                        // Display result of ally move, wait for player to press Enter/Confirm
+                        if (keyI.enterPressed && allyMoveExecuted) {
+                            keyI.enterPressed = false;
+                            allyMoveExecuted = false;
+
+                            // HIGHLIGHT: Decrement player's temporary defense buff after their turn if it
+                            // was a defense move that turn.
+                            // More accurately, any active buff should tick down.
+                            battle.getMainPlayerPokemon().decrementDefenseBoostTurns();
+
+                            if (battle.getMainEnemyPokemon().getHp() <= 0) {
+                                battle.setNewDialog(battle.getMainEnemyPokemon().getName().toUpperCase() + " fainted!",
+                                        g2);
+                                // Add logic for battle end, EXP gain, etc.
+                                // For now, transition back to overworld
+                                currentState = GameState.OVERWORLDTRANSITION; // Placeholder for proper win state
+                                break;
+                            }
+
+                            // Enemy's turn
+                            PokemonMove enemySelectedMove = battle.getMainEnemyPokemon().getMove(0); // Simple: enemy
+                                                                                                     // always uses
+                                                                                                     // first move
+                            if (enemySelectedMove != null) {
+                                enemyMoveResult = battle.executeAttemptedMove(enemySelectedMove); // This needs to be
+                                                                                                  // adapted for enemy
+                                // The executeAttemptedMove is player-centric. We need a version for enemy or
+                                // adapt it.
+                                // For now, let's assume a similar structure for enemy's move execution for
+                                // simplicity
+                                // This would ideally be:
+                                // enemyMoveResult = enemySelectedMove.move(battle.getMainEnemyPokemon(),
+                                // battle.getMainPlayerPokemon());
+                                // And then process the result.
+                                // Simplified for now:
+                                Pokemon enemy = battle.getMainEnemyPokemon();
+                                Pokemon playerTarget = battle.getMainPlayerPokemon();
+                                if (enemySelectedMove.getMoveType() == PokemonMoveType.ATTACK
+                                        || enemySelectedMove.getMoveType() == PokemonMoveType.SPECIAL_ATTACK
+                                        || enemySelectedMove.getMoveType() == PokemonMoveType.DEBUFF) {
+                                    enemyMoveResult = enemySelectedMove.move(enemy, playerTarget);
+                                } else if (enemySelectedMove.getMoveType() == PokemonMoveType.BUFF
+                                        || enemySelectedMove.getMoveType() == PokemonMoveType.DEFENSE) {
+                                    enemyMoveResult = enemySelectedMove.move(enemy);
+                                }
+
+                                battle.setNewDialog(
+                                        enemyMoveResult.getOrDefault("message", battle.getMainEnemyPokemon().getName()
+                                                + " used " + enemySelectedMove.getMoveName() + "!"),
+                                        g2);
+                            } else {
+                                battle.setNewDialog(battle.getMainEnemyPokemon().getName() + " has no moves!", g2);
+                            }
+                            enemyMoveExecuted = true;
+                            battleState = BattleState.BATTLE_ENEMYMOVE;
+                        }
+                        break;
+
+                    case BATTLE_ENEMYMOVE:
+                        // Display result of enemy move, wait for player to press Enter/Confirm
+                        if (keyI.enterPressed && enemyMoveExecuted) {
+                            keyI.enterPressed = false;
+                            enemyMoveExecuted = false;
+
+                            // HIGHLIGHT: Decrement enemy's temporary defense buff after their turn
+                            battle.getMainEnemyPokemon().decrementDefenseBoostTurns();
+
+                            if (battle.getMainPlayerPokemon().getHp() <= 0) {
+                                battle.setNewDialog(
+                                        battle.getMainPlayerPokemon().getName().toUpperCase() + " fainted! Game Over!",
+                                        g2);
+                                // Add logic for game over
+                                currentState = GameState.MAINMENU; // Placeholder for game over state
+                                break;
+                            }
+                            battle.prepareForNewDecisionPrompt(); // Prepare for player's next decision
+                            battleState = BattleState.BATTLE_DECISION;
+                        }
+                        break;
+                    // Add cases for BATTLE_ITEM, BATTLE_SWITCH, BATTLE_RUN
                 }
-                // Add logic for other battle states (BATTLE_SELECTMOVE, BATTLE_ALLYMOVE, etc.)
-                // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE &&
-                // this.battle.MovesBox != null) { ... }
                 break;
+            // Add logic for other battle states (BATTLE_SELECTMOVE, BATTLE_ALLYMOVE, etc.)
+            // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE &&
+            // this.battle.MovesBox != null) { ... }
         }
     }
 
@@ -549,43 +649,11 @@ public class GamePanel extends JPanel implements Runnable {
                 // g2.setColor(Color.BLACK);
                 // g2.setFont(new Font("Arial", Font.BOLD, 20));
                 // g2.drawString("Battle Start!", 100, 100);
-                switch (battleState) {
-                    case BATTLE_DECISION:
-                        if (keyI.ePressed) {
-                            switch (battle.optionBox.select()) {
-                                case "Fight":
-                                    battleState = BattleState.BATTLE_SELECTMOVE;
-                                    break;
-                                case "PkMn":
-                                    battleState = BattleState.BATTLE_SWITCH;
-                                    break;
-                                case "Bag":
-                                    battleState = BattleState.BATTLE_ITEM;
-                                    break;
-                                case "Run":
-                                    battleState = BattleState.BATTLE_RUN;
-                                    break;
-                            }
-                        }
-                        break;
-                    case BATTLE_ITEM:
-                        break;
-                    case BATTLE_SELECTMOVE:
-                        if (keyI.ePressed) {
-                            battle.optionBox.select();
-                            
-
-                            battleState = BattleState.BATTLE_ALLYMOVE;
-                        }
-                        break;
-                    case BATTLE_SWITCH:
-                        break;
-                    case BATTLE_RUN:
-                        break;
-                }
+                break;
         }
-        g2.dispose();
-
+        if (g2 != null) { // Ensure g2 is not null before disposing
+           g2.dispose(); // Dispose should be handled by Swing's repaint mechanism, not manually here.
+        }
     }
 
     public void startBattle(Graphics g) {
