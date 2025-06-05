@@ -59,6 +59,12 @@ public class MovesetParser {
                     case "EFFECT":
                         currentMove.effect = value.equalsIgnoreCase("N/A") ? null : value;
                         break;
+                    case "DESCRIPTION":
+                        currentMove.description = value.equalsIgnoreCase("N/A") ? null : value;
+                        break;
+                    case "AFFECTED_ATTRIBUTE":
+                        currentMove.affectedAttribute = value.equalsIgnoreCase("N/A") ? null : value;
+                        break;
                 }
             } catch (NumberFormatException e) {
                  System.err.println("Warning: Could not parse number for key '" + key + "' with value '" + value + "'. Skipping line.");

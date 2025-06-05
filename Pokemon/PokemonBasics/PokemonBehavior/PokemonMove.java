@@ -42,7 +42,7 @@ public abstract class PokemonMove {
         this.pokemonMoveSoundPath = pokemonMoveSoundPath;
     }
 
-    public String getmoveName() {
+    public String getMoveName() {
         return moveName;
     }
     public void setmoveName(String moveName) {
@@ -149,6 +149,6 @@ public abstract class PokemonMove {
     }
 
     public String toString() {
-        return moveName + " " + moveType + " " + sp + " " + desc;
+        return moveName + " " + moveCategory + " "  + maxSp + " " + moveType + " " + sp + " " + desc;
     }
 }

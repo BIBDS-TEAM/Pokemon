@@ -50,7 +50,7 @@ public class GamePanel extends JPanel implements Runnable {
     TileManager tileManager = new TileManager(this);
     public Player player = new Player(this, keyI);
     public java.util.List<NPC> npcList = new ArrayList<>();
-    NPC npc = new NPC(this,"Oak",1080,700,"down","Oek" );
+    NPC npc = new NPC(this, "Oak", 1080, 700, "down", "Oek");
     Battle battle;
     public Graphics2D g2;
     // gameSTATES
@@ -282,13 +282,18 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 ArrayList<String> movesetNames = new ArrayList<>(moveset.keySet());
 
+                // Inside GamePanel.java, update() method, BATTLETRANSITION case
+
                 PokemonMove[] moves = new PokemonMove[4];
                 for (int j = 0; j < moves.length; j++) {
-                    moves[j].loadPokemonMoveByType(moveset.get(movesetNames.get(j)));
-                    System.out.println("moves: " + moveset.get(movesetNames.get(j)));
+                    // Correctly assign the returned PokemonMove object
+                    moves[j] = PokemonMove.loadPokemonMoveByType(moveset.get(movesetNames.get(j))); // Changed line
+                    System.out.println("moves[" + j + "]: " + (moves[j] != null ? moves[j].toString() : "null -> " + moveset.get(movesetNames.get(j)))); // For debugging
                     if (moves[j] == null) {
-                        System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and MovesetParser.");
-                        // Optionally, assign a default "Struggle" move or handle this error state
+                        System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and PokemonMove.java. MoveData: " + moveset.get(movesetNames.get(j)));
+                        // Consider assigning a default move like "Struggle" or skipping
+                        // For example, to prevent nulls, you could assign a basic move:
+                        // moves[j] = new PokemonMove_PHYSICAL_ATTACK("Struggle", 1, "A desperate attack.", 50, 1.0, PokemonMoveType.ATTACK, PokemonMoveCategory.PHYSICAL);
                     }
                 }
 
@@ -334,57 +339,90 @@ public class GamePanel extends JPanel implements Runnable {
             case OVERWORLDTRANSITION:
             break;
             case BATTLE:
-                if (this.battle == null) { // Safety check
-                    System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
-                    currentState = GameState.OVERWORLD;
-                    return;
-                }
-                if (battleState == BattleState.BATTLE_DECISION && this.battle.optionBox != null) { //
-                    if (keyI.upPressed) {
-                        this.battle.menuOptionBoxMoveUp();
-                        keyI.upPressed = false;
-                    } //
-                    if (keyI.downPressed) {
-                        this.battle.menuOptionBoxMoveDown();
-                        keyI.downPressed = false;
-                    } //
-                    if (keyI.leftPressed) {
-                        this.battle.menuOptionBoxMoveLeft();
-                        keyI.leftPressed = false;
-                    } //
-                    if (keyI.rightPressed) {
-                        this.battle.menuOptionBoxMoveRight();
-                        keyI.rightPressed = false;
-                    } //
-
-                    if (keyI.enterPressed) { //
-                        keyI.enterPressed = false;
-                        String selectedOption = this.battle.optionBox.select(); //
-                        System.out.println("Battle action selected: " + selectedOption);
-
-                        this.battle.resetTextBoxStateForNewTurn();
-
-                        if (selectedOption.equalsIgnoreCase("Fight")) {
-                            battleState = BattleState.BATTLE_SELECTMOVE;
-                            this.battle.optionBox.setVisible(false);
-                            // Potentially show moves selection menu here, which might use the textbox or another UI
-                        } else if (selectedOption.equalsIgnoreCase("Bag")) {
-                            System.out.println("Bag selected - This feature is not ready yet!");
-                            battleState = BattleState.BATTLE_ITEM;
-                            this.battle.optionBox.setVisible(false);
-                        } else if (selectedOption.equalsIgnoreCase("Run")) {
-                            System.out.println("Run selected - Attempting to flee!");
-                            // HIGHLIGHT: Add logic for successful/failed run, then potentially a message.
-                            // For now, directly go to overworld.
-                            // this.battle.setNewDialog("Got away safely!", (Graphics2D)getGraphics()); // Example
+                switch (battleState) {
+                    case BATTLE_DECISION:
+                        if (this.battle == null) { // Safety check
+                            System.err.println("Error: Battle object is null in BATTLE state. Reverting to OVERWORLD.");
                             currentState = GameState.OVERWORLD;
-                            // Potentially stop battle music, etc.
-                        } else if (selectedOption.equalsIgnoreCase("PkMn")) {
-                            System.out.println("Pokemon selected - Switch Pokemon logic needed.");
-                            battleState = BattleState.BATTLE_SWITCH;
-                            this.battle.optionBox.setVisible(false);
+                            return;
                         }
-                    }
+                        if (this.battle.optionBox != null) { //
+                            if (keyI.upPressed) {
+                                this.battle.menuOptionBoxMoveUp();
+                                keyI.upPressed = false;
+                            } //
+                            if (keyI.downPressed) {
+                                this.battle.menuOptionBoxMoveDown();
+                                keyI.downPressed = false;
+                            } //
+                            if (keyI.leftPressed) {
+                                this.battle.menuOptionBoxMoveLeft();
+                                keyI.leftPressed = false;
+                            } //
+                            if (keyI.rightPressed) {
+                                this.battle.menuOptionBoxMoveRight();
+                                keyI.rightPressed = false;
+                            } //
+
+                            if (keyI.enterPressed) { //
+                                keyI.enterPressed = false;
+                                String selectedOption = this.battle.optionBox.select(); //
+                                System.out.println("Battle action selected: " + selectedOption);
+
+                                this.battle.resetTextBoxStateForNewTurn();
+
+                                if (selectedOption.equalsIgnoreCase("Fight")) {
+                                    System.out.println("Fight selected - Starting battle!");
+                                    battleState = BattleState.BATTLE_SELECTMOVE;
+                                    this.battle.optionBox.setVisible(false);
+                                    // Potentially show moves selection menu here, which might use the textbox or another UI
+                                } else if (selectedOption.equalsIgnoreCase("Bag")) {
+                                    System.out.println("Bag selected - This feature is not ready yet!");
+                                    battleState = BattleState.BATTLE_ITEM;
+                                    this.battle.optionBox.setVisible(false);
+                                } else if (selectedOption.equalsIgnoreCase("Run")) {
+                                    System.out.println("Run selected - Attempting to flee!");
+
+                                    currentState = GameState.OVERWORLD;
+                                    // Potentially stop battle music, etc.
+                                } else if (selectedOption.equalsIgnoreCase("PkMn")) {
+                                    System.out.println("Pokemon selected - Switch Pokemon logic needed.");
+                                    battleState = BattleState.BATTLE_SWITCH;
+                                    this.battle.optionBox.setVisible(false);
+                                }
+                            }
+                        }
+                        break;
+                    
+                    case BATTLE_SELECTMOVE:
+                        if (this.battle.movesBox != null) {
+                            if (keyI.upPressed) {
+                                this.battle.movesBox.moveUp();
+                                keyI.upPressed = false;
+                            }
+                            if (keyI.downPressed) {
+                                this.battle.movesBox.moveDown();
+                                keyI.downPressed = false;
+                            }
+                            if (keyI.leftPressed) {
+                                this.battle.movesBox.moveLeft();
+                                keyI.leftPressed = false;
+                            }
+                            if (keyI.rightPressed) {
+                                this.battle.movesBox.moveRight();
+                                keyI.rightPressed = false;
+                            }
+                            if (keyI.enterPressed) {
+                                keyI.enterPressed = false;
+                                this.battle.movesBox.select();
+
+                                System.out.println("Selected move: " + this.battle.movesBox.select());
+
+                                this.battle.resetTextBoxStateForNewTurn();
+                            }
+                        }
+                        break;
+                        // Add logic for item selection in the BATTLE_ITEM state
                 }
                 // Add logic for other battle states (BATTLE_SELECTMOVE, BATTLE_ALLYMOVE, etc.)
                 // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE &&
@@ -515,6 +553,10 @@ public class GamePanel extends JPanel implements Runnable {
                     case BATTLE_ITEM:
                         break;
                     case BATTLE_SELECTMOVE:
+                        if (keyI.ePressed) {
+                            battle.optionBox.select();
+                            battleState = BattleState.BATTLE_ALLYMOVE;
+                        }
                         break;
                     case BATTLE_SWITCH:
                         break;

@@ -3,6 +3,7 @@ package GuiTileMapThing;
 import java.awt.FontFormatException;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -52,6 +53,9 @@ public class Battle {
 
     private int battleMenuSelectionX = 225;
     private int battleMenuSelectionY = 363;
+
+    private int battleMoveSelectionX = 325;
+    private int battleMoveSelectionY = 363;
 
     private int battleTextBoxX = 50;
     private int battleTextBoxY = 360;
@@ -110,12 +114,12 @@ public class Battle {
 
         menuSelectMoves = new String[4];
         for (int i = 0; i < 4; i++) {
-            menuSelectMoves[i] = getMainPlayerPokemon().getMove(i).getmoveName();
+            menuSelectMoves[i] = getMainPlayerPokemon().getMove(i).getMoveName();
         };
 
 
         optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 40, 20);
-        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMenuSelectionX, battleMenuSelectionY, 20f);
+        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMoveSelectionX, battleMoveSelectionY, 14f);
         // MovesBox and itemBagBox can be initialized when needed or here if always
         // shown initially.
         this.optionBox.setVisible(false); // GamePanel will control visibility
@@ -124,6 +128,18 @@ public class Battle {
         // HIGHLIGHT: Initialize the battleTextBox
         this.battleTextBox = new TextBox();
     }
+
+    public Pokemon getMainEnemyPokemon() { 
+        if (enemyPokemon != null && enemyPokemon.length > 0 && enemyPokemon[0] != null) {
+            return enemyPokemon[0];
+        }
+        // Return a dummy or handle this case to avoid NullPointerExceptions
+        if (wildPokemon != null) {
+            return wildPokemon;
+        }
+        System.err.println("Warning: getMainEnemyPokemon() returning null.");
+        return null;
+    } // Getter method for EnemyPok
 
     public Pokemon getMainPlayerPokemon() {
         if (playerPokemons != null && playerPokemons.length > 0 && playerPokemons[0] != null) {
@@ -191,17 +207,15 @@ public class Battle {
             // Its visibility is managed internally by MenuWithSelection or explicitly by Battle logic.
             // Ensure optionBox.setVisible(true) is called when BATTLE_DECISION starts.
             movesBox.setVisible(false);
-            itemBagBox.setVisible(false);
             if (optionBox != null) { // Make sure optionBox is initialized
                  optionBox.setVisible(true); // Ensure it's visible during BATTLE_DECISION
                  drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
             }
         } else if (currentBattleState == BattleState.BATTLE_SELECTMOVE) {
             optionBox.setVisible(false);
-            itemBagBox.setVisible(false);
             if (movesBox != null) {
                 movesBox.setVisible(true);
-                drawBattleMovesBox(g2, battleMenuSelectionX, battleMenuSelectionY);
+                drawBattleMovesBox(g2, battleMoveSelectionX, battleMoveSelectionY);
             }
         } else {
             if (optionBox != null) {
@@ -473,6 +487,24 @@ public class Battle {
         }
     }
 
+    public Map<String, String> moveAttempted(PokemonMove move) {
+        PokemonMoveType moveType = move.getMoveType();
+        Map<String, String> moveAttempted = null;
+        if (moveType == PokemonMoveType.ATTACK || moveType == PokemonMoveType.SPECIAL_ATTACK || moveType == PokemonMoveType.DEBUFF) {
+            moveAttempted = move.move(getMainPlayerPokemon(), getMainEnemyPokemon());
+        } else if (moveType == PokemonMoveType.BUFF || moveType == PokemonMoveType.DEFENSE || moveType == PokemonMoveType.RUN) {
+            moveAttempted = move.move(getMainPlayerPokemon());
+        } else {
+            moveAttempted.put("error", "Invalid move type");
+            moveAttempted.put("flag", "false");
+            moveAttempted.put("message", "Failed to attempt move");
+            moveAttempted.put("moveName", move.getMoveName());
+            moveAttempted.put("moveType", move.getMoveType().toString());
+            moveAttempted.put("desc", move.getDesc());
+        }
+        return moveAttempted;
+    }
+
     public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {
         if (this.battleTextBox == null) {
              // This should ideally be initialized in the constructor or initializeAssets
@@ -532,7 +564,7 @@ public class Battle {
 
     public void drawBattleMovesBox(Graphics2D g2, int x, int y) {
         if (movesBox == null) {
-            movesBox = new MenuWithSelection(menuSelectMoves, x, y, 20f);
+            movesBox = new MenuWithSelection(menuSelectMoves, x, y, 14f);
         }
 
         movesBox.setPosition(x, y);

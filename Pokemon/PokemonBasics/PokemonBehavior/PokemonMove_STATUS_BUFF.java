@@ -13,6 +13,8 @@ public class PokemonMove_STATUS_BUFF extends PokemonMove {
     public PokemonMove_STATUS_BUFF(String moveName, int maxSp, String desc, int buffValue, String buffType,
             boolean isBuffInPercent) {
         super(moveName, maxSp, desc);
+        System.out.println("Buff move created" + moveName);
+        System.out.println("buff type" + buffType);
         this.buffValue = buffValue;
         this.isBuffInPercent = isBuffInPercent;
         this.buffType = buffType.toUpperCase();
