@@ -72,6 +72,8 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean shouldShowInitialText = true;
     //
     private boolean isOpeningPlayed;
+    private PokemonMove selectedMove = null;
+    private Map<String, String> selectedMoveInfo = new HashMap<>();
 
     public GamePanel() {
         npcList.add(npc);
@@ -419,6 +421,22 @@ public class GamePanel extends JPanel implements Runnable {
                                 System.out.println("Selected move: " + this.battle.movesBox.select());
 
                                 this.battle.resetTextBoxStateForNewTurn();
+
+                                for (PokemonMove move : this.battle.getMainPlayerPokemon().getMoves()) {
+                                    if (move.getMoveName().equalsIgnoreCase(this.battle.movesBox.select())) {
+                                        selectedMove = move;
+                                        break;
+                                    }
+                                }
+
+                                selectedMoveInfo = battle.executeAttemptedMove(selectedMove);
+
+                                if (selectedMoveInfo.containsKey("error")) {
+                                    System.out.println("Error: " + selectedMoveInfo.get("error"));
+                                    battleState = BattleState.BATTLE_DECISION;
+                                }
+
+                                battleState = BattleState.BATTLE_ALLYMOVE;
                             }
                         }
                         break;
@@ -555,6 +573,8 @@ public class GamePanel extends JPanel implements Runnable {
                     case BATTLE_SELECTMOVE:
                         if (keyI.ePressed) {
                             battle.optionBox.select();
+                            
+
                             battleState = BattleState.BATTLE_ALLYMOVE;
                         }
                         break;

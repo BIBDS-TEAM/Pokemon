@@ -47,6 +47,17 @@ public class MenuWithSelection {
         initAssets();
     }
 
+    public MenuWithSelection(String[] options, int x, int y, float fontSize, int additionalXPadding, int additionalYPadding) {
+        this.options = options;
+        this.x = x;
+        this.y = y;
+        this.fontSize = fontSize;
+        this.isGrid = false;
+        this.additionalXPadding = additionalXPadding;
+        this.additionalYPadding = additionalYPadding;
+        initAssets();
+    }
+
     public MenuWithSelection(String[][] gridOptions, int x, int y, float fontSize, int additionalXPadding, int additionalYPadding) {
         this.gridOptions = gridOptions;
         this.x = x;
@@ -129,17 +140,17 @@ public class MenuWithSelection {
             }
 
             int totalWidth = maxWidth + 2 * padding + extraSpaceX + additionalXPadding;
-            int totalHeight = options.length * lineSpacing + 2 * padding + additionalYPadding;
+            int totalHeight = options.length * lineSpacing + 2 * padding + additionalYPadding / 4;
 
             drawBorder(g2, x, y, totalWidth, totalHeight);
 
             for (int i = 0; i < options.length; i++) {
-                int textX = x + padding + extraSpaceX;
-                int textY = y + padding + i * lineSpacing + fm.getAscent();
+                int textX = x + padding + extraSpaceX + additionalXPadding / 3;
+                int textY = y + padding + i * lineSpacing + fm.getAscent() + additionalYPadding / 3;
                 g2.drawString(options[i], textX, textY);
 
                 if (i == selectedRow && selectionArrow != null) {
-                    g2.drawImage(selectionArrow, textX - 30, textY - 24, 24, 24, null);
+                    g2.drawImage(selectionArrow, textX - 30, textY - 24 + additionalYPadding / 5, 24, 24, null);
                 }
             }
         }

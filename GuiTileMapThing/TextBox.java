@@ -10,6 +10,8 @@ import javax.swing.*;
 public class TextBox {
     private final int DEFAULT_BOX_WIDTH = 512;
     private final int DEFAULT_BOX_HEIGHT = 128;
+    private int additionalWidth = 0;
+    private int additionalHeight = 0;
     private final int padding = 16;
 
     private Image borderImage;
@@ -102,6 +104,22 @@ public class TextBox {
         return DEFAULT_BOX_HEIGHT;
     }
 
+    public int getAdditionalWidth() {
+        return additionalWidth;
+    }
+
+    public int getAdditionalHeight() {
+        return additionalHeight;
+    }
+
+    public void setAdditionalWidth(int additionalWidth) {
+        this.additionalWidth = additionalWidth;
+    }
+
+    public void setAdditionalHeight(int additionalHeight) {
+        this.additionalHeight = additionalHeight;
+    }
+
     public void setVisible() {
         visible = true;
     }
@@ -133,8 +151,8 @@ public class TextBox {
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
 
-        int textDisplayAreaWidth = DEFAULT_BOX_WIDTH - 2 * padding;
-        int textDisplayAreaHeight = DEFAULT_BOX_HEIGHT - 2 * padding;
+        int textDisplayAreaWidth = (DEFAULT_BOX_WIDTH + additionalWidth) - 2 * padding;
+        int textDisplayAreaHeight = (DEFAULT_BOX_HEIGHT + additionalHeight) - 2 * padding;
         int lineHeight = fm.getHeight();
 
         if (lineHeight <= 0) {
@@ -222,8 +240,8 @@ public class TextBox {
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
 
-        int actualBoxWidth = this.DEFAULT_BOX_WIDTH;
-        int actualBoxHeight = this.DEFAULT_BOX_HEIGHT;
+        int actualBoxWidth = this.DEFAULT_BOX_WIDTH + additionalWidth;
+        int actualBoxHeight = this.DEFAULT_BOX_HEIGHT + additionalHeight;
         int x = (panelWidth - actualBoxWidth) / 2;
         int y = panelHeight - actualBoxHeight - 20;
 

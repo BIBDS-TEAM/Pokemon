@@ -54,8 +54,8 @@ public class Battle {
     private int battleMenuSelectionX = 225;
     private int battleMenuSelectionY = 363;
 
-    private int battleMoveSelectionX = 325;
-    private int battleMoveSelectionY = 363;
+    private int battleMoveSelectionX = 235;
+    private int battleMoveSelectionY = 350;
 
     private int battleTextBoxX = 50;
     private int battleTextBoxY = 360;
@@ -119,7 +119,7 @@ public class Battle {
 
 
         optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 40, 20);
-        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMoveSelectionX, battleMoveSelectionY, 14f);
+        this.movesBox = new MenuWithSelection(menuSelectMoves, battleMoveSelectionX, battleMoveSelectionY, 14f, 90, 35);
         // MovesBox and itemBagBox can be initialized when needed or here if always
         // shown initially.
         this.optionBox.setVisible(false); // GamePanel will control visibility
@@ -200,6 +200,7 @@ public class Battle {
             g2.drawString("No Ally", allyPokemonSpriteX + 10, allyPokemonSpriteY + 30);
         }
 
+        battleTextBox.show();
         drawBattleTextBox(g2, currentBattleState, panelWidth, panelHeight);
 
         if (currentBattleState == BattleState.BATTLE_DECISION) {
@@ -487,7 +488,7 @@ public class Battle {
         }
     }
 
-    public Map<String, String> moveAttempted(PokemonMove move) {
+    public Map<String, String> executeAttemptedMove(PokemonMove move) {
         PokemonMoveType moveType = move.getMoveType();
         Map<String, String> moveAttempted = null;
         if (moveType == PokemonMoveType.ATTACK || moveType == PokemonMoveType.SPECIAL_ATTACK || moveType == PokemonMoveType.DEBUFF) {
@@ -516,9 +517,6 @@ public class Battle {
                                 (activePlayerPokemon != null && activePlayerPokemon.getName() != null ?
                                  activePlayerPokemon.getName().toUpperCase() : "POKEMON") +
                                 " do?";
-
-        int tbX, tbY, tbWidth, tbHeight;
-        int effectiveTextWidth;
         if (hasNewDialogMessage) {
             this.battleTextBox.setText(this.currentDialogMessage, g2);
             this.battleTextBox.show();
@@ -529,7 +527,17 @@ public class Battle {
 
             if (!decisionPromptDisplayedThisTurn || !this.battleTextBox.isVisible() ||
                 !this.battleTextBox.getCurrentText().equals(decisionPrompt)) {
+                this.battleTextBoxHeight = this.battleTextBox.getDefaultHeight();
                 this.battleTextBox.setText(decisionPrompt, g2);
+                this.battleTextBox.show();
+                decisionPromptDisplayedThisTurn = true;
+            }
+        } else if (battleState == BattleState.BATTLE_SELECTMOVE) {
+            String moveSelectionPrompt = "Choose a move to use:";
+            if (!decisionPromptDisplayedThisTurn || !this.battleTextBox.isVisible() ||
+                !this.battleTextBox.getCurrentText().equals(moveSelectionPrompt)) {
+                this.battleTextBox.setAdditionalHeight(15);
+                this.battleTextBox.setText(moveSelectionPrompt, g2);    
                 this.battleTextBox.show();
                 decisionPromptDisplayedThisTurn = true;
             }
@@ -570,17 +578,6 @@ public class Battle {
         movesBox.setPosition(x, y);
         movesBox.setVisible(true);
         movesBox.draw(g2);
-    }
-
-    public void executePokemonMove(Graphics2D g2, PokemonMove move, Pokemon pokemon, Pokemon target) {
-        // ... logic for move execution...
-        String moveType, message = "";
-        Map<String, String> moveInfo;
-        // If move causes damage: message += " It dealt X damage.";
-        if (battleTextBox != null) { // Ensure battleTextBox is initialized
-            battleTextBox.setText(message, g2); // g2_for_textbox is needed by current TextBox.setText
-            battleTextBox.show(); // Ensure it's visible
-        }
     }
 
     public void drawBattleBagItemSelection(Graphics2D g2, String[] itemNames, String[] itemQuantities) {
