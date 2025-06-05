@@ -76,19 +76,15 @@ public class MovesetParser {
         String line;
         MoveData currentMove = null;
 
-        int i = 0;
+        int i = start;
         while ((line = reader.readLine()) != null) {
-            if (i < start) {
-                i++;
-                continue;
-            }
-            if (i >= end) {
-                break;
-            }
             line = line.trim();
             if (line.equals("---")) {
                 if (currentMove != null && currentMove.moveName != null) {
+                    
                     movesetMap.put(currentMove.moveName, currentMove);
+                    i++;
+                    if (i == end) break;
                 }
                 currentMove = null;
                 continue;

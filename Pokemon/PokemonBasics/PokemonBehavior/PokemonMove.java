@@ -79,26 +79,48 @@ public abstract class PokemonMove {
     }
     
     public static PokemonMove loadPokemonMoveByType(MoveData moveData) {
-        PokemonMove move = null;
-        String moveType = moveData.type.name();
-        if (moveType.equals("ATTACK")) {
-            new PokemonMove_PHYSICAL_ATTACK(moveData.moveName, moveData.sp, moveData.description, moveData.power, moveData.accuracy, (moveData.type), (moveData.category));
-        } else if (moveType.equals("SPECIAL_ATTACK")) {
-            new PokemonMove_SPECIAL_SPATTACK(moveData.moveName, moveData.sp, moveData.description, moveData.power, moveData.accuracy, (moveData.type), (moveData.category));
-        } else if (moveType.equals("BUFF")) {
-            if (!moveData.isBuffInPercent) new PokemonMove_STATUS_BUFF(moveData.moveName, moveData.sp, moveData.description, moveData.buffValueInt, moveData.affectedAttribute, moveData.isBuffInPercent);
-            else new PokemonMove_STATUS_BUFF(moveData.moveName, moveData.sp, moveData.description, (int)moveData.buffValuePercent, moveData.affectedAttribute, moveData.isBuffInPercent);
-        } else if (moveType.equals("DEBUFF")) {
-            new PokemonMove_STATUS_DEBUFF(moveData.moveName, moveData.sp, moveData.description, moveData.affectedAttribute, moveData.isBuffInPercent, moveData.buffValuePercent, moveData.accuracy);
-        } else if (moveType.equals("DEFENSE")) {
-            if (moveData.isBuffInPercent) new PokemonMove_STATUS_DEFENSE_by_flat(moveData.moveName, moveData.sp, moveData.description, moveData.buffValueInt);
-            else new PokemonMove_STATUS_DEFENSE_by_percentage(moveData.moveName, moveData.sp, moveData.description, moveData.buffValuePercent);
-        } else if (moveType.equals("RUN")) {
-            new PokemonMove_RUN(moveData.moveName, moveData.sp, moveData.description, (moveData.type), (moveData.category));
-        } else {
-            System.out.println("Invalid move type: " + moveType);
+        // PokemonMove move = null; // Original problematic line
+        PokemonMove createdMove = null; // Use a new variable to store the created move
+                
+        // Ensure moveData and its type are not null to prevent NullPointerExceptions here
+        if (moveData == null || moveData.type == null) {
+            System.err.println("Error: MoveData or MoveData.type is null. Cannot load move.");
+            return null; // Return null if essential data is missing
         }
-        return move;
+
+        String moveTypeStr = moveData.type.name();
+        switch (moveTypeStr) {
+            case "ATTACK":
+                createdMove = new PokemonMove_PHYSICAL_ATTACK(moveData.moveName, moveData.sp, moveData.description, moveData.power, moveData.accuracy, moveData.type, moveData.category);
+                break;
+            case "SPECIAL_ATTACK":
+                createdMove = new PokemonMove_SPECIAL_SPATTACK(moveData.moveName, moveData.sp, moveData.description, moveData.power, moveData.accuracy, moveData.type, moveData.category);
+                break;
+            case "BUFF":
+                if (!moveData.isBuffInPercent) {
+                    createdMove = new PokemonMove_STATUS_BUFF(moveData.moveName, moveData.sp, moveData.description, moveData.buffValueInt, moveData.affectedAttribute, moveData.isBuffInPercent);
+                } else {
+                    createdMove = new PokemonMove_STATUS_BUFF(moveData.moveName, moveData.sp, moveData.description, (int)moveData.buffValuePercent, moveData.affectedAttribute, moveData.isBuffInPercent);
+                }
+                break;
+            case "DEBUFF":
+                createdMove = new PokemonMove_STATUS_DEBUFF(moveData.moveName, moveData.sp, moveData.description, moveData.affectedAttribute, moveData.isBuffInPercent, moveData.buffValuePercent, moveData.accuracy);
+                break;
+            case "DEFENSE":
+                if (moveData.isBuffInPercent) { // Note: Original logic seemed swapped, this assumes buffValuePercent means percentage
+                    createdMove = new PokemonMove_STATUS_DEFENSE_by_percentage(moveData.moveName, moveData.sp, moveData.description, moveData.buffValuePercent);
+                } else {
+                    createdMove = new PokemonMove_STATUS_DEFENSE_by_flat(moveData.moveName, moveData.sp, moveData.description, moveData.buffValueInt);
+                }
+                break;
+            case "RUN":
+                createdMove = new PokemonMove_RUN(moveData.moveName, moveData.sp, moveData.description, moveData.type, moveData.category);
+                break;
+            default:
+                System.out.println("Invalid move type: " + moveTypeStr);
+                break; // createdMove will remain null
+        }
+        return createdMove; // Return the actual created move object
     }
 
     public Map<String, String> useMoveInfo() {

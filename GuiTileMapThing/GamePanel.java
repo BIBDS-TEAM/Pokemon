@@ -11,8 +11,6 @@ import java.awt.*;
 import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.*;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -278,18 +276,19 @@ public class GamePanel extends JPanel implements Runnable {
                 Map<String, MoveData> moveset = new HashMap<>();
                 
                 try {
-                    moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt", 0, 3);
+                    moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                ArrayList<String> movesetNames = new ArrayList<>(moveset.keySet());
 
                 PokemonMove[] moves = new PokemonMove[4];
-                int i = 0;
-                for (MoveData moveData : moveset.values()) {
-                    moves[i] = PokemonMove.loadPokemonMoveByType(moveData);
-                    i++;
-                    if (i == 4) {
-                        break;
+                for (int j = 0; j < moves.length; j++) {
+                    moves[j].loadPokemonMoveByType(moveset.get(movesetNames.get(j)));
+                    System.out.println("moves: " + moveset.get(movesetNames.get(j)));
+                    if (moves[j] == null) {
+                        System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and MovesetParser.");
+                        // Optionally, assign a default "Struggle" move or handle this error state
                     }
                 }
 
