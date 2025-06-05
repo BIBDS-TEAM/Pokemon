@@ -1,5 +1,6 @@
 package Pokemon.PokemonBasics.PokemonAllType;
 
+import Pokemon.PokemonReader.*;
 import Pokemon.PokemonBasics.PokemonBehavior.*;
 import java.util.Map;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 public class Pokemon {
+    protected PokemonData pokemonData;
     protected String name;
     protected PokemonType[] type = new PokemonType[2];
     protected int lvl;
@@ -21,20 +23,12 @@ public class Pokemon {
     protected int spDef;
     protected int spd;
     protected MajorStatus majorStatus;
-    protected MinorStatus[] minorStatus;
-    // index 0 for miniModel and 1 for fightModel
     protected BufferedImage[] model = new BufferedImage[3];
     protected String miniModelPath;
     protected String AllyFightModelPath;
     protected String EnemyFightModelPath;
-    // index 0 for ATTACK, 1 for DEFEND, 2 for TAKE_DAMAGE, 3
-    // for HEAL, 4 for SPECIAL_ATTACK, 5 for SPECIAL_DEFEND, 6 for LVL_UP, 7 for
-    // MOVE, 8 for RESIST, 9 for DODGE
-    protected PokemonSound[] sound = new PokemonSound[10];
+    protected PokemonSound sound;
     protected PokemonMove[] moves = new PokemonMove[4];
-
-    private int temporaryDefenseBoost = 0;
-    private int defenseBoostTurns = 0;
 
     public void print() {
         System.out.println(("Name: " + name));
@@ -49,49 +43,9 @@ public class Pokemon {
         System.out.println("Speed: " + spd);
     }
 
-    public Map<String, String> getPokemonInfo() {
-        Map<String, String> pokemonInfo = new HashMap<>();
-        pokemonInfo.put("name", name);
-        pokemonInfo.put("type", type.toString());
-        pokemonInfo.put("level", String.valueOf(lvl));
-        pokemonInfo.put("maxHP", String.valueOf(maxHp));
-        pokemonInfo.put("HP", String.valueOf(hp));
-        pokemonInfo.put("attack", String.valueOf(atk));
-        pokemonInfo.put("defense", String.valueOf(def));
-        pokemonInfo.put("specialAttack", String.valueOf(spAtk));
-        pokemonInfo.put("specialDefense", String.valueOf(spDef));
-        pokemonInfo.put("speed", String.valueOf(spd));
-        pokemonInfo.put("miniModelPath", miniModelPath);
-        pokemonInfo.put("AllyFightModelPath", AllyFightModelPath);
-        pokemonInfo.put("EnemyFightModelPath", EnemyFightModelPath);
-        return pokemonInfo;
-    }
-
     public void paint(Graphics g, int modelIndex) {
         g.drawImage(model[modelIndex], 0, 0, null);
     }
-
-    public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
-            String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath) {
-        this.name = name;
-        this.type = type;
-        this.lvl = lvl;
-        this.maxHp = maxHp;
-        setHp(maxHp);
-        this.atk = atk;
-        this.def = def;
-        this.spAtk = spAtk;
-        this.spDef = spDef;
-        this.spd = spd;
-        try {
-            model[0] = ImageIO.read(new File(miniModelPath));
-            model[1] = ImageIO.read(new File(AllyFightModelPath));
-            model[2] = ImageIO.read(new File(EnemyFightModelPath));
-        } catch (IOException e) {
-            System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
-        }
-    }
-
     public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
             String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath, PokemonMove[] moves) {
         this.name = name;
@@ -174,7 +128,7 @@ public class Pokemon {
     }
 
     public int getDef() {
-        return def + temporaryDefenseBoost;
+        return def;
     }
 
     public void setDef(int def) {
@@ -203,22 +157,6 @@ public class Pokemon {
 
     public void setSpd(int spd) {
         this.spd = spd;
-    }
-
-    public void applyTemporaryDefenseBoost(int amount, int turns) {
-        this.temporaryDefenseBoost = amount;
-        this.defenseBoostTurns = turns;
-        System.out.println(this.name + "'s defense was greatly boosted for " + turns + " turn(s)!");
-    }
-
-    public void decrementDefenseBoostTurns() {
-        if (this.defenseBoostTurns > 0) {
-            this.defenseBoostTurns--;
-            if (this.defenseBoostTurns == 0) {
-                this.temporaryDefenseBoost = 0;
-                System.out.println(this.name + "'s temporary defense boost wore off.");
-            }
-        }
     }
 
     public void setModel(String filePath, int modelIndex) {
@@ -274,14 +212,6 @@ public class Pokemon {
         if (EnemyFightModel != null)
             this.model[2] = EnemyFightModel;
         else System.err.println("Fight model cannot be null.");
-    }
-
-    public PokemonSound getSound(int soundIndex) {
-        if (soundIndex < 0 || soundIndex >= sound.length) {
-            System.err.println("Invalid sound index (0 - 9): " + soundIndex);
-            return null;
-        }
-        return sound[soundIndex];
     }
 
     public Dimension getPreferredSize(int modelIndex) {

@@ -4,7 +4,7 @@ category: special
 power: 20
 accuracy: 1.0
 pp: 20
-effects: LifeSteal
+effect: LifeSteal
 ---
 name: Acid
 type: poison
@@ -36,7 +36,7 @@ category: physical
 power: 15
 accuracy: 0.85
 pp: 20
-effects: Multiple - 1,5
+effect: Multiple - 1,5
 ---
 name: Barrier
 type: psychic
@@ -84,7 +84,7 @@ category: physical
 power: 50
 accuracy: 0.9
 pp: 10
-effects: Multiple - 2,2
+effect: Multiple - 2,2
 ---
 name: Bubble
 type: water
@@ -108,7 +108,7 @@ category: physical
 power: 18
 accuracy: 0.85
 pp: 15
-effects: Multiple - 1,3
+effect: Multiple - 1,3
 ---
 name: ConfuseRay
 type: ghost
@@ -163,7 +163,7 @@ category: status
 power: null
 accuracy: 0.55
 pp: 20
-effects: Disable
+effect: Disable
 ---
 name: DizzyPunch
 type: normal
@@ -178,7 +178,7 @@ category: physical
 power: 30
 accuracy: 1.0
 pp: 30
-effects: Multiple - 2,2
+effect: Multiple - 2,2
 ---
 name: DoubleSlap
 type: normal
@@ -186,7 +186,7 @@ category: physical
 power: 15
 accuracy: 0.85
 pp: 10
-effects: Multiple - 2,2
+effect: Multiple - 2,2
 ---
 name: DoubleEdge
 type: normal
@@ -194,7 +194,7 @@ category: physical
 power: 100
 accuracy: 1.0
 pp: 15
-effects: Inflict - 0.25
+effect: Inflict - 0.25
 ---
 name: DrillPeck
 type: flying
@@ -231,7 +231,7 @@ category: physical
 power: 170
 accuracy: 1.0
 pp: 5
-effects: Faint
+effect: Faint
 ---
 name: FireBlast
 type: fire
@@ -262,7 +262,7 @@ category: physical
 power: null
 accuracy: 0.15
 pp: 5
-effects: OneHit
+effect: OneHit
 ---
 name: Flamethrower
 type: fire
@@ -294,7 +294,7 @@ category: physical
 power: 15
 accuracy: 0.85
 pp: 20
-effects: Multiple - 1,3
+effect: Multiple - 1,3
 ---
 name: FurySwipes
 type: normal
@@ -302,7 +302,7 @@ category: physical
 power: 18
 accuracy: 0.8
 pp: 15
-effects: Multiple - 1,4
+effect: Multiple - 1,4
 ---
 name: Glare
 type: normal
@@ -326,7 +326,7 @@ category: physical
 power: null
 accuracy: null
 pp: 5
-effects: OneHit
+effect: OneHit
 ---
 name: Gust
 type: normal
@@ -364,7 +364,7 @@ category: physical
 power: null
 accuracy: null
 pp: 5
-effects: OneHit
+effect: OneHit
 ---
 name: HydroPump
 type: water
@@ -434,7 +434,7 @@ category: physical
 power: 20
 accuracy: 1.0
 pp: 15
-effects: LifeSteal
+effect: LifeSteal
 ---
 name: Leer
 type: normal
@@ -482,7 +482,7 @@ category: special
 power: 40
 accuracy: 1.0
 pp: 10
-effects: LifeSteal
+effect: LifeSteal
 ---
 name: MegaKick
 type: normal
@@ -525,7 +525,7 @@ category: special
 power: 120
 accuracy: 1.0
 pp: 10
-effects: Confuse
+effect: Confuse
 ---
 name: PinMissile
 type: bug
@@ -533,7 +533,7 @@ category: physical
 power: 14
 accuracy: 0.85
 pp: 20
-effects: Multiple - 1,4
+effect: Multiple - 1,4
 ---
 name: PoisonGas
 type: poison
@@ -603,7 +603,7 @@ category: status
 power: null
 accuracy: null
 pp: 20
-effects: Heal
+effect: Heal
 ---
 name: RockSlide
 type: rock
@@ -657,7 +657,7 @@ category: physical
 power: 200
 accuracy: 1.0
 pp: 5
-effects: Faint
+effect: Faint
 ---
 name: Sharpen
 type: normal
@@ -728,7 +728,7 @@ category: status
 power: null
 accuracy: null
 pp: 10
-effects: Heal
+effect: Heal
 ---
 name: SpikeCannon
 type: normal
@@ -736,7 +736,7 @@ category: physical
 power: 20
 accuracy: 1.0
 pp: 15
-effects: Multiple - 1,4
+effect: Multiple - 1,4
 ---
 name: Splash
 type: normal
@@ -782,7 +782,7 @@ category: physical
 power: 50
 accuracy: 1.0
 pp: null
-effects: User takes recoil damage. Used when no PP left.
+effect: User takes recoil damage. Used when no PP left.
 ---
 name: StunSpore
 type: grass
@@ -798,7 +798,7 @@ category: physical
 power: 80
 accuracy: 0.8
 pp: 25
-effects: Inflict
+effect: Inflict
 ---
 name: Supersonic
 type: normal
@@ -844,7 +844,7 @@ category: physical
 power: 90
 accuracy: 0.85
 pp: 20
-effects: Inflict
+effect: Inflict
 ---
 name: Teleport
 type: psychic
@@ -913,7 +913,7 @@ category: physical
 power: 25
 accuracy: 1.0
 pp: 20
-effects: Multiple - 2,2
+effect: Multiple - 2,2
 ---
 name: ViceGrip
 type: normal

@@ -1,10 +1,11 @@
 package Pokemon.PokemonReader;
 
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import java.util.Arrays;
 
 public class PokemonData {
     public String name;
-    public String[] types;
+    public PokemonType[] types = new PokemonType[2];
     public int id;
     public int maxHp;
     public int atk;
