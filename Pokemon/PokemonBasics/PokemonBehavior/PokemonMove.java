@@ -38,10 +38,7 @@ public class PokemonMove {
         if (moveCategory.equals("PHYSICAL") || moveCategory.equals("SPECIAL")) {
             setPower(moveData.power);
             setAccuracy(moveData.accuracy);
-        } else {
-            setPower(0);
-            setAccuracy(0);
-        }
+        } 
         setDesc(moveData.description);
         setEffect(moveData.effect);
     }

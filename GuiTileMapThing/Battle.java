@@ -29,8 +29,8 @@ import java.awt.AlphaComposite;
 // import javax.imageio.ImageIO;
 
 public class Battle {
-    protected static Pokemon playerPokemons[];
-    protected static Pokemon enemyPokemon[]; // For NPC trainer battles
+    protected Pokemon playerPokemons[];
+    protected Pokemon enemyPokemon[]; // For NPC trainer battles
     protected Pokemon wildPokemon; // For wild Pokemon encounters
     private boolean isNpcBattle; // Distinguishes between NPC trainer and wild battle
 
@@ -150,7 +150,7 @@ public class Battle {
         }
 
 
-        optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 45, 50);
+        this.optionBox = new MenuWithSelection(menuSelectDecision, battleMenuSelectionX, battleMenuSelectionY, 20f, 45, 50);
         this.movesBox = new MenuWithSelection(menuSelectMoves, battleMoveSelectionX, battleMoveSelectionY, 14f, 285.0, 145);
         // MovesBox and itemBagBox can be initialized when needed or here if always
         // shown initially.
@@ -200,7 +200,7 @@ public class Battle {
     }
 
     public void setMainEnemyPokemon(Pokemon pokemon) {
-        if (enemyPokemon != null && enemyPokemon.length > 0 && enemyPokemon[0] != null) {
+        if (enemyPokemon[0] != null && !isNpcBattle) {
             enemyPokemon[0] = pokemon;
         }
         if (wildPokemon != null) {
@@ -210,7 +210,7 @@ public class Battle {
     }
 
     public void setMainPlayerPokemon(Pokemon pokemon) {
-        if (playerPokemons != null && playerPokemons.length > 0 && playerPokemons[0] != null) {
+        if (playerPokemons[0] != null) {
             playerPokemons[0] = pokemon;
         }
         System.err.println("Warning: There are no main Player pokemon to set");
@@ -587,7 +587,7 @@ public class Battle {
 
     public ArrayList<String> executeAttemptedMove(PokemonMove move, Pokemon user, Pokemon target) {
         // 1 for ally and 2 for enemy
-        Pokemon[] pokemonTemp = new Pokemon[2];
+        Pokemon[] pokemonTemp = { user, target };
         
         ArrayList<String> messages = new ArrayList<String>();
 
@@ -642,8 +642,12 @@ public class Battle {
             }
         }
 
-        setMainPlayerPokemon(pokemonTemp[0]);
-        setMainEnemyPokemon(pokemonTemp[1]);
+        this.playerPokemons[0] = pokemonTemp[0];
+        if(!isNpcBattle) {
+            this.enemyPokemon[0] = pokemonTemp[1];
+        } else {
+            this.wildPokemon = pokemonTemp[1];
+        }
         
         return messages;
     }

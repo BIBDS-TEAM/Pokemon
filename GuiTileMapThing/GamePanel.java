@@ -434,7 +434,7 @@ public class GamePanel extends JPanel implements Runnable {
                 for (Entry<String, MoveData> entry : moveset.entrySet()) {
                     MoveData moveData = entry.getValue();
                     moves[ind] = new PokemonMove(entry.getKey(),moveData);
-                    if (ind < 3) break;
+                    if (ind > 2) break;
                     ind++;
                 }
 
