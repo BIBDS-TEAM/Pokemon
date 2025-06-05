@@ -49,41 +49,7 @@ public class PokemonMove_PHYSICAL_ATTACK extends PokemonMove {
         response.put("sp", String.valueOf(sp));
         response.put("desc", desc);
 
-        if (isSpZero()) {
-            System.out.println("SP not enough");
-
-            response.put("message", "SP not enough");
-            response.put("flag", "false");
-            return response;
-        }
-        useMove();
-
-        Random rand = new Random();
-        double roll = rand.nextDouble();
-        if (roll > accuracy) {
-            System.out.println("Attack missed");
-
-            response.put("error", "Attack missed");
-            response.put("flag", "false");
-            return response;
-        }
-
-        int attackerAtk = attacker.getAtk();
-        int defenderDef = defender.getDef();
-        PokemonType[] attackerTypes = attacker.getType();
-        PokemonType[] defenderTypes = defender.getType();
-
-        double multiplier = 1.0;
-        for (PokemonType attackerType : attackerTypes) {
-            for (PokemonType defenderType : defenderTypes) {
-                multiplier *= PokemonMultiplier.getAttackMultiplier(attackerType, defenderType);
-            }
-        }
-        int damage = (int) ((2 * attacker.getLvl() / 5 + 2) * (attackerAtk * power)
-                * multiplier
-                / ((defenderDef > 0 ? defenderDef : 1) * 50.0 / 2 + 2.0));
-
-        defender.setHp(defender.getHp() - damage);
+        
 
         System.out.println(attacker.getName() + " used " + moveName + " and dealt " + damage + " damage to "
                 + defender.getName() + "!");

@@ -491,20 +491,7 @@ public class Battle {
 
     public Map<String, String> executeAttemptedMove(PokemonMove move) {
         PokemonMoveType moveType = move.getMoveType();
-        Map<String, String> moveAttempted = null;
-        if (moveType == PokemonMoveType.ATTACK || moveType == PokemonMoveType.SPECIAL_ATTACK || moveType == PokemonMoveType.DEBUFF) {
-            moveAttempted = move.move(getMainPlayerPokemon(), getMainEnemyPokemon());
-        } else if (moveType == PokemonMoveType.BUFF || moveType == PokemonMoveType.DEFENSE || moveType == PokemonMoveType.RUN) {
-            moveAttempted = move.move(getMainPlayerPokemon());
-        } else {
-            moveAttempted.put("error", "Invalid move type");
-            moveAttempted.put("flag", "false");
-            moveAttempted.put("message", "Failed to attempt move");
-            moveAttempted.put("moveName", move.getMoveName());
-            moveAttempted.put("moveType", move.getMoveType().toString());
-            moveAttempted.put("desc", move.getDesc());
-        }
-        return moveAttempted;
+        
     }
 
     public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {

@@ -20,7 +20,7 @@ category: status
 power: null
 accuracy: null
 pp: 30
-effect: Speed+1
+effect: Speed + 1
 ---
 name: AuroraBeam
 type: ice
@@ -92,7 +92,7 @@ category: special
 power: 20
 accuracy: 1.0
 pp: 30
-effect: Speed-1
+effect: Speed - 1
 ---
 name: BubbleBeam
 type: water
@@ -100,7 +100,7 @@ category: special
 power: 65
 accuracy: 1.0
 pp: 20
-effect: Speed-1
+effect: Speed - 1
 ---
 name: CometPunch
 type: normal
@@ -132,7 +132,7 @@ category: physical
 power: 10
 accuracy: 1.0
 pp: 35
-effect: Speed-1
+effect: Speed - 1
 ---
 name: Crabhammer
 type: water
@@ -155,15 +155,7 @@ category: status
 power: null
 accuracy: null
 pp: 40
-effect: Defence+1
----
-name: Disable
-type: normal
-category: status
-power: null
-accuracy: 0.55
-pp: 20
-effect: Disable
+effect: Defence + 1
 ---
 name: DizzyPunch
 type: normal
@@ -278,7 +270,7 @@ category: status
 power: null
 accuracy: 0.7
 pp: 20
-effect: Accuracy-1
+effect: Accuracy - 1
 ---
 name: FocusEnergy
 type: normal
@@ -318,7 +310,7 @@ category: status
 power: null
 accuracy: 1.0
 pp: 40
-effect: Attack-1
+effect: Attack - 1
 ---
 name: Guillotine
 type: normal
@@ -341,7 +333,7 @@ category: status
 power: null
 accuracy: null
 pp: 30
-effect: Defence+1
+effect: Defence + 1
 ---
 name: Headbutt
 type: normal
@@ -442,7 +434,7 @@ category: status
 power: null
 accuracy: 1.0
 pp: 30
-effect: Defence-1
+effect: Defence - 1
 ---
 name: Lick
 type: ghost
@@ -474,7 +466,7 @@ category: status
 power: null
 accuracy: null
 pp: 40
-effect: Attack+1
+effect: Attack + 1
 ---
 name: MegaDrain
 type: grass
@@ -649,7 +641,7 @@ category: status
 power: null
 accuracy: 0.85
 pp: 40
-effect: Defence-2
+effect: Defence - 2
 ---
 name: SelfDestruct
 type: normal
@@ -665,7 +657,7 @@ category: status
 power: null
 accuracy: null
 pp: 30
-effect: Attack+1
+effect: Attack + 1
 ---
 name: Sing
 type: normal
@@ -720,7 +712,7 @@ category: status
 power: null
 accuracy: 1.0
 pp: 20
-effect: Accuracy-1
+effect: Accuracy - 1
 ---
 name: SoftBoiled
 type: normal
@@ -774,7 +766,7 @@ category: status
 power: null
 accuracy: 0.95
 pp: 40
-effect: Speed-1
+effect: Speed - 1
 ---
 name: Struggle
 type: normal
@@ -821,7 +813,7 @@ category: status
 power: null
 accuracy: null
 pp: 30
-effect: Attack+2
+effect: Attack + 2
 ---
 name: Tackle
 type: normal
@@ -836,7 +828,7 @@ category: status
 power: null
 accuracy: 1.0
 pp: 30
-effect: Defence-2
+effect: Defence - 2
 ---
 name: TakeDown
 type: normal
@@ -963,5 +955,5 @@ category: status
 power: null
 accuracy: null
 pp: 40
-effect: Defence+1
+effect: Defence + 1
 ---

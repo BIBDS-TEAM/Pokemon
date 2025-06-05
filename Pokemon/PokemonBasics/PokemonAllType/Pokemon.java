@@ -29,6 +29,19 @@ public class Pokemon {
     protected String EnemyFightModelPath;
     protected PokemonSound sound;
     protected PokemonMove[] moves = new PokemonMove[4];
+    
+    protected final int MAX_BUFF_STACK = 5;
+    protected final int MAX_DEBUFF_STACK = 4;
+    // if less than 0 debuff, if more than 0 buff
+    protected int hpStack = 0;
+    protected int atkStack = 0;
+    protected int defStack = 0;
+    protected int spAtkStack = 0;
+    protected int spdStack = 0;
+
+    protected int dotDamage = 0;
+    protected PokemonMoveEffect moveEffect = null;
+    protected int moveEffectStack = 0;
 
     public void print() {
         System.out.println(("Name: " + name));
@@ -90,6 +103,20 @@ public class Pokemon {
         this.type = type;
     }
 
+    public void setMoveEffectStack(int moveEffectStack) {
+        this.moveEffectStack = moveEffectStack;
+    }
+
+    public void decreaseMoveEffectStack() {
+        if (moveEffectStack <= 0)
+            return;
+        this.moveEffectStack -= 1;
+    }
+
+    public int getMoveEffectStack() {
+        return moveEffectStack;
+    }
+
     public int getLvl() {
         return lvl;
     }
@@ -141,6 +168,33 @@ public class Pokemon {
 
     public void setSpAtk(int spAtk) {
         this.spAtk = spAtk;
+    }
+
+    public void setDotDmg(int dotDmg) {
+        if (dotDmg > maxHp)
+            this.dotDamage = maxHp;
+        else if (dotDmg < 0)
+            this.dotDamage = 0;
+        else
+            this.dotDamage = dotDmg;
+    }
+
+    public int getDotDmg() {
+        if (dotDamage > maxHp) return maxHp;
+        else if (dotDamage < 0) return 0;
+        else return dotDamage;
+    }
+
+    public PokemonMoveEffect getMoveEffect() {
+        return moveEffect;
+    }
+
+    public void resetStatusEffect() {
+        moveEffect = null;
+    }
+
+    public void setMoveEffect(PokemonMoveEffect moveEffect) {
+        this.moveEffect = moveEffect;
     }
 
     public int getSpDef() {
@@ -242,39 +296,16 @@ public class Pokemon {
         spd = statsUp(spd);
     }
 
-    public void attack(PokemonMove move, Pokemon defender) {
-        move.move(this, defender);
-    }
+    // public void playSound(int soundIndex) {
+    //     if (soundIndex < 0 || soundIndex >= sound.length) {
+    //         System.err.println("Invalid sound index (0 - 9): " + soundIndex);
+    //         return;
+    //     }
+    //     sound[soundIndex].playSound();
+    // }
 
-    public void defense(PokemonMove move) {
-        move.move(this);
-    }
-
-    public void specialAttack(PokemonMove move, Pokemon defender) {
-        move.move(this, defender);
-    }
-
-    public void specialDefense(PokemonMove move) {
-        move.move(this);
-    }
-
-    public void debuff(PokemonMove move, Pokemon defender) {
-        move.move(this, defender);
-    }
-
-    public void selfBuff(PokemonMove move) {
-        move.move(this);
-    }
-
-    public void othersBuff(PokemonMove move, Pokemon defender) {
-        move.move(this, defender);
-    }
-
-    public void playSound(int soundIndex) {
-        if (soundIndex < 0 || soundIndex >= sound.length) {
-            System.err.println("Invalid sound index (0 - 9): " + soundIndex);
-            return;
-        }
-        sound[soundIndex].playSound();
+    public PokemonMoveCategory getMoveCategory() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMoveCategory'");
     }
 }

@@ -31,7 +31,7 @@ public class PokemonMultiplier {
         {1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 2.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 0.5, 1.0},
     };
 
-    public static double getAttackMultiplier(PokemonType attacker, PokemonType defender) {
+    public static double getAttackMultiplier(PokemonMoveType attacker, PokemonType defender) {
         return attackMultiplier[attacker.ordinal()][defender.ordinal()];
     }
 

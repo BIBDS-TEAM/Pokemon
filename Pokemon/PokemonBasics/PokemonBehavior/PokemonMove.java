@@ -1,11 +1,14 @@
 package Pokemon.PokemonBasics.PokemonBehavior;
 
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
+
 import java.io.File;
 import javax.sound.sampled.*;
 import Pokemon.PokemonReader.MoveData;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.HashMap;
 
 public class PokemonMove {
@@ -17,10 +20,6 @@ public class PokemonMove {
     protected double buffOrDebuffValue;
     protected final double BUFF_PERCENTAGE_PER_STACK = 0.25;
     protected final double DEBUFF_PERCENTAGE_PER_STACK = 0.15;
-    protected final int MAX_BUFF_STACK = 5;
-    protected final int MAX_DEBUFF_STACK = 4;
-    // if less than 0 debuff, if more than 0 buff
-    protected int stack = 0;
 
     protected PokemonMoveType moveType;
     protected PokemonMoveCategory moveCategory;
@@ -52,24 +51,25 @@ public class PokemonMove {
 
     protected String Effect;
 
-    public PokemonMove(String moveName, int maxSp, String desc, PokemonMoveType MoveType, PokemonMoveCategory moveCategory) {
+    public PokemonMove(String moveName, int maxSp, String desc, PokemonMoveType MoveType,
+            PokemonMoveCategory moveCategory) {
         this.moveName = moveName;
         this.maxSp = maxSp;
         this.sp = maxSp;
         this.desc = desc;
         this.moveType = MoveType;
         this.moveCategory = moveCategory;
-        this.pokemonMoveSoundPath = "../Pokemon/audioSave/"+ moveName +".wav";
-        loadStatusEffect();
+        this.pokemonMoveSoundPath = "../Pokemon/audioSave/" + moveName + ".wav";
     }
-    public void playPokemonMoveSound(){
+
+    public void playPokemonMoveSound() {
         new Thread(() -> {
             try {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File(pokemonMoveSoundPath));
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioStream);
                 clip.start();
-                
+
                 clip.addLineListener(event -> {
                     if (event.getType() == LineEvent.Type.STOP) {
                         clip.close();
@@ -81,17 +81,21 @@ public class PokemonMove {
             }
         }).start();
     }
+
     public String getMoveName() {
         return moveName;
     }
+
     public void setmoveName(String moveName) {
         this.moveName = moveName;
     }
 
     public int getPower() {
         if (moveCategory == PokemonMoveCategory.PHYSICAL || moveCategory == PokemonMoveCategory.SPECIAL) {
-           if (power > 0) return power;
-           else throw new NullPointerException("Power cannot be negative");
+            if (power > 0)
+                return power;
+            else
+                throw new NullPointerException("Power cannot be negative");
         }
         throw new NullPointerException("Power is not applicable for this move category");
     }
@@ -108,8 +112,10 @@ public class PokemonMove {
         if (moveCategory == PokemonMoveCategory.RUN) {
             throw new NullPointerException("Accuracy is not applicable for this move category");
         }
-        if (accuracy > 0) return accuracy;
-        else throw new NullPointerException("Accuracy cannot be negative");
+        if (accuracy > 0)
+            return accuracy;
+        else
+            throw new NullPointerException("Accuracy cannot be negative");
     }
 
     public void setAccuracy(double accuracy) {
@@ -119,80 +125,74 @@ public class PokemonMove {
         this.accuracy = accuracy;
     }
 
+    public PokemonMoveCategory getMoveCategory() {
+        return moveCategory;
+    }
+
+    public void setMoveCategory(PokemonMoveCategory moveCategory) {
+        this.moveCategory = moveCategory;
+    }
+
     public double getBuffOrDebuffValue() {
         if (moveCategory == PokemonMoveCategory.STATUS) {
-            if (buffOrDebuffValue > 0) return buffOrDebuffValue;
-            else throw new NullPointerException("Buff or debuff value cannot be negative");
+            if (buffOrDebuffValue > 0)
+                return buffOrDebuffValue;
+            else
+                throw new NullPointerException("Buff or debuff value cannot be negative");
         }
         throw new NullPointerException("Buff or debuff value is not applicable for this move category");
     }
 
     public void setBuffOrDebuffValue(double buffOrDebuffValue) {
         if (moveCategory == PokemonMoveCategory.STATUS) {
-            if (buffOrDebuffValue > 0) this.buffOrDebuffValue = buffOrDebuffValue;
-            else throw new NullPointerException("Buff or debuff value cannot be negative");
+            if (buffOrDebuffValue > 0)
+                this.buffOrDebuffValue = buffOrDebuffValue;
+            else
+                throw new NullPointerException("Buff or debuff value cannot be negative");
         } else {
             throw new NullPointerException("Buff or debuff value is not applicable for this move category");
         }
     }
 
-    public int getStack() {
+    public double getBuffOrDebuffPercentage(int stack) {
         if (moveCategory == PokemonMoveCategory.STATUS) {
-            if (stack > MAX_BUFF_STACK) return MAX_BUFF_STACK;
-            if (stack <= 0) return 0;
-            return stack;
+            if (stack >= 0)
+                return BUFF_PERCENTAGE_PER_STACK * stack;
+            if (stack < 0)
+                return DEBUFF_PERCENTAGE_PER_STACK * stack;
         }
-        if (moveCategory == PokemonMoveCategory.STATUS) {
-            if (stack < MAX_DEBUFF_STACK) return MAX_DEBUFF_STACK;
-            if (stack >= 0) return 0;
-            return stack;
-        }
-        throw new NullPointerException("Stack is not applicable for this move category");
-    }
-
-    public void stackedStack() {
-        if (moveCategory == PokemonMoveCategory.STATUS) {
-            if (stack < MAX_BUFF_STACK) stack++;
-        }
-        if (moveCategory == PokemonMoveCategory.STATUS) {
-            if (stack > MAX_DEBUFF_STACK) stack--;
-        }
-        throw new NullPointerException("Stack is not applicable for this move category");
-    }
-
-    public double getBuffOrDebuffPercentage() {
-        if (moveCategory == PokemonMoveCategory.BUFF) return BUFF_PERCENTAGE_PER_STACK * stack;
-        if (moveCategory == PokemonMoveCategory.DEBUFF) return DEBUFF_PERCENTAGE_PER_STACK * stack;
         throw new NullPointerException("Buff or debuff percentage is not applicable for this move category");
     }
 
     public void setEffect(String effect) {
-        if (effect != null) this.effect = effect;
-        else this.effect = "";
+        if (effect != null)
+            this.effect = effect;
+        else
+            this.effect = "";
     }
 
     public PokemonMoveType getMoveType() {
         return moveType;
     }
+
     public void setMoveType(PokemonMoveType moveType) {
         this.moveType = moveType;
     }
 
     public int getSp() {
-        if (sp < 0) sp = 0;
+        if (sp < 0)
+            sp = 0;
         return sp;
     }
+
     public boolean isSpZero() {
         return sp > 0;
     }
 
-    public void useMove(Pokemon user, Pokemon target) {
+    public void useMove() {
         if (!isSpZero()) {
             System.out.println("SP not enough");
             return;
-        }
-        else {
-
         }
         sp--;
     }
@@ -200,12 +200,13 @@ public class PokemonMove {
     public String getDesc() {
         return desc;
     }
+
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    
+
     public Map<String, String> useMoveInfo() {
-            Map<String, String> response = new HashMap<String, String>();
+        Map<String, String> response = new HashMap<String, String>();
         if (!isSpZero()) {
             System.out.println("SP not enough");
             response.put("error", "SP not enough");
@@ -219,11 +220,175 @@ public class PokemonMove {
         }
     }
 
+    public Pokemon[] moves(Pokemon user, Pokemon target) {
+        Pokemon[] result = new Pokemon[2];
+        if (isSpZero()) {
+            System.out.println("SP not enough");
+            return new Pokemon[] { user, target };
+        }
+        useMove();
+        String moveCategory = String.valueOf(this.moveCategory);
+        if (moveCategory == "PHYSICAL" || moveCategory == "SPECIAL" || moveCategory == "STATUS") {
+            Random rand = new Random();
+            double roll = rand.nextDouble();
+            if (roll > accuracy) {
+                System.out.println("Attack missed");
+                return new Pokemon[] { user, target };
+            }
+
+            if (moveCategory == "PHYSICAL" || moveCategory == "SPECIAL") {
+                double pntMultiplier = PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[0]);
+                pntMultiplier *= PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[1]);
+
+                int attackerAtk, defenderDef, damage;
+                if (moveCategory == "PHYSICAL") {
+                    attackerAtk = user.getAtk();
+                    defenderDef = target.getDef();
+                } else {
+                    attackerAtk = user.getSpAtk();
+                    defenderDef = target.getSpDef();
+                }
+                damage = (int) ((2 * user.getLvl() / 5 + 2) * (attackerAtk * power)
+                        * pntMultiplier
+                        / ((defenderDef > 0 ? defenderDef : 1) * 50.0 / 2 + 2.0));
+
+                roll = rand.nextDouble();
+                if (effect.contains("LIFESTEAL")) {
+                    user.setHp((int) (user.getHp() + damage * 0.5));
+                }
+                if (roll <= 0.1) {
+                    String[] effectAnh = effect.toUpperCase().split("\s,");
+                    PokemonMoveEffect effectType = PokemonMoveEffect.valueOf(effectAnh[0]);
+                    switch (effectType) {
+                        case BURN:
+                            target.setMoveEffectStack(2);
+                            target.setDotDmg((int) (damage * 0.3));
+                            break;
+                        case POISON:
+                            target.setMoveEffectStack(4);
+                            target.setDotDmg((int) (damage * 0.2));
+                            break;
+                        case FLINCH:
+                            target.setMoveEffectStack(1);
+                            target.setMoveEffect(effectType);
+                            break;
+                        case LIFESTEAL:
+                            System.out.println("Skipping Life Steal");
+                            break;
+                        case FREEZE:
+                            target.setMoveEffectStack(1);
+                            target.setMoveEffect(effectType);
+                            break;
+                        case MULTIPLE:
+                            int intRoll = rand.nextInt(Integer.parseInt(effectAnh[1]), Integer.parseInt(effectAnh[2]));
+                            for (int i = 0; i < intRoll; i++) {
+                                target.setHp(target.getHp() - damage);
+                            }
+                            break;
+                        case INVINCIBLE:
+                            target.setMoveEffectStack(1);
+                            target.setMoveEffect(effectType);
+                            break;
+                        case CONFUSE:
+                            user.setHp((int)(user.getHp() - damage * 0.3));
+                            return new Pokemon[] { user, target };
+                        case CRIT:
+                            damage *= 1.7;
+                            break;
+                        case INFLICT:
+                            user.setHp((int)(user.getHp() - damage * 0.4));
+                            break;
+                        case HEAL:
+                            user.setHp((int)(target.getHp() + damage * 0.3));
+                            break;
+                        case ONEHIT:
+                            damage = target.getHp();
+                            break;
+                        default:
+                            System.out.println("No effect");
+                            break;
+                    }
+
+                target.setHp(target.getHp() - damage);
+                }
+            } else if (moveCategory == "STATUS") {
+                String[] effectAnh = effect.toUpperCase().split("\s,");
+                    PokemonMoveEffect effectType = PokemonMoveEffect.valueOf(effectAnh[0]);
+                    int targetEffectStack = target.getMoveEffectStack();
+                    switch (effectType) {
+                        case ATTACK:
+                            switch(effectAnh[2]) {
+                                case "+":
+                                    target.setMoveEffectStack(targetEffectStack + Integer.parseInt(effectAnh[3]));
+                                    target.setAtk((int)(target.getAtk() * (1 + (target.getMoveEffectStack() * BUFF_PERCENTAGE_PER_STACK))));
+                                    break;
+                                case "-":
+                                    target.setMoveEffectStack(targetEffectStack - Integer.parseInt(effectAnh[3]));
+                                    target.setAtk((int)(target.getAtk() * (1 - (target.getMoveEffectStack() * BUFF_PERCENTAGE_PER_STACK))));
+                                    break;
+                            }
+                            break;
+                        case DEFENCE:
+                            switch(effectAnh[2]) {
+                                case "+":
+                                    target.setMoveEffectStack(targetEffectStack + Integer.parseInt(effectAnh[3]));
+                                    target.setDef((int)(target.getDef() * (1 + (target.getMoveEffectStack() * BUFF_PERCENTAGE_PER_STACK))));
+                                    break;
+                                case "-":
+                                    target.setMoveEffectStack(targetEffectStack - Integer.parseInt(effectAnh[3]));
+                                    target.setDef((int)(target.getDef() * (1 - (target.getMoveEffectStack() * BUFF_PERCENTAGE_PER_STACK))));
+                                    break;
+                            }
+                            break;
+                        case SPEED:
+                            switch(effectAnh[2]) {
+                                case "+":
+                                    target.setMoveEffectStack(targetEffectStack + Integer.parseInt(effectAnh[3]));
+                                    target.setSpd((int)(target.getSpd() * (1 + (target.getMoveEffectStack() * BUFF_PERCENTAGE_PER_STACK))));
+                                    break;
+                                case "-":
+                                    target.setMoveEffectStack(targetEffectStack - Integer.parseInt(effectAnh[3]));
+                                    target.setSpd((int)(target.getSpd() * (1 - (target.getMoveEffectStack() * BUFF_PERCENTAGE_PER_STACK))));
+                                    break;
+                            }
+                            break;
+                        case POISON:
+                            target.setMoveEffectStack(targetEffectStack + 2);
+                            target.setDotDmg((int) (target.getMoveEffectStack() * 0.2 * 0.5 * target.getHp()));
+                            break;
+                        case FLINCH:
+                            target.setMoveEffectStack(1);
+                            target.setMoveEffect(effectType);
+                            break;
+                        case INVINCIBLE:
+                            target.setMoveEffectStack(1);
+                            target.setMoveEffect(effectType);
+                            break;
+                        case CONFUSE:
+                            target.setMoveEffect(effectType);
+                            target.setMoveEffectStack(2);
+                            break;
+                        case SLEEP:
+                            target.setMoveEffectStack(1);
+                            target.setMoveEffect(effectType);
+                            break;
+                        case HEAL:
+                            user.setHp((int)(target.getHp() * 1.3));
+                            break;
+                        default:
+                            System.out.println("No effect");
+                            break;
+                    }
+            }
+        }
+        return new Pokemon[] { user, target };
+    }
+
     public void playSound() {
 
     }
 
     public String toString() {
-        return moveName + " " + moveCategory + " "  + maxSp + " " + moveType + " " + sp + " " + desc;
+        return moveName + " " + moveCategory + " " + maxSp + " " + moveType + " " + sp + " " + desc;
     }
 }
