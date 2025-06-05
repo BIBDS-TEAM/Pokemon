@@ -1,19 +1,6 @@
-name: Bob
-position: 10, 20
-direction: left
-spriteFolder: bob
----
-name: Alice
-position: 30, 15
-direction: right
-spriteFolder: alice
----
-name: Carol
-position: 5, 8
-direction: up
-spriteFolder: carol
----
 name: Oek
 position: 40, 25
 direction : down
-spriteFolder : oek
+spriteFolder : Oek
+dialog : " "
+---
