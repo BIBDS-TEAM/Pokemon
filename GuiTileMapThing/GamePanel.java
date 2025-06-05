@@ -2,10 +2,7 @@ package GuiTileMapThing;
 
 import PlayerNPCgitu.NPC;
 import PlayerNPCgitu.Player;
-import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
-import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
-import Pokemon.PokemonReader.*;
 import java.awt.*;
 import java.awt.FontFormatException;
 import java.io.File;
@@ -74,11 +71,32 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean shouldShowInitialText = true;
     private boolean conf;
     //
+    private long lastInputTime = 0;
+    private final long inputDelay = 150;
+    private SaveSlotSubState currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT;
+    private StringBuilder currentName = new StringBuilder(); 
+    private final int MAX_NAME_LENGTH = 7; 
     private boolean newGame;
     private boolean isOpeningPlayed;
     private PokemonMove selectedMove = null;
     private Map<String, String> selectedMoveInfo = new HashMap<>();
-
+    //options
+    String[][] alphabetOptions = { { "a", "b", "c", "d", "e", "f" },
+                { "g", "h", "i", "j", "k", "l" },
+                { "m", "n", "o", "p", "q", "r" },
+                { "s", "t", "u", "v", "w", "x" },
+                { "y", "z", "1", "2", "3", "4" },
+                { "5", "6", "7", "8", "9", "bck" },
+                { "0", "?", "1" ,"!", "Up", "ok"},
+        };
+        String [][]ALPHABETOptions = { { "A", "B", "C", "D", "E", "F" },
+            { "G", "H", "I", "J", "K", "L" },
+            { "M", "N", "O", "P", "Q", "R" },
+            { "S", "T", "U", "V", "W", "X" },
+            { "Y", "Z", "1", "2", "3", "4" },
+            { "5", "6", "7", "8", "9", "bck" },
+            { "0", "?", "1" ,"!", "Lw", "ok"},
+    };
     public GamePanel() {
         npcList.add(npc);
         setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -92,13 +110,7 @@ public class GamePanel extends JPanel implements Runnable {
         String[] menuOptions = { "New Game", "Load Game", "Settings" };
         mainMenu = new MenuWithSelection(menuOptions, 140, 290, 28f);
         mainMenu.setVisible(false);
-        String[][] alphabetOptions = { { "a", "b", "c", "d", "e", "f" },
-                { "g", "h", "i", "j", "k", "l" },
-                { "m", "n", "o", "p", "q", "r" },
-                { "s", "t", "u", "v", "w", "x" },
-                { "y", "z", "1", "2", "3", "4" },
-                { "5", "6", "7", "8", "9", "?" } };
-        nameSelect = new MenuWithSelection(alphabetOptions, 40, 100, 28f);
+        nameSelect = new MenuWithSelection(alphabetOptions, 20, 160, 24f);
         String[] yesNo = {"Yes", "No"};
         confirmation = new MenuWithSelection(yesNo, 420, 320, 24f);
         textBox = new TextBox();
@@ -185,92 +197,91 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 break;
             case SAVESLOT:
-    mainMenu.setVisible(false); 
-    saveSlotMenu.setVisible(true);
+                mainMenu.setVisible(false);
+                saveSlotMenu.setVisible(true);
 
-    if (currentSaveSlotSubState == SaveSlotSubState.SELECTING_SLOT) {
-        if (keyI.upPressed) {
-            saveSlotMenu.moveUp();
-            keyI.upPressed = false;
-        }
-        if (keyI.downPressed) {
-            saveSlotMenu.moveDown();
-            keyI.downPressed = false;
-        }
-        if (keyI.escPressed) { 
-            keyI.escPressed = false;
-            currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT;
-            saveSlotMenu.setVisible(false);
-            textBox.notVisible();
-            confirmation.setVisible(false);
-            currentState = GameState.MAINMENU;
-            mainMenu.setVisible(true);
-            break; 
-        }
-        if (keyI.enterPressed) {
-            keyI.enterPressed = false;
-            selectedSaveSlot = saveSlotMenu.getSelectedSlot();
+                if (currentSaveSlotSubState == SaveSlotSubState.SELECTING_SLOT) {
+                    if (keyI.upPressed) {
+                        saveSlotMenu.moveUp();
+                        keyI.upPressed = false;
+                    }
+                    if (keyI.downPressed) {
+                        saveSlotMenu.moveDown();
+                        keyI.downPressed = false;
+                    }
+                    if (keyI.escPressed) {
+                        keyI.escPressed = false;
+                        currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT;
+                        saveSlotMenu.setVisible(false);
+                        textBox.notVisible();
+                        confirmation.setVisible(false);
+                        currentState = GameState.MAINMENU;
+                        mainMenu.setVisible(true);
+                        break;
+                    }
+                    if (keyI.enterPressed) {
+                        keyI.enterPressed = false;
+                        selectedSaveSlot = saveSlotMenu.getSelectedSlot();
 
-            if (saveSlotMenu.checkSelectedSlot(selectedSaveSlot)) { 
-                if (isNewGame) { 
-                    textBox.setText("Overwrite data in Slot " + (selectedSaveSlot + 1) + "?",g2);
-                    textBox.setVisible();
-                    confirmation.setVisible(true);
-                    currentSaveSlotSubState = SaveSlotSubState.CONFIRMING_OVERWRITE;
-                } else { 
-                    System.out.println("Loading game from slot " + (selectedSaveSlot + 1));
-                    currentState = GameState.OVERWORLD; 
-                    saveSlotMenu.setVisible(false);
-                    textBox.notVisible();
-                    confirmation.setVisible(false);
+                        if (saveSlotMenu.checkSelectedSlot(selectedSaveSlot)) {
+                            if (isNewGame) {
+                                textBox.setText("Overwrite data in Slot " + (selectedSaveSlot + 1) + "?",g2);
+                                textBox.setVisible();
+                                confirmation.setVisible(true);
+                                currentSaveSlotSubState = SaveSlotSubState.CONFIRMING_OVERWRITE;
+                            } else {
+                                System.out.println("Loading game from slot " + (selectedSaveSlot + 1));
+                                currentState = GameState.OVERWORLD;
+                                saveSlotMenu.setVisible(false);
+                                textBox.notVisible();
+                                confirmation.setVisible(false);
+                            }
+                        } else {
+                            if (isNewGame) {
+                                System.out.println("Starting new game in empty slot " + (selectedSaveSlot + 1));
+                                currentState = GameState.NAMINGPLAYER;
+                                saveSlotMenu.setVisible(false);
+                                textBox.notVisible();
+                                confirmation.setVisible(false);
+                            } else {
+                                textBox.setText("Slot " + (selectedSaveSlot + 1) + " is empty. Cannot load.",g2);
+                                textBox.setVisible();
+                            }
+                        }
+                    }
+                } else if (currentSaveSlotSubState == SaveSlotSubState.CONFIRMING_OVERWRITE) {
+                    if (keyI.upPressed) {
+                        confirmation.moveUp();
+                        keyI.upPressed = false;
+                    }
+                    if (keyI.downPressed) {
+                        confirmation.moveDown();
+                        keyI.downPressed = false;
+                    }
+                    if (keyI.escPressed) { 
+                        keyI.escPressed = false;
+                        textBox.notVisible();
+                        confirmation.setVisible(false);
+                        currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT; // Go back to selecting slot
+                    }
+                    if (keyI.enterPressed) {
+                        keyI.enterPressed = false;
+                        String choice = confirmation.select();
+
+                        if (choice.equals("Yes")) {
+                            System.out.println("Overwrite confirmed for slot " + (selectedSaveSlot + 1));
+                            currentState = GameState.NAMINGPLAYER;
+                            saveSlotMenu.setVisible(false);
+                        } else {
+                            System.out.println("Overwrite cancelled for slot " + (selectedSaveSlot + 1));
+                            saveSlotMenu.setVisible(true);
+                        }
+                        textBox.notVisible();
+                        confirmation.setVisible(false);
+                        currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT;
+                    }
                 }
-            } else { // Slot is empty
-                if (isNewGame) { // New Game on an empty slot
-                    System.out.println("Starting new game in empty slot " + (selectedSaveSlot + 1));
-                    // TODO: Implement createNewSaveData(selectedSaveSlot);
-                    currentState = GameState.NAMINGPLAYER; // Or your game start transition
-                    saveSlotMenu.setVisible(false);
-                    textBox.notVisible();
-                    confirmation.setVisible(false);
-                } else { 
-                    textBox.setText("Slot " + (selectedSaveSlot + 1) + " is empty. Cannot load.",g2);
-                    textBox.setVisible();
-                }
-            }
-        }
-    } else if (currentSaveSlotSubState == SaveSlotSubState.CONFIRMING_OVERWRITE) {
-        if (keyI.upPressed) {
-            confirmation.moveUp();
-            keyI.upPressed = false;
-        }
-        if (keyI.downPressed) {
-            confirmation.moveDown();
-            keyI.downPressed = false;
-        }
-        if (keyI.escPressed) { // Cancel confirmation (acts like "No")
-            keyI.escPressed = false;
-            textBox.notVisible();
-            confirmation.setVisible(false);
-            currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT; // Go back to selecting slot
-        }
-        if (keyI.enterPressed) {
-            keyI.enterPressed = false;
-            String choice = confirmation.select();
-
-            if (choice.equals("Yes")) {
-                System.out.println("Overwrite confirmed for slot " + (selectedSaveSlot + 1));
-                currentState = GameState.NAMINGPLAYER; 
-                saveSlotMenu.setVisible(false);
-            } else { 
-                System.out.println("Overwrite cancelled for slot " + (selectedSaveSlot + 1));
-                saveSlotMenu.setVisible(true); 
-            }
-            textBox.notVisible();
-            confirmation.setVisible(false);
-            currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT;
-        }
-    }
-    break;
+                break;
             case NAMINGPLAYER:
                 nameSelect.setVisible(true);
                 if (keyI.upPressed) {
@@ -290,11 +301,33 @@ public class GamePanel extends JPanel implements Runnable {
                     keyI.rightPressed = false;
                 }
                 if (keyI.enterPressed) {
-                    currentState = GameState.OVERWORLD;
-                    stopSound();
-                    isOpeningPlayed = false;
+                    long now = System.currentTimeMillis();
 
+                    if (now - lastInputTime >= inputDelay) {
+                        String selected = nameSelect.getSelectedSelection();
+
+                    if (selected.equals("Up")) {
+                        nameSelect.setOptions(this.ALPHABETOptions);
+                } 
+                    else if (selected.equals("Lw")) {
+                        nameSelect.setOptions(this.alphabetOptions);
+                } 
+                    else if (selected.equals("bck")) {
+                        if (currentName.length() > 0) {
+                            currentName.deleteCharAt(currentName.length() - 1);
+                            }
+                    } 
+                    else if(selected.equals("ok")){
+                        currentState = GameState.OVERWORLD;
+                    }
+                    else {
+                        if (currentName.length() < MAX_NAME_LENGTH) {
+                            currentName.append(selected);
+                    }
                 }
+                lastInputTime = now;
+            }
+        }
                 break;
             case OVERWORLD:
                 switch (overworldState) {
@@ -309,11 +342,11 @@ public class GamePanel extends JPanel implements Runnable {
                         if (keyI.enterPressed) {
                             for (NPC npc : npcList) {
                                 if (npc.isPlayerInRange() && npc.haveDialogue() ) {
-                                    String dialog = npc.getDialog();  
-                                    textBox.setText(dialog, g2); 
+                                    String dialog = npc.getDialog();
+                                    textBox.setText(dialog, g2);
                                     textBox.setVisible();
                                     npc.interact();
-                                    break;  
+                                    break;
                                 }
                             }
                         }
@@ -353,77 +386,77 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
 
-                String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png"; 
-                String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
-                String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
+                // String snorlaxEnemyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ENEMY.png";
+                // String snorlaxAllyFightModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png";
+                // String snorlaxMiniModelPath = "Pokemon/PokemonAssets/SNORLAX_FIGHTMODEL_ALLY.png"; // Or actual mini
 
-                MovesetParser movesetReader = new MovesetParser();
+                // MovesetParser movesetReader = new MovesetParser();
 
-                Map<String, MoveData> moveset = new HashMap<>();
-                
-                try {
-                    moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ArrayList<String> movesetNames = new ArrayList<>(moveset.keySet());
+                // Map<String, MoveData> moveset = new HashMap<>();
 
-                // Inside GamePanel.java, update() method, BATTLETRANSITION case
+                // try {
+                // moveset = movesetReader.loadMovesetFromTxt("Pokemon/PokemonReader/PokemonMovesetList.txt");
+                // } catch (IOException e) {
+                // e.printStackTrace();
+                // }
+                // ArrayList<String> movesetNames = new ArrayList<>(moveset.keySet());
 
-                PokemonMove[] moves = new PokemonMove[4];
-                for (int j = 0; j < moves.length; j++) {
-                    // Correctly assign the returned PokemonMove object
-                    moves[j] = PokemonMove.loadPokemonMoveByType(moveset.get(movesetNames.get(j))); // Changed line
-                    System.out.println("moves[" + j + "]: " + (moves[j] != null ? moves[j].toString() : "null -> " + moveset.get(movesetNames.get(j)))); // For debugging
-                    if (moves[j] == null) {
-                        System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and PokemonMove.java. MoveData: " + moveset.get(movesetNames.get(j)));
-                        // Consider assigning a default move like "Struggle" or skipping
-                        // For example, to prevent nulls, you could assign a basic move:
-                        // moves[j] = new PokemonMove_PHYSICAL_ATTACK("Struggle", 1, "A desperate attack.", 50, 1.0, PokemonMoveType.ATTACK, PokemonMoveCategory.PHYSICAL);
-                    }
-                }
+                // // Inside GamePanel.java, update() method, BATTLETRANSITION case
 
-                PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
-                // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
-                // Snorlax is only Normal.
-                // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
+                // PokemonMove[] moves = new PokemonMove[4];
+                // for (int j = 0; j < moves.length; j++) {
+                // // Correctly assign the returned PokemonMove object
+                // moves[j] = PokemonMove.loadPokemonMoveByType(moveset.get(movesetNames.get(j))); // Changed line
+                // System.out.println("moves[" + j + "]: " + (moves[j] != null ? moves[j].toString() : "null -> " + moveset.get(movesetNames.get(j)))); // For debugging
+                // if (moves[j] == null) {
+                // System.err.println("Warning: Pokemon move at index " + j + " is null after loading. Check MovesetList.txt and PokemonMove.java. MoveData: " + moveset.get(movesetNames.get(j)));
+                // // Consider assigning a default move like "Struggle" or skipping
+                // // For example, to prevent nulls, you could assign a basic move:
+                // // moves[j] = new PokemonMove_PHYSICAL_ATTACK("Struggle", 1, "A desperate attack.", 50, 1.0, PokemonMoveType.ATTACK, PokemonMoveCategory.PHYSICAL);
+                // }
+                // }
 
-                Pokemon playerPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
-                        snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath, moves);
-                // Scale models if necessary (consider doing this once when Pokemon is loaded,
-                // not every battle start)
-                playerPokemon.setAllyFightModel(Battle.scaleImage(playerPokemon.getAllyFightModel(), 2.0));
-                playerPokemon.setEnemyFightModel(Battle.scaleImage(playerPokemon.getEnemyFightModel(), 2.0));
+                // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE }; // Pokemon constructor takes PokemonType[]
+                // // Make sure PokemonType.FIRE is defined if you meant to use it, or remove if
+                // // Snorlax is only Normal.
+                // // PokemonType[] snorlaxType = { PokemonType.NORMAL, PokemonType.FIRE };
 
-                Pokemon enemyPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
-                        snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
-                enemyPokemon.setAllyFightModel(Battle.scaleImage(enemyPokemon.getAllyFightModel(), 2.0));
-                enemyPokemon.setEnemyFightModel(Battle.scaleImage(enemyPokemon.getEnemyFightModel(), 2.0));
+                // Pokemon playerPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
+                // snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath, moves);
+                // // Scale models if necessary (consider doing this once when Pokemon is loaded,
+                // // not every battle start)
+                // playerPokemon.setAllyFightModel(Battle.scaleImage(playerPokemon.getAllyFightModel(), 2.0));
+                // playerPokemon.setEnemyFightModel(Battle.scaleImage(playerPokemon.getEnemyFightModel(), 2.0));
 
-                Pokemon[] playerCards = { playerPokemon }; // Example for wild battle constructor
-                // Pokemon[] enemyCards = { enemyPokemon }; // Example for trainer battle
+                // Pokemon enemyPokemon = new Pokemon("SNORLAX", snorlaxType, 1, 80, 50, 45, 35, 60, 60,
+                // snorlaxMiniModelPath, snorlaxAllyFightModelPath, snorlaxEnemyFightModelPath);
+                // enemyPokemon.setAllyFightModel(Battle.scaleImage(enemyPokemon.getAllyFightModel(), 2.0));
+                // enemyPokemon.setEnemyFightModel(Battle.scaleImage(enemyPokemon.getEnemyFightModel(), 2.0));
 
-                // Assuming a wild battle for this Snorlax example:
-                this.battle = new Battle(playerCards, playerCards);
-                // Or for a trainer battle:
-                // this.battle = new Battle(playerCards, enemyCards);
+                // Pokemon[] playerCards = { playerPokemon }; // Example for wild battle constructor
+                // // Pokemon[] enemyCards = { enemyPokemon }; // Example for trainer battle
+
+                // // Assuming a wild battle for this Snorlax example:
+                // this.battle = new Battle(playerCards, playerCards);
+                // // Or for a trainer battle:
+                // // this.battle = new Battle(playerCards, enemyCards);
 
                 battleState = BattleState.BATTLE_DECISION;
-                        // HIGHLIGHT: Reset textbox state when battle starts and it's decision time
-                        if (this.battle != null) {
-                            this.battle.resetTextBoxStateForNewTurn();
-                        }
-                        currentState = GameState.BATTLE;
-                        currentFPS = normalFPS;
-                        // Reset transition flags
-                        isOpeningPhase = false;
-                        transitionStep = 0;
-                        transitionTimer = 0;
-                        openingStep = 0;
+                // HIGHLIGHT: Reset textbox state when battle starts and it's decision time
+                if (this.battle != null) {
+                    this.battle.resetTextBoxStateForNewTurn();
+                }
+                currentState = GameState.BATTLE;
+                currentFPS = normalFPS;
+                // Reset transition flags
+                isOpeningPhase = false;
+                transitionStep = 0;
+                transitionTimer = 0;
+                openingStep = 0;
 
                 break;
             case OVERWORLDTRANSITION:
-            break;
+                break;
             case BATTLE:
                 switch (battleState) {
                     case BATTLE_DECISION:
@@ -479,7 +512,7 @@ public class GamePanel extends JPanel implements Runnable {
                             }
                         }
                         break;
-                    
+
                     case BATTLE_SELECTMOVE:
                         if (this.battle.movesBox != null) {
                             if (keyI.upPressed) {
@@ -524,7 +557,7 @@ public class GamePanel extends JPanel implements Runnable {
                             }
                         }
                         break;
-                        // Add logic for item selection in the BATTLE_ITEM state
+                    // Add logic for item selection in the BATTLE_ITEM state
                 }
                 // Add logic for other battle states (BATTLE_SELECTMOVE, BATTLE_ALLYMOVE, etc.)
                 // e.g., if (battleState == BattleState.BATTLE_SELECTMOVE &&
@@ -580,11 +613,17 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.setComposite(originalComposite);
                 break;
             case SAVESLOT:
-                saveSlot.draw(g2);
+                saveSlotMenu.draw(g2);
                 break;
             case NAMINGPLAYER:
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight()); 
                 nameSelect.draw(g2);
+                drawNamingScreen(g2);
+
                 break;
+            case OVERWORLDTRANSITION:
+
 
             case OVERWORLD:
                 tileManager.draw(g2);
@@ -630,9 +669,6 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 this.battle.draw(g2, battleState, screenWidth, screenHeight);
-                // g2.setColor(Color.BLACK);
-                // g2.setFont(new Font("Arial", Font.BOLD, 20));
-                // g2.drawString("Battle Start!", 100, 100);
                 switch (battleState) {
                     case BATTLE_DECISION:
                         if (keyI.ePressed) {
@@ -657,7 +693,7 @@ public class GamePanel extends JPanel implements Runnable {
                     case BATTLE_SELECTMOVE:
                         if (keyI.ePressed) {
                             battle.optionBox.select();
-                            
+
 
                             battleState = BattleState.BATTLE_ALLYMOVE;
                         }
@@ -704,8 +740,26 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
     public enum SaveSlotSubState {
-    SELECTING_SLOT,
-    CONFIRMING_OVERWRITE
+        SELECTING_SLOT,
+        CONFIRMING_OVERWRITE
+    }
+    private void drawNamingScreen(Graphics2D g2) {
+    g2.setColor(Color.BLACK);
+    g2.setFont(new Font("Monospaced", Font.BOLD, 24));
+    g2.drawString("YOUR NAME?", 40, 50);
+
+    g2.setFont(new Font("Monospaced", Font.PLAIN, 26));
+    g2.drawString(currentName.toString(), 40, 90); 
+
+    g2.setFont(new Font("Monospaced", Font.BOLD, 28));
+    StringBuilder display = new StringBuilder();
+    for (int i = 0; i < MAX_NAME_LENGTH; i++) {
+        if (i < currentName.length()) {
+            display.append(currentName.charAt(i)).append(" ");
+        } else {
+            display.append("_ ");
+        }
+    }
+    g2.drawString(display.toString(), 40, 120); 
 }
-    private SaveSlotSubState currentSaveSlotSubState = SaveSlotSubState.SELECTING_SLOT;
 }

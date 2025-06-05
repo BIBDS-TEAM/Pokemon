@@ -222,5 +222,8 @@ public class MenuWithSelection {
     protected int getY() { return y; }
     protected int getSelectedRow() { return selectedRow; }
     protected int getSelectedCol() { return selectedCol; }
+    public String getSelectedSelection(){
+        return gridOptions[selectedRow][selectedCol];
+    }
     protected Font getFont() { return font; }
 }

@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 
 public class Player extends Entity {
+    private String playerName;
     private String lastDirection;
     private Clip bumpClip;
     private Clip footstepClip;
@@ -215,5 +216,11 @@ public class Player extends Entity {
         e.printStackTrace();
     }
 }
+    public String getName(){
+        return playerName;
+    }
+    public void setName(String name){
+        playerName = name;
+    }
 }
 

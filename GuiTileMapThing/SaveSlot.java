@@ -13,7 +13,7 @@ public class SaveSlot {
 
     private final int borderTileSize = 16;
     private final int drawTileSize = 32;
-    private final float fontSize = 28f;
+    private final float fontSize = 16f;
 
     private String[] slotTexts = {
             "Save Slot 1 - Empty",
@@ -38,47 +38,53 @@ public class SaveSlot {
         }
     }
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.BLACK);
+        g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, screenWidth, screenHeight); // fill background
 
         g2.setFont(font);
-        g2.setColor(Color.WHITE);
+        g2.setColor(Color.BLACK);
 
         int slotWidth = screenWidth - 200;
-        int slotHeight = 100;
+        int slotHeight = 100; // Height of each slot
         int slotX = 100;
-        int startY = 100;
-        int spacing = 150;
+        int startY = 50;
+        // int spacing = 150; // Original spacing
+        int spacing = 92;  // Modified spacing to make the bottom of the last slot at Y=384
 
         FontMetrics fm = g2.getFontMetrics();
 
         for (int i = 0; i < 3; i++) {
             int slotY = startY + i * spacing;
+            
             drawBorder(g2, slotX, slotY, slotWidth, slotHeight);
             String text = slotTexts[i];
-            int textX = slotX + 40;
-            int textY = slotY + (slotHeight + fm.getAscent()) / 2;
+            int textX = slotX + 40; // Indent text within the slot
+            int textY = slotY + (slotHeight - fm.getHeight()) / 2 + fm.getAscent(); // Center text vertically
             g2.drawString(text, textX, textY);
             if (i == selectedSlot) {
+                // Center arrow vertically within the slot
                 g2.drawImage(selectionArrow, slotX - 50, slotY + (slotHeight - 24) / 2, 24, 24, null);
             }
         }
     }
     private void drawBorder(Graphics2D g2, int x, int y, int width, int height) {
-        int b = borderTileSize;
-        int d = drawTileSize;
+        int b = borderTileSize; // source tile size
+        int d = drawTileSize;   // destination draw size for corners/edges
 
-        g2.drawImage(borderImage, x, y, x + d, y + d, 0, 0, b, b, null);
-        g2.drawImage(borderImage, x + width - d, y, x + width, y + d, b * 2, 0, b * 3, b, null);
-        g2.drawImage(borderImage, x, y + height - d, x + d, y + height, 0, b * 2, b, b * 3, null);
-        g2.drawImage(borderImage, x + width - d, y + height - d, x + width, y + height, b * 2, b * 2, b * 3, b * 3, null);
+        // Corners
+        g2.drawImage(borderImage, x, y, x + d, y + d, 0, 0, b, b, null); // Top-left
+        g2.drawImage(borderImage, x + width - d, y, x + width, y + d, b * 2, 0, b * 3, b, null); // Top-right
+        g2.drawImage(borderImage, x, y + height - d, x + d, y + height, 0, b * 2, b, b * 3, null); // Bottom-left
+        g2.drawImage(borderImage, x + width - d, y + height - d, x + width, y + height, b * 2, b * 2, b * 3, b * 3, null); // Bottom-right
 
-        g2.drawImage(borderImage, x + d, y, x + width - d, y + d, b, 0, b * 2, b, null);
-        g2.drawImage(borderImage, x + d, y + height - d, x + width - d, y + height, b, b * 2, b * 2, b * 3, null);
-        g2.drawImage(borderImage, x, y + d, x + d, y + height - d, 0, b, b, b * 2, null);
-        g2.drawImage(borderImage, x + width - d, y + d, x + width, y + height - d, b * 2, b, b * 3, b * 2, null);
+        // Edges
+        g2.drawImage(borderImage, x + d, y, x + width - d, y + d, b, 0, b * 2, b, null); // Top
+        g2.drawImage(borderImage, x + d, y + height - d, x + width - d, y + height, b, b * 2, b * 2, b * 3, null); // Bottom
+        g2.drawImage(borderImage, x, y + d, x + d, y + height - d, 0, b, b, b * 2, null); // Left
+        g2.drawImage(borderImage, x + width - d, y + d, x + width, y + height - d, b * 2, b, b * 3, b * 2, null); // Right
 
-        g2.drawImage(borderImage, x + d, y + d, x + width - d, y + height - d, b, b, b * 2, b * 2, null);
+        // Center
+        g2.drawImage(borderImage, x + d, y + d, x + width - d, y + height - d, b, b, b * 2, b * 2, null); // Middle
     }
 
     public void moveUp() {
@@ -105,4 +111,3 @@ public class SaveSlot {
     public boolean isVisible() { return visible; }
 
 }
-
