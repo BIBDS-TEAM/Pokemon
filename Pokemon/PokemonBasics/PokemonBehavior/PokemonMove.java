@@ -34,6 +34,7 @@ public class PokemonMove {
         this.moveName = moveData.moveName;
         this.moveCategory = moveData.category;
         this.moveType = moveData.type;
+        this.sp = moveData.sp;
         String moveCategory = String.valueOf(moveData.category).toUpperCase();
         if (moveCategory.equals("PHYSICAL") || moveCategory.equals("SPECIAL")) {
             setPower(moveData.power);
@@ -189,17 +190,15 @@ public class PokemonMove {
     }
 
     public int getSp() {
-        if (sp < 0)
-            sp = 0;
         return sp;
     }
 
     public boolean isSpZero() {
-        return sp > 0;
+        return sp <= 0;
     }
 
     public void useMove() {
-        if (!isSpZero()) {
+        if (isSpZero()) {
             System.out.println("SP not enough");
             return;
         }
@@ -214,22 +213,8 @@ public class PokemonMove {
         this.desc = desc;
     }
 
-    public Map<String, String> useMoveInfo() {
-        Map<String, String> response = new HashMap<String, String>();
-        if (!isSpZero()) {
-            System.out.println("SP not enough");
-            response.put("error", "SP not enough");
-            return response;
-        } else {
-            response.put("MoveName", moveName);
-            response.put("MoveType", moveType.toString());
-            response.put("sp", String.valueOf(sp));
-            response.put("desc", desc);
-            return response;
-        }
-    }
-
     public Pokemon[] move(Pokemon user, Pokemon target) {
+        System.out.println(this.sp);
         if (isSpZero()) {
             System.out.println("SP not enough");
             return new Pokemon[] { user, target };

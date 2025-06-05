@@ -9,10 +9,6 @@ public class MoveData {
     public PokemonMoveCategory category;
     public Integer power;
     public Integer accuracy;
-    public boolean isBuffInPercent;
-    public double buffValuePercent;
-    public int buffValueInt;
-    public String affectedAttribute;
     public int sp;
     public String effect;
     public String description;
@@ -25,10 +21,6 @@ public class MoveData {
                ", category=" + category +
                ", power=" + power +
                ", accuracy=" + accuracy +
-               ", isBuffInPercent=" + isBuffInPercent +
-               ", buffValuePercent=" + buffValuePercent +
-               ", buffValueInt=" + buffValueInt +
-               ", affectedAttribute='" + affectedAttribute + '\'' +
                ", sp=" + sp +
                ", effect='" + effect + '\'' +
                ", description='" + description + '\'' +
