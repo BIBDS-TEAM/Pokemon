@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class GamePanel extends JPanel implements Runnable {
     // game screen
+    private String tutorDiag ="Selamat Datang!" + "%%PAGEBREAK%%" + "Sayangnya... Game ini masin incomplete" + "%%PAGEBREAK%%" + "Jadi untuk sekarang anda akan memilih 6 Pokemon secara langsung." + "%%PAGEBREAK%%" + "Level dan Move Pokemon akan di Random, jadi semoga beruntung!";
     public final int oriTileSize = 16;
     public final int scale = 2;
     public final int tileSize = oriTileSize * scale;
@@ -70,6 +71,8 @@ public class GamePanel extends JPanel implements Runnable {
     private SaveSlot saveSlot;
     private boolean shouldShowInitialText = true;
     private boolean conf;
+    private boolean isTutorial;
+    private boolean isDoneTyping = false;
     //
     private long lastInputTime = 0;
     private final long inputDelay = 150;
@@ -318,7 +321,11 @@ public class GamePanel extends JPanel implements Runnable {
                             }
                     } 
                     else if(selected.equals("ok")){
-                        currentState = GameState.OVERWORLD;
+                        currentState = GameState.TUTORIAL; 
+                        isTutorial = false;
+                            textBox.reset();              
+                        textBox.setVisible();     
+                        currentName.setLength(0);    
                     }
                     else {
                         if (currentName.length() < MAX_NAME_LENGTH) {
@@ -329,6 +336,20 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
                 break;
+            case TUTORIAL:
+
+            if (keyI.enterPressed) {
+                long now = System.currentTimeMillis();
+                if (now - lastInputTime >= inputDelay) {
+                handleTextBoxEnterLogic();
+                if(isDoneTyping){
+                    currentState = GameState.OVERWORLD;
+                    isDoneTyping = false;
+                }
+            }
+                lastInputTime = now;
+            }
+            break;
             case OVERWORLD:
                 switch (overworldState) {
                     case OVERWORLD_ROAM:
@@ -572,7 +593,9 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
+        if (textBox.isVisible()) {
+                    textBox.draw(g2, screenWidth, screenHeight);
+                }
         switch (currentState) {
             case SPLASH:
                 float progress = Math.min(1.0f, (float) splashTimer / splashDuration);
@@ -622,6 +645,13 @@ public class GamePanel extends JPanel implements Runnable {
                 drawNamingScreen(g2);
 
                 break;
+            case TUTORIAL:
+            if(!isTutorial){
+                textBox.setText(tutorDiag, this.g2);
+                textBox.show();
+                isTutorial = true;
+            }
+                break;
             case OVERWORLDTRANSITION:
 
 
@@ -629,9 +659,6 @@ public class GamePanel extends JPanel implements Runnable {
                 tileManager.draw(g2);
                 npc.draw(g2);
                 player.draw(g2);
-                if (textBox.isVisible()) {
-                    textBox.draw(g2, screenWidth, screenHeight);
-                }
                 break;
 
             case BATTLETRANSITION:
@@ -761,5 +788,15 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
     g2.drawString(display.toString(), 40, 120); 
+}
+private void handleTextBoxEnterLogic() {
+    if (!textBox.isDoneTyping()) {
+        textBox.skipToFullPage();
+    } else {
+        textBox.nextPage();
+    }
+    if(textBox.isDoneTyping() && textBox.isLastPage() && !textBox.hasMorePages()){
+        isDoneTyping = true;
+    }
 }
 }

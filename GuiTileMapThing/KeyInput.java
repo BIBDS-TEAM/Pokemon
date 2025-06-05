@@ -58,7 +58,6 @@ public class KeyInput implements KeyListener {
             }
         }
 
-        // --- Movement Keys (WASD) ---
         if (code == KeyEvent.VK_W) {
             upPressed = true;
             if (!directionList.contains("up")) {

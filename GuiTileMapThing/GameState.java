@@ -9,5 +9,6 @@ public enum GameState {
     BATTLETRANSITION,
     BATTLE,
     OVERWORLDTRANSITION,
-    PAUSED;
+    PAUSED,
+    TUTORIAL;
 }
