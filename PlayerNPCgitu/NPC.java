@@ -31,6 +31,9 @@ public class NPC extends Entity {
         loadSprites();
         setDefaultArea();
     }
+    public void setDialog(String d){
+        this.dialogue = d;
+    }
     public String getDialog(){
         return dialogue;
     }

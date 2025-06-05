@@ -2,11 +2,10 @@ package GuiTileMapThing;
 
 import PlayerNPCgitu.NPC;
 import PlayerNPCgitu.Player;
-import Pokemon.PokemonReader.*;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
-
+import Pokemon.PokemonReader.*;
 import java.awt.*;
 import java.awt.FontFormatException;
 import java.io.File;
@@ -225,6 +224,7 @@ public class GamePanel extends JPanel implements Runnable {
                                     String dialog = npc.getDialog();  
                                     textBox.setText(dialog, g2); 
                                     textBox.setVisible();
+                                    npc.interact();
                                     break;  
                                 }
                             }
