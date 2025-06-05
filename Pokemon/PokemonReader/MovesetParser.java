@@ -1,7 +1,7 @@
 package Pokemon.PokemonReader;
 
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
-import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;  // changed from PokemonMoveType
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +17,8 @@ public class MovesetParser {
 
         while ((line = reader.readLine()) != null) {
             line = line.trim();
+            if (line.isEmpty()) continue;  // skip blank lines
+
             if (line.equals("---")) {
                 if (currentMove != null && currentMove.moveName != null) {
                     movesetMap.put(currentMove.moveName, currentMove);
@@ -41,7 +43,7 @@ public class MovesetParser {
                         currentMove.moveName = value;
                         break;
                     case "type":
-                        currentMove.type = PokemonMoveType.valueOf(value.toUpperCase());
+                        currentMove.type = PokemonType.valueOf(value.toUpperCase());
                         break;
                     case "category":
                         currentMove.category = PokemonMoveCategory.valueOf(value.toLowerCase());
@@ -56,7 +58,6 @@ public class MovesetParser {
                         currentMove.sp = Integer.parseInt(value);
                         break;
                     case "effect":
-                    case "effects": 
                         currentMove.effect = value;
                         break;
                 }
