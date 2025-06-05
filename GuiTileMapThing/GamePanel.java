@@ -89,6 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean isOpeningPlayed;
     private PokemonMove selectedMove = null;
     private Map<String, String> selectedMoveInfo = new HashMap<>();
+    private boolean isBattleMessage =false;
     //options
     String[][] alphabetOptions = { { "a", "b", "c", "d", "e", "f" },
                 { "g", "h", "i", "j", "k", "l" },
@@ -454,7 +455,8 @@ public class GamePanel extends JPanel implements Runnable {
                 enemyPokemon.setAllyFightModel(Battle.scaleImage(enemyPokemon.getAllyFightModel(), 2.0));
                 enemyPokemon.setEnemyFightModel(Battle.scaleImage(enemyPokemon.getEnemyFightModel(), 2.0));
 
-                Pokemon[] playerCards = { playerPokemon }; // Example for wild battle constructor
+                Pokemon[] playerCards = { playerPokemon }; 
+                Pokemon[] enemyCards = { enemyPokemon }; // Example for wild battle constructor
                 // Pokemon[] enemyCards = { enemyPokemon }; // Example for trainer battle
 
                 for (int i = 0; i < enemyPokemon.getMoves().length; i++) {
@@ -465,7 +467,7 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
                 // Assuming a wild battle for this Snorlax example:
-                this.battle = new Battle(playerCards, playerCards);
+                this.battle = new Battle(playerCards, enemyCards);
                 // Or for a trainer battle:
                 // this.battle = new Battle(playerCards, enemyCards);
 
@@ -484,6 +486,7 @@ public class GamePanel extends JPanel implements Runnable {
 
                 break;
             case OVERWORLDTRANSITION:
+
                 break;
             case BATTLE:     
                 ArrayList<String> messages = new ArrayList<String>();
@@ -584,14 +587,26 @@ public class GamePanel extends JPanel implements Runnable {
                                     battleState = BattleState.BATTLE_DECISION;
                                     return;
                                 }
-
-                                messages = battle.executeAttemptedMove(selectedMove, this.battle.getMainPlayerPokemon(), this.battle.getMainEnemyPokemon());
-
                                 battleState = BattleState.BATTLE_ALLYMOVE;
                             }
                         }
                         break;
                     case BATTLE_ALLYMOVE:
+                        if(!isBattleMessage){
+                        messages = battle.executeAttemptedMove(g2, selectedMove, this.battle.getMainPlayerPokemon(), this.battle.getMainEnemyPokemon(), battleState);
+                        isBattleMessage = true;
+                        }
+                        System.out.println(messages);
+                          while (messages.size() > 0) {
+                            String message = messages.remove(0);
+                            this.battle.getBattleTextBox().setText(message, this.g2);
+                            this.battle.getBattleTextBox().reset();
+                            this.battle.getBattleTextBox().show();
+                        }
+                        
+                        
+            
+                        battleState = BattleState.BATTLE_ENEMYMOVE;
                         break;
                     case BATTLE_ENEMYMOVE:
                         break;
@@ -743,6 +758,8 @@ public class GamePanel extends JPanel implements Runnable {
                                     break;
                             }
                         }
+                        break;
+                    case BATTLE_ALLYMOVE:
                         break;
                     case BATTLE_ITEM:
                         break;

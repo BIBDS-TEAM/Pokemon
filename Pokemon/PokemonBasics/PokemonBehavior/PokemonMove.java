@@ -175,8 +175,10 @@ public class PokemonMove {
     }
 
     public void setEffect(String effect) {
-        if (effect != null)
+        if (effect != null){
             this.effect = effect;
+            this.effect = effect.toUpperCase();
+    }
         else
             this.effect = "";
     }
@@ -230,6 +232,7 @@ public class PokemonMove {
             }
 
             if (moveCategory == "PHYSICAL" || moveCategory == "SPECIAL") {
+                System.out.println(moveCategory + " attack");
                 double pntMultiplier = PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[0]);
                 pntMultiplier *= PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[1]);
 
@@ -241,12 +244,12 @@ public class PokemonMove {
                     attackerAtk = user.getSpAtk();
                     defenderDef = target.getSpDef();
                 }
-                damage = (int) ((2 * user.getLvl() / 5 + 2) * (attackerAtk * power)
-                        * pntMultiplier
-                        / ((defenderDef > 0 ? defenderDef : 1) * 50.0 / 2 + 2.0));
-
+                damage = (int)((((((10.0 * user.getLvl()) / 5 + 2) * attackerAtk * power) / defenderDef / 4.0 + 2)) * pntMultiplier);
+                System.out.println("DefenderDef: " + defenderDef);
+                System.out.println("Damage: " + damage);
+                System.out.println("effect" + this.effect);
                 roll = rand.nextDouble();
-                if (effect.contains("LIFESTEAL")) {
+                if (effect.equals("LIFESTEAL")) {
                     user.setHp((int) (user.getHp() + damage * 0.5));
                 }
                 if (roll <= 0.1) {
@@ -301,9 +304,9 @@ public class PokemonMove {
                             System.out.println("No effect");
                             break;
                     }
-
-                target.setHp(target.getHp() - damage);
                 }
+                target.setHp(target.getHp() - damage);
+                System.out.println("Target HP: " + target.getHp());
             } else if (moveCategory == "STATUS") {
                 String[] effectAnh = effect.toUpperCase().split("\s,");
                     PokemonMoveEffect effectType = PokemonMoveEffect.valueOf(effectAnh[0]);
@@ -373,6 +376,7 @@ public class PokemonMove {
                             break;
                     }
             }
+            System.out.println(user.getName() + " used " + moveName);
         }
         return new Pokemon[] { user, target };
     }

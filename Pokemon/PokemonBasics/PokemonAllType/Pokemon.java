@@ -59,6 +59,21 @@ public class Pokemon {
     public void paint(Graphics g, int modelIndex) {
         g.drawImage(model[modelIndex], 0, 0, null);
     }
+
+    public Pokemon(Pokemon other) {
+        this.name = other.name;
+        this.type = other.type;
+        this.lvl = other.lvl;
+        this.maxHp = other.maxHp;
+        this.hp = other.hp;
+        this.atk = other.atk;
+        this.def = other.def;
+        this.spAtk = other.spAtk;
+        this.spDef = other.spDef;
+        this.spd = other.spd;
+        this.moves = other.moves;
+    }
+
     public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
             String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath, PokemonMove[] moves) {
         this.name = name;

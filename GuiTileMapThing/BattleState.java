@@ -7,5 +7,6 @@ public enum BattleState {
     BATTLE_ENEMYMOVE,
     BATTLE_SWITCH,
     BATTLE_ITEM,
-    BATTLE_RUN
+    BATTLE_RUN,
+    BATTLE_MESSAGE;
 }

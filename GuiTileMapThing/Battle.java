@@ -85,6 +85,9 @@ public class Battle {
     private final float FLICKER_LOW_OPACITY = 0.4f; // 1.0f (normal) - 0.6f (60% reduction)
     private final float FLICKER_HIGH_OPACITY = 1.0f;
 
+    private ArrayList<String> currentBattleMessages = new ArrayList<>();
+    private boolean battleActionPlayerTurn = true; 
+
     // Constructor for NPC Trainer battles
     public Battle(Pokemon[] playerPokemons, Pokemon[] enemyPokemon) {
         if (playerPokemons == null || playerPokemons.length < 1 || playerPokemons[0] == null) {
@@ -103,7 +106,7 @@ public class Battle {
     }
 
     // Constructor for Wild Pokemon battles
-    public Battle(Pokemon playerPokemon, Pokemon wildPokemon) {
+    public Battle(Pokemon[] playerPokemon, Pokemon wildPokemon) {
         if (playerPokemons == null) {
             throw new IllegalArgumentException("playerPokemon cannot be null Pokemon.");
         }
@@ -111,7 +114,7 @@ public class Battle {
             throw new IllegalArgumentException("wildPokemon cannot be null for wild battles.");
         }
         this.playerPokemons = new Pokemon[1];
-        this.playerPokemons[0] = playerPokemon;
+        this.playerPokemons = playerPokemon;
         this.wildPokemon = wildPokemon;
         this.isNpcBattle = false; // This is a wild Pokemon battle
         this.enemyPokemon = null;
@@ -313,16 +316,7 @@ public class Battle {
         // This is the critical part for the VerifyError.
         Pokemon pokemonToDraw; // This will be locals[4] for this method
         if (this.isNpcBattle) {
-            Pokemon firstActiveNPCPokemon = null;
-            if (this.enemyPokemon != null && this.enemyPokemon.length > 0) {
-                for (Pokemon p : this.enemyPokemon) {
-                    if (p != null && p.getHp() > 0) {
-                        firstActiveNPCPokemon = p;
-                        break;
-                    }
-                }
-            }
-            pokemonToDraw = firstActiveNPCPokemon;
+                pokemonToDraw = this.enemyPokemon[0];
         } else {
             pokemonToDraw = this.wildPokemon;
         }
@@ -585,9 +579,9 @@ public class Battle {
         }
     }
 
-    public ArrayList<String> executeAttemptedMove(PokemonMove move, Pokemon user, Pokemon target) {
+    public ArrayList<String> executeAttemptedMove(Graphics2D g2, PokemonMove move, Pokemon user, Pokemon target, BattleState battleState) {
         // 1 for ally and 2 for enemy
-        Pokemon[] pokemonTemp = { user, target };
+        Pokemon[] pokemonTemp = { new Pokemon(user), new Pokemon(target) };
         
         ArrayList<String> messages = new ArrayList<String>();
 
@@ -596,24 +590,12 @@ public class Battle {
 
         PokemonMoveCategory moveType = move.getMoveCategory();
 
-        pokemonTemp = move.move(user, target);
+        pokemonTemp = move.move(pokemonTemp[0], pokemonTemp[1]);
+        dmgToUser = user.getHp() - pokemonTemp[0].getHp();
+        dmgToTarget = target.getHp() - pokemonTemp[1].getHp();
 
-        dmgToUser = (user.getHp() - pokemonTemp[0].getHp());
-        dmgToTarget = (target.getHp() - pokemonTemp[1].getHp());
-
-        if (pokemonTemp[0].getHp() - user.getHp() > 0) {
-            buffToUser = (pokemonTemp[0].getHp() - user.getHp());
-            buffedStats = "hp";
-        } else if (pokemonTemp[0].getAtk() - user.getAtk() > 0) {
-            buffToUser = (pokemonTemp[0].getAtk() - user.getAtk());
-            buffedStats = "atk";
-        } else if (pokemonTemp[0].getDef() - user.getDef() > 0) {
-            buffToUser = (pokemonTemp[0].getDef() - user.getDef());
-            buffedStats = "def";
-        } else if (pokemonTemp[0].getSpd() - user.getSpd() > 0) {
-            buffToUser = (pokemonTemp[0].getSpd() - user.getSpd());
-            buffedStats = "spd";
-        }
+        
+        System.out.println(dmgToUser);
 
         if (moveType == PokemonMoveCategory.PHYSICAL || moveType == PokemonMoveCategory.SPECIAL) {
             if (dmgToTarget > 0) {
@@ -631,6 +613,21 @@ public class Battle {
             if (dmgToUser > 0) {
                 messages.add(user.getName() + " self damage " + dmgToUser);
             }
+
+            if (pokemonTemp[0].getHp() - user.getHp() > 0) {
+                buffToUser = (pokemonTemp[0].getHp() - user.getHp());
+                buffedStats = "hp";
+            } else if (pokemonTemp[0].getAtk() - user.getAtk() > 0) {
+                buffToUser = (pokemonTemp[0].getAtk() - user.getAtk());
+                buffedStats = "atk";
+            } else if (pokemonTemp[0].getDef() - user.getDef() > 0) {
+                buffToUser = (pokemonTemp[0].getDef() - user.getDef());
+                buffedStats = "def";
+            } else if (pokemonTemp[0].getSpd() - user.getSpd() > 0) {
+                buffToUser = (pokemonTemp[0].getSpd() - user.getSpd());
+                buffedStats = "spd";
+            }
+
             switch (buffedStats) {
                 case "hp" -> messages.add(user.getName() + " recovered " + buffToUser + " hp");
                 case "atk" -> messages.add(user.getName() + "'s attack increased by " + buffToUser);
@@ -642,13 +639,23 @@ public class Battle {
             }
         }
 
-        this.playerPokemons[0] = pokemonTemp[0];
-        if(!isNpcBattle) {
-            this.enemyPokemon[0] = pokemonTemp[1];
+         if (battleState == BattleState.BATTLE_ENEMYMOVE) {
+            
         } else {
-            this.wildPokemon = pokemonTemp[1];
+            this.playerPokemons[0].setHp(this.playerPokemons[0].getHp() - dmgToUser);
+            if (isNpcBattle) this.enemyPokemon[0].setHp(this.enemyPokemon[0].getHp() - dmgToTarget);
+            else this.wildPokemon.setHp(this.wildPokemon.getHp() - dmgToTarget);
         }
         
+        if (dmgToTarget > 0) {
+            System.out.println("t"+dmgToTarget);
+            flickeringSprite(g2, target, "enemy");
+        }
+        if (dmgToUser > 0) {
+            System.out.println("u" + dmgToUser);
+            flickeringSprite(g2, user, "ally");
+        }
+        System.out.println("t"+dmgToTarget);
         return messages;
     }
 
