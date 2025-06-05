@@ -3,7 +3,6 @@ package Pokemon;
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
 import Pokemon.PokemonBasics.PokemonBehavior.*;
 import Pokemon.PokemonReader.*;
-
 import java.util.Map;
 
 public class PokemonFactory {
@@ -20,11 +19,6 @@ public class PokemonFactory {
             return null;
         }
 
-        String[] types = new String[2];
-        for (int i = 0; i < data.types.length; i++) {
-            types[i] = data.types[i].toUpperCase();
-        }
-
         String modelBase = "../Pokemon/TileGambar/" + data.id;
         String miniModelPath = modelBase + "_1.png";
         String allyFightPath = modelBase + "_2.png";
@@ -32,7 +26,7 @@ public class PokemonFactory {
 
         return new Pokemon(
             data.name,
-            types,
+            data.types,
             level,
             data.maxHp,
             data.atk,
