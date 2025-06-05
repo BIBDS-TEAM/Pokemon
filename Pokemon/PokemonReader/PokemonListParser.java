@@ -1,10 +1,9 @@
 package Pokemon.PokemonReader;
 
+import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,11 +40,14 @@ public class PokemonListParser {
                         currentPokemon.name = value.toUpperCase();
                         break;
                     case "TYPE":
-                        // Handle both single type and comma-separated multiple types
-                        currentPokemon.types = new ArrayList<>(Arrays.asList(value.split(",")));
-                        for (int i = 0; i < currentPokemon.types.size(); i++) {
-                            currentPokemon.types.set(i, currentPokemon.types.get(i).trim().toUpperCase());
-                        }
+                        String[] typeParts = value.split(",");
+                        for (int i = 0; i < typeParts.length && i < 2; i++) {
+                    try {
+                        currentPokemon.types[i] = PokemonType.valueOf(typeParts[i].trim().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Warning: Unknown Pokémon type '" + typeParts[i] + "' for Pokémon " + currentPokemon.name + ". Skipping type.");
+                }
+            }
                         break;
                     case "ID":
                         currentPokemon.id = Integer.parseInt(value);

@@ -1,7 +1,7 @@
 package GuiTileMapThing;
 
-import java.awt.FontFormatException;
 import java.awt.*;
+import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -119,7 +119,9 @@ public class TextBox {
     public void setAdditionalHeight(int additionalHeight) {
         this.additionalHeight = additionalHeight;
     }
-
+    public void notVisible(){
+        visible = false;
+    }
     public void setVisible() {
         visible = true;
     }

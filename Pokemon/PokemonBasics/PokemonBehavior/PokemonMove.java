@@ -1,12 +1,15 @@
 package Pokemon.PokemonBasics.PokemonBehavior;
 
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
+import java.io.File;
+import javax.sound.sampled.*;
 import Pokemon.PokemonReader.MoveData;
 
 import java.util.Map;
 import java.util.HashMap;
 
 public class PokemonMove {
+    private Clip clip;
     protected String moveName;
     protected int power;
     protected double accuracy;
@@ -47,6 +50,37 @@ public class PokemonMove {
         this.pokemonMoveSoundPath = pokemonMoveSoundPath;
     }
 
+    protected String Effect;
+
+    public PokemonMove(String moveName, int maxSp, String desc, PokemonMoveType MoveType, PokemonMoveCategory moveCategory) {
+        this.moveName = moveName;
+        this.maxSp = maxSp;
+        this.sp = maxSp;
+        this.desc = desc;
+        this.moveType = MoveType;
+        this.moveCategory = moveCategory;
+        this.pokemonMoveSoundPath = "../Pokemon/audioSave/"+ moveName +".wav";
+        loadStatusEffect();
+    }
+    public void playPokemonMoveSound(){
+        new Thread(() -> {
+            try {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File(pokemonMoveSoundPath));
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioStream);
+                clip.start();
+                
+                clip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        clip.close();
+                    }
+                });
+            } catch (Exception e) {
+                System.err.println("Error playing sound: " + pokemonMoveSoundPath);
+                e.printStackTrace();
+            }
+        }).start();
+    }
     public String getMoveName() {
         return moveName;
     }
@@ -152,10 +186,13 @@ public class PokemonMove {
         return sp > 0;
     }
 
-    public void useMove() {
+    public void useMove(Pokemon user, Pokemon target) {
         if (!isSpZero()) {
             System.out.println("SP not enough");
             return;
+        }
+        else {
+
         }
         sp--;
     }
