@@ -1,11 +1,16 @@
 package GuiTileMapThing;
+
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.ImageIcon;
 
 public class SaveSlot {
     private int screenWidth;
     private int screenHeight;
-    private int selectedSlot = 0;  // 0 = top, 1 = middle, 2 = bottom
+    private int selectedSlot = 0; // 0 = top, 1 = middle, 2 = bottom
     public boolean visible;
     private Image borderImage;
     private Image selectionArrow;
@@ -15,11 +20,7 @@ public class SaveSlot {
     private final int drawTileSize = 32;
     private final float fontSize = 16f;
 
-    private String[] slotTexts = {
-            "Save Slot 1 - Empty",
-            "Save Slot 2 - Empty",
-            "Save Slot 3 - Empty"
-    };
+    private String[] slotTexts = new String[3];
 
     public SaveSlot(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
@@ -30,14 +31,55 @@ public class SaveSlot {
         selectionArrow = new ImageIcon("TileGambar/Arrow_Selection_1.png").getImage();
 
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new java.io.File("Font/Pokemon_Jadul.ttf")).deriveFont(fontSize);
+            font = Font.createFont(Font.TRUETYPE_FONT, new File("Font/Pokemon_Jadul.ttf")).deriveFont(fontSize);
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
         } catch (Exception e) {
             e.printStackTrace();
             font = new Font("Arial", Font.BOLD, 20);
         }
+
+        // Check save files and set initial text for each slot
+        updateSlotTexts();
     }
+
+    /**
+     * Checks if a save file exists and has content. Updates slot text accordingly.
+     */
+    private void updateSlotTexts() {
+        for (int i = 0; i < 3; i++) {
+            // Note: Corrected file name generation from i+1 to (i+1)
+            String fileName = "saveSlot_" + (i + 1) + ".txt";
+            File saveFile = new File(fileName);
+
+            // Check if the file exists AND has content (length > 0)
+            if (saveFile.exists() && saveFile.length() > 0) {
+                // If it's a save file, try to read the player's name
+                try (BufferedReader reader = new BufferedReader(new FileReader(saveFile))) {
+                    String playerName = reader.readLine(); // Read the first line
+                    if (playerName != null && !playerName.trim().isEmpty()) {
+                        // Successfully read a name, so display it
+                        slotTexts[i] = "Save File " + (i + 1) + " - " + playerName.trim();
+                    } else {
+                        // File has content but the first line is blank, treat as empty
+                        slotTexts[i] = "Save Slot " + (i + 1) + " - Empty";
+                    }
+                } catch (IOException e) {
+                    // If there's an error reading the file, treat it as empty for safety
+                    e.printStackTrace();
+                    slotTexts[i] = "Save Slot " + (i + 1) + " - Empty";
+                }
+            } else {
+                // If the file doesn't exist or is empty, mark it as such
+                slotTexts[i] = "Save Slot " + (i + 1) + " - Empty";
+            }
+        }
+    }
+
     public void draw(Graphics2D g2) {
+        if (!visible) {
+            return;
+        }
+
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, screenWidth, screenHeight); // fill background
 
@@ -48,14 +90,13 @@ public class SaveSlot {
         int slotHeight = 100; // Height of each slot
         int slotX = 100;
         int startY = 50;
-        // int spacing = 150; // Original spacing
-        int spacing = 92;  // Modified spacing to make the bottom of the last slot at Y=384
+        int spacing = 92; // Modified spacing
 
         FontMetrics fm = g2.getFontMetrics();
 
         for (int i = 0; i < 3; i++) {
             int slotY = startY + i * spacing;
-            
+
             drawBorder(g2, slotX, slotY, slotWidth, slotHeight);
             String text = slotTexts[i];
             int textX = slotX + 40; // Indent text within the slot
@@ -67,6 +108,7 @@ public class SaveSlot {
             }
         }
     }
+
     private void drawBorder(Graphics2D g2, int x, int y, int width, int height) {
         int b = borderTileSize; // source tile size
         int d = drawTileSize;   // destination draw size for corners/edges
@@ -102,12 +144,29 @@ public class SaveSlot {
     public String getSelectedSlotText() {
         return slotTexts[selectedSlot];
     }
-    public boolean checkSelectedSlot(int a) {
-    String fileName = "saveSlot_" + a + ".txt";
-    java.io.File file = new java.io.File(fileName);
-    return file.exists() && file.isFile();
-}
-    public void setVisible(boolean visible) { this.visible = visible; }
-    public boolean isVisible() { return visible; }
 
+    /**
+     * Checks if a save file for the given slot number exists and has content.
+     * @param slotNumber The slot number (0, 1, or 2).
+     * @return True if the file exists and is not empty, false otherwise.
+     */
+    public boolean checkSelectedSlot(int slotNumber) {
+        // Note: Corrected file name generation
+        String fileName = "saveSlot_" + (slotNumber + 1) + ".txt";
+        File file = new File(fileName);
+        // Check for existence, ensure it's a file, AND that it has content.
+        return file.exists() && file.isFile() && file.length() > 0;
+    }
+
+    public void setVisible(boolean visible) {
+        if (visible) {
+            // Refresh slot texts every time the menu becomes visible
+            updateSlotTexts();
+        }
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
 }

@@ -1,7 +1,7 @@
 package Pokemon.PokemonReader;
 
-import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;
-import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;  // Changed from PokemonMoveType
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
+import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveType;  // Changed from PokemonMoveType
 
 public class MoveData {
     public String moveName;

@@ -1,15 +1,10 @@
 package Pokemon.PokemonBasics.PokemonBehavior;
 
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
-import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
-
-import java.io.File;
-import javax.sound.sampled.*;
 import Pokemon.PokemonReader.MoveData;
-
-import java.util.Map;
+import java.io.File;
 import java.util.Random;
-import java.util.HashMap;
+import javax.sound.sampled.*;
 
 public class PokemonMove {
     private Clip clip;
@@ -37,7 +32,12 @@ public class PokemonMove {
         this.sp = moveData.sp;
         String moveCategory = String.valueOf(moveData.category).toUpperCase();
         if (moveCategory.equals("PHYSICAL") || moveCategory.equals("SPECIAL")) {
-            setPower(moveData.power);
+            if(moveData.power == null){
+                setPower(0);
+            }
+            else {
+                setPower(moveData.power);
+            }
             setAccuracy(moveData.accuracy);
         } 
         setDesc(moveData.description);
@@ -194,7 +194,9 @@ public class PokemonMove {
     public int getSp() {
         return sp;
     }
-
+    public void setSp(int sp){
+        this.sp = sp;
+    }
     public boolean isSpZero() {
         return sp <= 0;
     }
@@ -234,7 +236,9 @@ public class PokemonMove {
             if (moveCategory == "PHYSICAL" || moveCategory == "SPECIAL") {
                 System.out.println(moveCategory + " attack");
                 double pntMultiplier = PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[0]);
-                pntMultiplier *= PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[1]);
+                if(target.getType()[1] != null){
+                    pntMultiplier *= PokemonMultiplier.getAttackMultiplier(moveType, target.getType()[1]);
+                }
 
                 int attackerAtk, defenderDef, damage;
                 if (moveCategory == "PHYSICAL") {

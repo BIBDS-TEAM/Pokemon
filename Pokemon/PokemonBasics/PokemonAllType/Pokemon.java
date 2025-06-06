@@ -1,13 +1,11 @@
 package Pokemon.PokemonBasics.PokemonAllType;
 
-import Pokemon.PokemonReader.*;
 import Pokemon.PokemonBasics.PokemonBehavior.*;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.IOException;
-import java.io.File;
+import Pokemon.PokemonReader.*;
 import java.awt.*;
 import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 import javax.imageio.*;
 
 public class Pokemon {
@@ -29,7 +27,7 @@ public class Pokemon {
     protected String EnemyFightModelPath;
     protected PokemonSound sound;
     protected PokemonMove[] moves = new PokemonMove[4];
-    
+
     protected final int MAX_BUFF_STACK = 5;
     protected final int MAX_DEBUFF_STACK = 4;
     // if less than 0 debuff, if more than 0 buff
@@ -75,7 +73,7 @@ public class Pokemon {
     }
 
     public Pokemon(String name, PokemonType[] type, int lvl, int maxHp, int atk, int def, int spAtk, int spDef, int spd,
-            String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath, PokemonMove[] moves) {
+                   String miniModelPath, String AllyFightModelPath, String EnemyFightModelPath, PokemonMove[] moves) {
         this.name = name;
         this.type = type;
         this.lvl = lvl;
@@ -86,17 +84,52 @@ public class Pokemon {
         this.spAtk = spAtk;
         this.spDef = spDef;
         this.spd = spd;
-        try {
-            model[0] = ImageIO.read(new File(miniModelPath));
-            model[1] = ImageIO.read(new File(AllyFightModelPath));
-            model[2] = ImageIO.read(new File(EnemyFightModelPath));
-        } catch (IOException e) {
-            System.err.println("Failed to load pokemon's model, error: " + e.getMessage());
-        }
         this.moves = moves;
-    }
 
-    // setter & getter
+        // --- START OF DEBUGGING CODE ---
+        System.out.println("------------------------------------------");
+        System.out.println("Attempting to load assets for: " + this.name);
+        try {
+            // Debugging Mini Model
+            File miniFile = new File(miniModelPath);
+            System.out.println("Trying to read mini sprite from: " + miniFile.getAbsolutePath());
+            if(miniFile.exists()) {
+                System.out.println("SUCCESS: Mini sprite file found!");
+                model[0] = ImageIO.read(miniFile);
+            } else {
+                System.err.println("FAILURE: Mini sprite file NOT found!");
+            }
+
+            // Debugging Ally Model
+            File allyFile = new File(AllyFightModelPath);
+            System.out.println("Trying to read ally sprite from: " + allyFile.getAbsolutePath());
+            if(allyFile.exists()) {
+                System.out.println("SUCCESS: Ally sprite file found!");
+                model[1] = ImageIO.read(allyFile);
+            } else {
+                System.err.println("FAILURE: Ally sprite file NOT found!");
+            }
+
+            // Debugging Enemy Model
+            File enemyFile = new File(EnemyFightModelPath);
+            System.out.println("Trying to read enemy sprite from: " + enemyFile.getAbsolutePath());
+            if(enemyFile.exists()) {
+                System.out.println("SUCCESS: Enemy sprite file found!");
+                model[2] = ImageIO.read(enemyFile);
+            } else {
+                System.err.println("FAILURE: Enemy sprite file NOT found!");
+            }
+            System.out.println("------------------------------------------");
+
+        } catch (IOException e) {
+            System.err.println("An IOException occurred. This usually means the file exists but cannot be read.");
+            e.printStackTrace();
+        }
+        // --- END OF DEBUGGING CODE ---
+    }
+    
+    // --- Rest of the file is unchanged ---
+
     public String getName() {
         return name;
     }
@@ -267,7 +300,7 @@ public class Pokemon {
     }
 
     public void setAllyFightModel(BufferedImage AllyFightModel) {
-        if (AllyFightModel != null) 
+        if (AllyFightModel != null)
             this.model[1] = AllyFightModel;
         else System.err.println("Fight model cannot be null.");
     }
@@ -291,12 +324,13 @@ public class Pokemon {
     public int hpStatsUp() {
         return (int)(maxHp + (lvl * 1.5) + 15);
     }
-    public int statsUp(int stat)  {
+
+    public int statsUp(int stat) {
         int statsUp = (int)(stat + (lvl * 1.5) + 5);
         return statsUp;
     }
 
-    public void lvlUp()  {
+    public void lvlUp() {
         lvl++;
         hpStatsUp();
         atk = statsUp(atk);
@@ -305,14 +339,6 @@ public class Pokemon {
         spDef = statsUp(spDef);
         spd = statsUp(spd);
     }
-
-    // public void playSound(int soundIndex) {
-    //     if (soundIndex < 0 || soundIndex >= sound.length) {
-    //         System.err.println("Invalid sound index (0 - 9): " + soundIndex);
-    //         return;
-    //     }
-    //     sound[soundIndex].playSound();
-    // }
 
     public PokemonMoveCategory getMoveCategory() {
         // TODO Auto-generated method stub

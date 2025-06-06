@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 
 public class NPC extends Entity {
     protected GamePanel gp;
-    protected String name;
+    public String name;
     protected String spriteFolder;
     protected Pokemon[] pokemonList = new Pokemon[6];
     protected String dialogue;
@@ -22,12 +22,6 @@ public class NPC extends Entity {
         this.direction = direction;
         this.spriteFolder = spriteFolder;
         this.solidArea = new Rectangle(4, 0, 28, 28);
-        this.dialogue = "Hello player! This is the first part of the text on page 1. "
-                      + "%%PAGEBREAK%% "
-                      + "This text will start on a brand new page, page 2. "
-                      + "Even if page 1 had more space. "
-                      + "%%PAGEBREAK%% "
-                      + "And this is page 3.";
         loadSprites();
         setDefaultArea();
     }
@@ -57,16 +51,29 @@ public class NPC extends Entity {
     }
 
     public boolean isPlayerInRange() {
-        if (gp.player == null) return false;
+    if (gp.player == null) return false;
 
-        int playerX = gp.player.worldX;
-        int playerY = gp.player.worldY;
+    int interactionDistanceInTiles = 2; 
+    int rangeInPixels = interactionDistanceInTiles * gp.tileSize;
 
-        return (Math.abs(worldX - playerX) == gp.tileSize && worldY == playerY) || 
-               (Math.abs(worldY - playerY) == gp.tileSize && worldX == playerX);
+    int distanceX = Math.abs(this.worldX - gp.player.worldX);
+    int distanceY = Math.abs(this.worldY - gp.player.worldY);
+
+    int playerCenterX = gp.player.worldX + (gp.tileSize / 2);
+    int npcCenterX = this.worldX + (gp.tileSize / 2);
+    int playerCenterY = gp.player.worldY + (gp.tileSize / 2);
+    int npcCenterY = this.worldY + (gp.tileSize / 2);
+
+    boolean isHorizontallyAligned = Math.abs(npcCenterY - playerCenterY) < gp.tileSize;
+    boolean isVerticallyAligned = Math.abs(npcCenterX - playerCenterX) < gp.tileSize;
+
+    return (distanceX <= rangeInPixels && isHorizontallyAligned) || (distanceY <= rangeInPixels && isVerticallyAligned);
+}
+    public Pokemon[] getPokemonList(){
+        return pokemonList;
     }
-
-    public void interact() {
+        public void interact() {
+        System.out.println("interacted");
         if (isPlayerInRange()) {
             int dx = gp.player.worldX - worldX;
             int dy = gp.player.worldY - worldY;
@@ -77,7 +84,7 @@ public class NPC extends Entity {
                 direction = dy > 0 ? "down" : "up";
             }
             if (dialogue != null) {
-                gp.textBox.setText(dialogue, gp.g2);
+                gp.textBox.setText(dialogue);
             }
         }
     }

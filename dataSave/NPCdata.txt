@@ -1,6 +1,0 @@
-name: Oek
-position: 40, 25
-direction : down
-spriteFolder : Oek
-dialog : " "
----

@@ -40,7 +40,7 @@ public class NPCLoader {
                 } else if (line.startsWith("spriteFolder:")) {
                     spriteFolder = line.substring(13).trim();
                 } else if (line.startsWith("dialog:")) {
-                    dialog = line.substring(7).trim(); // no need to strip quotes
+                    dialog = line.substring(7).trim(); 
                 }
             }
             if (!name.isEmpty()) {

@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PokemonListParser {
-    public static Map<String, PokemonData> loadPokemonFromTxt(String filePath) throws IOException {
+    public static Map<String, PokemonData> loadPokemonFromTxt() throws IOException {
+        String filePath = "../Pokemon/dataSave/PokemonList.txt";
         Map<String, PokemonData> pokemonMap = new HashMap<>();
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;

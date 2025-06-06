@@ -1,6 +1,7 @@
 package GuiTileMapThing;
 
 public enum BattleState {
+    BATTLE_START,
     BATTLE_DECISION,
     BATTLE_SELECTMOVE,
     BATTLE_ALLYMOVE,
@@ -8,5 +9,9 @@ public enum BattleState {
     BATTLE_SWITCH,
     BATTLE_ITEM,
     BATTLE_RUN,
-    BATTLE_MESSAGE;
+    BATTLE_MESSAGE,
+    BATTLE_LOSE,
+    BATTLE_WIN,
+    BATTLE_END,
+    BATTLE_CHANGEPOKEMON,
 }

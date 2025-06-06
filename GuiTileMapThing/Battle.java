@@ -1,28 +1,20 @@
 package GuiTileMapThing;
 
 import Pokemon.PokemonBasics.PokemonAllType.Pokemon;
-import Pokemon.PokemonBasics.PokemonAllType.PokemonType;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMove;
 import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
-import Pokemon.PokemonBasics.PokemonBehavior.PokemonMoveCategory;
-
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.awt.FontFormatException;
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.awt.GraphicsEnvironment; // Required for font registration
-import java.awt.AlphaComposite;
+import java.util.Random;
 
 // It's good practice to have ImageIO import if you were to load images directly here,
 // but Pokemon class seems to handle its own image loading.
@@ -55,14 +47,20 @@ public class Battle {
     private final int enemyPokemonHpBarX = 50;
     private final int enemyPokemonHpBarY = 100;
 
-    private int allyPokemonSpriteX = 350;
-    private int allyPokemonSpriteY = 30;
-    private int enemyPokemonSpriteX = 60;
-    private int enemyPokemonSpriteY = 230;
+    // --- FIX START: Swapped the sprite coordinates ---
+
+    // The ally (player's) sprite should be at the bottom-left.
+    private int allyPokemonSpriteX = 60;
+    private int allyPokemonSpriteY = 230;
+
+    // The enemy's sprite should be at the top-right.
+    private int enemyPokemonSpriteX = 350;
+    private int enemyPokemonSpriteY = 30;
+
+    // --- FIX END ---
 
     private int battleMenuSelectionX = 225;
     private int battleMenuSelectionY = 363;
-
     private int battleMoveSelectionX = 235;
     private int battleMoveSelectionY = 348;
 
@@ -74,6 +72,9 @@ public class Battle {
     private int battleMoveSelectionWidth = 350;
     private int battleMoveSelectionHeight = 150;
     
+    private Pokemon pokemonToFlicker = null;
+    private long flickerStartTime = 0;
+    private final long FLICKER_DURATION = 500; 
     private float currentFlickerOpacity = 1.0f;
     private int currentFlickerXOffset = 0;
     private long lastFlickerStateUpdateTime = 0;
@@ -89,35 +90,37 @@ public class Battle {
     private boolean battleActionPlayerTurn = true; 
 
     // Constructor for NPC Trainer battles
-    public Battle(Pokemon[] playerPokemons, Pokemon[] enemyPokemon) {
-        if (playerPokemons == null || playerPokemons.length < 1 || playerPokemons[0] == null) {
-            throw new IllegalArgumentException(
-                    "playerPokemons array cannot be null, empty, or have a null first Pokemon.");
+    public Battle(Pokemon[] playerPokemons, Pokemon[] enemyPokemon, TextBox sharedTextBox) {
+         if (playerPokemons == null || playerPokemons.length < 1 || playerPokemons[0] == null) {
+            throw new IllegalArgumentException("playerPokemons array cannot be null, empty, or have a null first Pokemon.");
         }
         if (enemyPokemon == null || enemyPokemon.length < 1 || enemyPokemon[0] == null) {
-            throw new IllegalArgumentException(
-                    "enemyPokemon array cannot be null, empty, or have a null first Pokemon for NPC battles.");
+            throw new IllegalArgumentException("enemyPokemon array cannot be null, empty, or have a null first Pokemon for NPC battles.");
         }
         this.playerPokemons = playerPokemons;
         this.enemyPokemon = enemyPokemon;
-        this.isNpcBattle = true; // This is an NPC trainer battle
+        this.isNpcBattle = true;
         this.wildPokemon = null;
-        initializeAssets();
+
+        // --- KEY CHANGES ---
+        this.battleTextBox = sharedTextBox; // Use the shared textbox
+        initializeAssets(); // Call your asset initializer
     }
 
     // Constructor for Wild Pokemon battles
-    public Battle(Pokemon[] playerPokemon, Pokemon wildPokemon) {
+    public Battle(Pokemon[] playerPokemon, Pokemon wildPokemon,TextBox sharedTextBox) {
         if (playerPokemons == null) {
             throw new IllegalArgumentException("playerPokemon cannot be null Pokemon.");
         }
         if (wildPokemon == null) {
             throw new IllegalArgumentException("wildPokemon cannot be null for wild battles.");
         }
-        this.playerPokemons = new Pokemon[1];
         this.playerPokemons = playerPokemon;
         this.wildPokemon = wildPokemon;
-        this.isNpcBattle = false; // This is a wild Pokemon battle
+        this.isNpcBattle = false;
         this.enemyPokemon = null;
+
+        this.battleTextBox = sharedTextBox;
         initializeAssets();
     }
 
@@ -159,9 +162,6 @@ public class Battle {
         // shown initially.
         this.optionBox.setVisible(false); // GamePanel will control visibility
         this.movesBox.setVisible(false);
-
-        // HIGHLIGHT: Initialize the battleTextBox
-        this.battleTextBox = new TextBox();
     }
 
     public Pokemon getMainEnemyPokemon() { 
@@ -188,19 +188,12 @@ public class Battle {
     // This method determines the current opponent to draw.
     private Pokemon getCurrentOpponentForDrawing() {
         if (this.isNpcBattle) {
-            if (this.enemyPokemon != null) {
-                for (Pokemon p : this.enemyPokemon) {
-                    if (p != null && p.getHp() > 0) {
-                        return p; // Return the first active NPC Pokemon
-                    }
-                }
-            }
-            return null; // All NPC Pokemon fainted or array is null
-        } else {
-            // Wild battle
-            return this.wildPokemon;
-        }
+        return (this.enemyPokemon != null && this.enemyPokemon[0].getHp() > 0) ? this.enemyPokemon[0] : null;
+    } else {
+        return this.wildPokemon;
     }
+}
+
 
     public void setMainEnemyPokemon(Pokemon pokemon) {
         if (enemyPokemon[0] != null && !isNpcBattle) {
@@ -224,58 +217,74 @@ public class Battle {
     }
 
     public void draw(Graphics2D g2, BattleState currentBattleState, int panelWidth, int panelHeight) {
-        Pokemon currentEnemyToDraw = getCurrentOpponentForDrawing();
-        if (currentEnemyToDraw != null) {
-            drawPokemonSpriteWithIndex(g2, currentEnemyToDraw, 2); // 2 for enemy
-            drawEnemyPokemonHpBar(g2, 130, 20); // Uses internal logic to get the Pokemon
-        } else {
-            // Optionally draw a placeholder if no enemy
-            if (font != null)
-                g2.setFont(font.deriveFont(Font.PLAIN, 12f));
-            else
-                g2.setFont(new Font("Arial", Font.PLAIN, 12));
-            g2.setColor(Color.GRAY);
-            g2.drawString("No Opponent", enemyPokemonSpriteX + 10, enemyPokemonSpriteY + 30);
-        }
+    // --- ENEMY DRAWING LOGIC ---
+    Pokemon currentEnemyToDraw = getCurrentOpponentForDrawing();
+    if (currentEnemyToDraw != null) {
+        drawPokemonSpriteWithIndex(g2, currentEnemyToDraw, 2); // 2 for enemy
+        // CHANGE: Pass the 'currentEnemyToDraw' object, which is the active, non-fainted one.
+        drawEnemyPokemonHpBar(g2, currentEnemyToDraw, 130, 20);
+    } else {
+        // This part for when all enemies are fainted is fine.
+        if (font != null)
+            g2.setFont(font.deriveFont(Font.PLAIN, 12f));
+        else
+            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.setColor(Color.GRAY);
+        g2.drawString("No Opponent", enemyPokemonSpriteX + 10, enemyPokemonSpriteY + 30);
+    }
 
-        Pokemon currentPlayerPkmn = getMainPlayerPokemon();
-        if (currentPlayerPkmn != null) {
-            drawPokemonSpriteWithIndex(g2, currentPlayerPkmn, 1); // 1 for ally
-            drawAllyPokemonHpBar(g2, 130, 20); // Uses internal logic for player Pokemon
-        } else {
-            // Optionally draw a placeholder if no player Pokemon
-            if (font != null)
-                g2.setFont(font.deriveFont(Font.PLAIN, 12f));
-            else
-                g2.setFont(new Font("Arial", Font.PLAIN, 12));
-            g2.setColor(Color.GRAY);
-            g2.drawString("No Ally", allyPokemonSpriteX + 10, allyPokemonSpriteY + 30);
-        }
+    // --- ALLY DRAWING LOGIC ---
+    Pokemon currentPlayerPkmn = getMainPlayerPokemon();
+    // ADDED: A check to ensure we don't draw the UI for a fainted player Pokémon.
+    if (currentPlayerPkmn != null && currentPlayerPkmn.getHp() > 0) {
+        drawPokemonSpriteWithIndex(g2, currentPlayerPkmn, 1); // 1 for ally
+        // CHANGE: Pass the 'currentPlayerPkmn' object to the HP bar method.
+        drawAllyPokemonHpBar(g2, currentPlayerPkmn, 130, 20);
+    } else {
+        // This part for when the player's Pokémon is fainted is fine.
+        if (font != null)
+            g2.setFont(font.deriveFont(Font.PLAIN, 12f));
+        else
+            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.setColor(Color.GRAY);
+        g2.drawString("No Ally", allyPokemonSpriteX + 10, allyPokemonSpriteY + 30);
+    }
 
-        battleTextBox.show();
-        drawBattleTextBox(g2, currentBattleState, panelWidth, panelHeight);
-
-        if (currentBattleState == BattleState.BATTLE_DECISION) {
-            // optionBox is drawn only when it's decision time.
-            // Its visibility is managed internally by MenuWithSelection or explicitly by Battle logic.
-            // Ensure optionBox.setVisible(true) is called when BATTLE_DECISION starts.
-            movesBox.setVisible(false);
-            if (optionBox != null) { // Make sure optionBox is initialized
-                 optionBox.setVisible(true); // Ensure it's visible during BATTLE_DECISION
-                 drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
-            }
-        } else if (currentBattleState == BattleState.BATTLE_SELECTMOVE) {
-            optionBox.setVisible(false);
-            if (movesBox != null) {
-                movesBox.setVisible(true);
-                drawBattleMovesBox(g2, battleMoveSelectionX, battleMoveSelectionY);
-            }
+    // --- FLICKER AND OTHER UI LOGIC (This part is unchanged) ---
+    if (pokemonToFlicker != null) {
+        long elapsedTime = System.currentTimeMillis() - flickerStartTime;
+        if (elapsedTime < FLICKER_DURATION) {
+            String alliance = (pokemonToFlicker == getMainPlayerPokemon()) ? "ally" : "enemy";
+            flickeringSprite(g2, pokemonToFlicker, alliance);
         } else {
-            if (optionBox != null) {
-                optionBox.setVisible(false); // Hide optionBox in other states
-            }
+            pokemonToFlicker = null;
         }
     }
+    if (pokemonToFlicker != getMainEnemyPokemon()) {
+        drawPokemonSpriteWithIndex(g2, getCurrentOpponentForDrawing(), 2);
+    }
+    if (pokemonToFlicker != getMainPlayerPokemon()) {
+        drawPokemonSpriteWithIndex(g2, getMainPlayerPokemon(), 1);
+    }
+    drawBattleTextBox(g2, currentBattleState, panelWidth, panelHeight);
+    if (currentBattleState == BattleState.BATTLE_DECISION) {
+        movesBox.setVisible(false);
+        if (optionBox != null) {
+            optionBox.setVisible(true);
+            drawBattleMenuSelection(g2, battleMenuSelectionX, battleMenuSelectionY);
+        }
+    } else if (currentBattleState == BattleState.BATTLE_SELECTMOVE) {
+        optionBox.setVisible(false);
+        if (movesBox != null) {
+            movesBox.setVisible(true);
+            drawBattleMovesBox(g2, battleMoveSelectionX, battleMoveSelectionY);
+        }
+    } else {
+        if (optionBox != null) {
+            optionBox.setVisible(false); // Hide optionBox in other states
+        }
+    }
+}
 
     public void drawPokemonSpriteWithIndex(Graphics2D g2, Pokemon pokemon, int index) {
         int pokemonPosX, pokemonPosY;
@@ -311,157 +320,147 @@ public class Battle {
     }
 
     // Reverted signature to (Graphics2D, int, int) as implied by error
-    public void drawEnemyPokemonHpBar(Graphics2D g2, int width, int height) {
-        // Determine the Pokemon whose HP bar needs to be drawn.
-        // This is the critical part for the VerifyError.
-        Pokemon pokemonToDraw; // This will be locals[4] for this method
-        if (this.isNpcBattle) {
-                pokemonToDraw = this.enemyPokemon[0];
-        } else {
-            pokemonToDraw = this.wildPokemon;
-        }
+    public void drawEnemyPokemonHpBar(Graphics2D g2, Pokemon pokemonToDraw, int width, int height) {
+    // CHANGE: This method now accepts a Pokemon object directly.
+    // REMOVED: The old logic that tried to find 'this.enemyPokemon[0]'.
 
-        // If pokemonToDraw is null, we can't draw its HP bar.
-        if (pokemonToDraw == null) {
-            // System.err.println("drawEnemyPokemonHpBar: pokemonToDraw is null.");
-            // Optionally draw a placeholder or message indicating no opponent
-            if (font != null)
-                g2.setFont(font.deriveFont(Font.PLAIN, 12f));
-            else
-                g2.setFont(new Font("Arial", Font.PLAIN, 12));
-            g2.setColor(Color.RED);
-            g2.drawString("NO ENEMY TARGET", enemyPokemonHpBarX, enemyPokemonHpBarY + 10);
-            return;
-        }
-
-        // Rest of the drawing logic using 'pokemonToDraw'
-        float hpRatio = (pokemonToDraw.getMaxHp() > 0) ? (float) pokemonToDraw.getHp() / pokemonToDraw.getMaxHp() : 0;
-        hpRatio = Math.max(0, Math.min(1, hpRatio));
-
-        Color barColor = hpRatio > 0.5 ? Color.GREEN : hpRatio > 0.2 ? Color.YELLOW : Color.RED;
-
-        int paddingX = enemyPokemonHpBarX - 14;
-        int paddingY = enemyPokemonHpBarY - 18;
-        int borderWidth = width + 36;
-        int borderHeight = height + 16;
-
-        g2.setColor(Color.BLACK);
-        g2.fillRect(paddingX, paddingY, 6, borderHeight);
-        g2.fillRect(paddingX + 2, paddingY + borderHeight - 1, borderWidth, 6);
-        g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 7, 4, 3);
-        g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 4, 10, 3);
-        g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 1, 15, 3);
-        g2.fillRect(paddingX + borderWidth, paddingY + borderHeight + 2, 19, 3);
-
-        g2.setColor(Color.BLACK);
+    // If pokemonToDraw is null, we can't draw its HP bar.
+    if (pokemonToDraw == null) {
         if (font != null)
-            g2.setFont(font.deriveFont(Font.BOLD, 12f));
+            g2.setFont(font.deriveFont(Font.PLAIN, 12f));
         else
-            g2.setFont(new Font("Arial", Font.BOLD, 12));
-        g2.drawString("HP:", enemyPokemonHpBarX, enemyPokemonHpBarY);
-
-        int hpBarActualWidth = borderWidth - 52;
-        g2.setColor(Color.DARK_GRAY);
-        g2.fillRect(enemyPokemonHpBarX + 36, enemyPokemonHpBarY - 10, hpBarActualWidth, 12);
-
-        g2.setColor(barColor);
-        g2.fillRect(enemyPokemonHpBarX + 37, enemyPokemonHpBarY - 9, (int) ((hpBarActualWidth - 2) * hpRatio), 10);
-
-        g2.setColor(Color.BLACK);
-        g2.drawRect(enemyPokemonHpBarX + 36, enemyPokemonHpBarY - 10, hpBarActualWidth, 12);
-
-        int nameAndLvlPadding = 24;
-        String pokemonName = pokemonToDraw.getName();
-        String pokemonLvl = "Lv." + pokemonToDraw.getLvl();
-        g2.setColor(Color.BLACK);
-        if (font != null)
-            g2.setFont(font.deriveFont(Font.PLAIN, 18f));
-        else
-            g2.setFont(new Font("Arial", Font.PLAIN, 18));
-        g2.drawString(pokemonName, enemyPokemonHpBarX, enemyPokemonHpBarY - (nameAndLvlPadding * 9 / 5) - 4);
-
-        if (font != null)
-            g2.setFont(font.deriveFont(Font.BOLD, 14f));
-        else
-            g2.setFont(new Font("Arial", Font.BOLD, 14));
-        g2.drawString(pokemonLvl, enemyPokemonHpBarX + 10, enemyPokemonHpBarY - (nameAndLvlPadding * 7 / 8) - 4);
+            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.setColor(Color.RED);
+        g2.drawString("NO ENEMY TARGET", enemyPokemonHpBarX, enemyPokemonHpBarY + 10);
+        return;
     }
 
-    // Reverted signature
-    public void drawAllyPokemonHpBar(Graphics2D g2, int width, int height) {
-        Pokemon pokemonToDraw = getMainPlayerPokemon(); // Get the current player's Pokemon
+    // Rest of the drawing logic using 'pokemonToDraw' (This part is unchanged)
+    float hpRatio = (pokemonToDraw.getMaxHp() > 0) ? (float) pokemonToDraw.getHp() / pokemonToDraw.getMaxHp() : 0;
+    hpRatio = Math.max(0, Math.min(1, hpRatio));
 
-        if (pokemonToDraw == null) {
-            // System.err.println("drawAllyPokemonHpBar: pokemonToDraw is null (player's
-            // main Pokemon).");
-            if (font != null)
-                g2.setFont(font.deriveFont(Font.PLAIN, 12f));
-            else
-                g2.setFont(new Font("Arial", Font.PLAIN, 12));
-            g2.setColor(Color.RED);
-            g2.drawString("NO ALLY TARGET", allyPokemonHpBarX, allyPokemonHpBarY + 10);
-            return;
-        }
+    Color barColor = hpRatio > 0.5 ? Color.GREEN : hpRatio > 0.2 ? Color.YELLOW : Color.RED;
 
-        // Rest of the drawing logic using 'pokemonToDraw'
-        float hpRatio = (pokemonToDraw.getMaxHp() > 0) ? (float) pokemonToDraw.getHp() / pokemonToDraw.getMaxHp() : 0;
-        hpRatio = Math.max(0, Math.min(1, hpRatio));
+    int paddingX = enemyPokemonHpBarX - 14;
+    int paddingY = enemyPokemonHpBarY - 18;
+    int borderWidth = width + 36;
+    int borderHeight = height + 16;
 
-        Color barColor = hpRatio > 0.5 ? Color.GREEN : hpRatio > 0.2 ? Color.YELLOW : Color.RED;
+    g2.setColor(Color.BLACK);
+    g2.fillRect(paddingX, paddingY, 6, borderHeight);
+    g2.fillRect(paddingX + 2, paddingY + borderHeight - 1, borderWidth, 6);
+    g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 7, 4, 3);
+    g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 4, 10, 3);
+    g2.fillRect(paddingX + borderWidth, paddingY + borderHeight - 1, 15, 3);
+    g2.fillRect(paddingX + borderWidth, paddingY + borderHeight + 2, 19, 3);
 
-        int borderWidth = width + 36;
-        int borderHeight = height + 26;
+    g2.setColor(Color.BLACK);
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.BOLD, 12f));
+    else
+        g2.setFont(new Font("Arial", Font.BOLD, 12));
+    g2.drawString("HP:", enemyPokemonHpBarX, enemyPokemonHpBarY);
 
-        g2.setColor(Color.BLACK);
-        g2.fillRect(allyPokemonHpBarX + 15, allyPokemonHpBarY - 7, 4, 3);
-        g2.fillRect(allyPokemonHpBarX + 9, allyPokemonHpBarY - 4, 10, 3);
-        g2.fillRect(allyPokemonHpBarX + 4, allyPokemonHpBarY - 1, 15, 3);
-        g2.fillRect(allyPokemonHpBarX, allyPokemonHpBarY + 2, 19, 3);
-        g2.fillRect(allyPokemonHpBarX + 19, allyPokemonHpBarY - 1, borderWidth, 6);
-        g2.fillRect(allyPokemonHpBarX + borderWidth + 16, allyPokemonHpBarY - borderHeight + 1, 6, borderHeight);
+    int hpBarActualWidth = borderWidth - 52;
+    g2.setColor(Color.DARK_GRAY);
+    g2.fillRect(enemyPokemonHpBarX + 36, enemyPokemonHpBarY - 10, hpBarActualWidth, 12);
 
-        int barPosX = allyPokemonHpBarX + 52;
-        int barPosY = allyPokemonHpBarY - 38;
+    g2.setColor(barColor);
+    g2.fillRect(enemyPokemonHpBarX + 37, enemyPokemonHpBarY - 9, (int) ((hpBarActualWidth - 2) * hpRatio), 10);
 
-        g2.setColor(Color.BLACK);
+    g2.setColor(Color.BLACK);
+    g2.drawRect(enemyPokemonHpBarX + 36, enemyPokemonHpBarY - 10, hpBarActualWidth, 12);
+
+    int nameAndLvlPadding = 24;
+    String pokemonName = pokemonToDraw.getName();
+    String pokemonLvl = "Lv." + pokemonToDraw.getLvl();
+    g2.setColor(Color.BLACK);
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.PLAIN, 18f));
+    else
+        g2.setFont(new Font("Arial", Font.PLAIN, 18));
+    g2.drawString(pokemonName, enemyPokemonHpBarX, enemyPokemonHpBarY - (nameAndLvlPadding * 9 / 5) - 4);
+
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.BOLD, 14f));
+    else
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
+    g2.drawString(pokemonLvl, enemyPokemonHpBarX + 10, enemyPokemonHpBarY - (nameAndLvlPadding * 7 / 8) - 4);
+}
+
+    public void drawAllyPokemonHpBar(Graphics2D g2, Pokemon pokemonToDraw, int width, int height) {
+    // CHANGE: This method now accepts a Pokemon object directly.
+    // REMOVED: The line 'Pokemon pokemonToDraw = getMainPlayerPokemon();'
+
+    if (pokemonToDraw == null) {
         if (font != null)
-            g2.setFont(font.deriveFont(Font.BOLD, 12f));
+            g2.setFont(font.deriveFont(Font.PLAIN, 12f));
         else
-            g2.setFont(new Font("Arial", Font.BOLD, 12));
-        g2.drawString("HP:", barPosX - 36, barPosY + 9);
-
-        int hpBarActualWidth = borderWidth - 52;
-        g2.setColor(Color.DARK_GRAY);
-        g2.fillRect(barPosX, barPosY - 2, hpBarActualWidth, 12);
-
-        g2.setColor(barColor);
-        g2.fillRect(barPosX + 1, barPosY - 1, (int) ((hpBarActualWidth - 2) * hpRatio), 10);
-
-        g2.setColor(Color.BLACK);
-        g2.drawRect(barPosX, barPosY - 2, hpBarActualWidth, 12);
-
-        String hpStats = pokemonToDraw.getHp() + "/" + pokemonToDraw.getMaxHp();
-        if (font != null)
-            g2.setFont(font.deriveFont(Font.BOLD, 14f));
-        else
-            g2.setFont(new Font("Arial", Font.BOLD, 14));
-        int hpStatsWidth = g2.getFontMetrics().stringWidth(hpStats);
-        g2.drawString(hpStats, barPosX + hpBarActualWidth - hpStatsWidth - 5, barPosY + 25);
-
-        int nameAndLvlPadding = 10;
-        g2.setColor(Color.BLACK);
-        if (font != null)
-            g2.setFont(font.deriveFont(Font.PLAIN, 18f));
-        else
-            g2.setFont(new Font("Arial", Font.PLAIN, 18));
-        g2.drawString(pokemonToDraw.getName(), allyPokemonHpBarX + 20, barPosY - (nameAndLvlPadding * 3) - 4);
-
-        if (font != null)
-            g2.setFont(font.deriveFont(Font.BOLD, 14f));
-        else
-            g2.setFont(new Font("Arial", Font.BOLD, 14));
-        g2.drawString("Lv." + pokemonToDraw.getLvl(), allyPokemonHpBarX + width - 30, barPosY - nameAndLvlPadding - 4);
+            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.setColor(Color.RED);
+        g2.drawString("NO ALLY TARGET", allyPokemonHpBarX, allyPokemonHpBarY + 10);
+        return;
     }
+
+    // The rest of this method's code is unchanged.
+    float hpRatio = (pokemonToDraw.getMaxHp() > 0) ? (float) pokemonToDraw.getHp() / pokemonToDraw.getMaxHp() : 0;
+    hpRatio = Math.max(0, Math.min(1, hpRatio));
+
+    Color barColor = hpRatio > 0.5 ? Color.GREEN : hpRatio > 0.2 ? Color.YELLOW : Color.RED;
+
+    int borderWidth = width + 36;
+    int borderHeight = height + 26;
+
+    g2.setColor(Color.BLACK);
+    g2.fillRect(allyPokemonHpBarX + 15, allyPokemonHpBarY - 7, 4, 3);
+    g2.fillRect(allyPokemonHpBarX + 9, allyPokemonHpBarY - 4, 10, 3);
+    g2.fillRect(allyPokemonHpBarX + 4, allyPokemonHpBarY - 1, 15, 3);
+    g2.fillRect(allyPokemonHpBarX, allyPokemonHpBarY + 2, 19, 3);
+    g2.fillRect(allyPokemonHpBarX + 19, allyPokemonHpBarY - 1, borderWidth, 6);
+    g2.fillRect(allyPokemonHpBarX + borderWidth + 16, allyPokemonHpBarY - borderHeight + 1, 6, borderHeight);
+
+    int barPosX = allyPokemonHpBarX + 52;
+    int barPosY = allyPokemonHpBarY - 38;
+
+    g2.setColor(Color.BLACK);
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.BOLD, 12f));
+    else
+        g2.setFont(new Font("Arial", Font.BOLD, 12));
+    g2.drawString("HP:", barPosX - 36, barPosY + 9);
+
+    int hpBarActualWidth = borderWidth - 52;
+    g2.setColor(Color.DARK_GRAY);
+    g2.fillRect(barPosX, barPosY - 2, hpBarActualWidth, 12);
+
+    g2.setColor(barColor);
+    g2.fillRect(barPosX + 1, barPosY - 1, (int) ((hpBarActualWidth - 2) * hpRatio), 10);
+
+    g2.setColor(Color.BLACK);
+    g2.drawRect(barPosX, barPosY - 2, hpBarActualWidth, 12);
+
+    String hpStats = pokemonToDraw.getHp() + "/" + pokemonToDraw.getMaxHp();
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.BOLD, 14f));
+    else
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
+    int hpStatsWidth = g2.getFontMetrics().stringWidth(hpStats);
+    g2.drawString(hpStats, barPosX + hpBarActualWidth - hpStatsWidth - 5, barPosY + 25);
+
+    int nameAndLvlPadding = 10;
+    g2.setColor(Color.BLACK);
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.PLAIN, 18f));
+    else
+        g2.setFont(new Font("Arial", Font.PLAIN, 18));
+    g2.drawString(pokemonToDraw.getName(), allyPokemonHpBarX + 20, barPosY - (nameAndLvlPadding * 3) - 4);
+
+    if (font != null)
+        g2.setFont(font.deriveFont(Font.BOLD, 14f));
+    else
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
+    g2.drawString("Lv." + pokemonToDraw.getLvl(), allyPokemonHpBarX + width - 30, barPosY - nameAndLvlPadding - 4);
+}
 
     public void flickeringSprite(Graphics2D g2, Pokemon pokemon, String pokemonAlliance) {
         if (g2 == null) throw new NullPointerException("Graphics2D g2 cannot be null");
@@ -556,18 +555,25 @@ public class Battle {
         return scaledImage;
     }
 
-    // In Battle.java
-    public void setNewDialog(String message, Graphics2D g2) {
+     public void setNewDialog(String message) {
         this.currentDialogMessage = message;
         this.hasNewDialogMessage = true;
         if (this.battleTextBox != null) {
-            int dialogWidth = battleTextBox.getDefaultWidth(); // Use default full width for dialogs
-            int effectiveTextWidth = dialogWidth - 2 * 16; // 16 is padding from TextBox
-            this.battleTextBox.setText(message, g2);
+            this.battleTextBox.setText(message); 
             this.battleTextBox.show();
         }
-        this.decisionPromptDisplayedThisTurn = false; // A new dialog means the old prompt is no longer the focus
     }
+    public void acknowledgeDialog() {
+    if (this.hasNewDialogMessage) {
+        this.hasNewDialogMessage = false;
+        this.battleTextBox.setText(""); 
+    }
+}
+
+// Also add a getter to check the flag from your input handler
+public boolean isDisplayingDialog() {
+    return this.hasNewDialogMessage;
+}
 
     public void prepareForNewDecisionPrompt() {
         this.decisionPromptDisplayedThisTurn = false;
@@ -575,137 +581,147 @@ public class Battle {
             this.optionBox.setVisible(true); // Make sure menu is ready
         }
          if (this.battleTextBox != null) {
-            // Don't necessarily hide the textbox here, drawBattleTextBox will handle setting the prompt
+            
         }
     }
 
-    public ArrayList<String> executeAttemptedMove(Graphics2D g2, PokemonMove move, Pokemon user, Pokemon target, BattleState battleState) {
-        // 1 for ally and 2 for enemy
-        Pokemon[] pokemonTemp = { new Pokemon(user), new Pokemon(target) };
-        
-        ArrayList<String> messages = new ArrayList<String>();
-
-        int dmgToUser, dmgToTarget, buffToUser = 0;
-        String buffedStats = "";
-
-        PokemonMoveCategory moveType = move.getMoveCategory();
-
-        pokemonTemp = move.move(pokemonTemp[0], pokemonTemp[1]);
-        dmgToUser = user.getHp() - pokemonTemp[0].getHp();
-        dmgToTarget = target.getHp() - pokemonTemp[1].getHp();
-
-        
-        System.out.println(dmgToUser);
-
-        if (moveType == PokemonMoveCategory.PHYSICAL || moveType == PokemonMoveCategory.SPECIAL) {
-            if (dmgToTarget > 0) {
-                messages.add(user.getName() + " dealt " + dmgToTarget + " damage to " + target.getName());
-            } else {
-                messages.add(user.getName() + " attack's failed and dealt no damage to " + target.getName());
-            }
-            if (dmgToUser > 0) {
-                messages.add(user.getName() + " self damage " + dmgToUser);
-            }
-        } else if (moveType == PokemonMoveCategory.STATUS) {
-            if (dmgToTarget > 0) {
-                messages.add(user.getName() + " used " + move.getMoveName() + " on " + target.getName() + " and inflicted " + dmgToTarget + " damage");
-            }
-            if (dmgToUser > 0) {
-                messages.add(user.getName() + " self damage " + dmgToUser);
-            }
-
-            if (pokemonTemp[0].getHp() - user.getHp() > 0) {
-                buffToUser = (pokemonTemp[0].getHp() - user.getHp());
-                buffedStats = "hp";
-            } else if (pokemonTemp[0].getAtk() - user.getAtk() > 0) {
-                buffToUser = (pokemonTemp[0].getAtk() - user.getAtk());
-                buffedStats = "atk";
-            } else if (pokemonTemp[0].getDef() - user.getDef() > 0) {
-                buffToUser = (pokemonTemp[0].getDef() - user.getDef());
-                buffedStats = "def";
-            } else if (pokemonTemp[0].getSpd() - user.getSpd() > 0) {
-                buffToUser = (pokemonTemp[0].getSpd() - user.getSpd());
-                buffedStats = "spd";
-            }
-
-            switch (buffedStats) {
-                case "hp" -> messages.add(user.getName() + " recovered " + buffToUser + " hp");
-                case "atk" -> messages.add(user.getName() + "'s attack increased by " + buffToUser);
-                case "def" -> messages.add(user.getName() + "'s defence increased by " + buffToUser);
-                case "spd" -> messages.add(user.getName() + "'s speed increased by " + buffToUser);
-                default -> {
-                    System.out.println("No buff");
-                }
-            }
-        }
-
-         if (battleState == BattleState.BATTLE_ENEMYMOVE) {
-            
-        } else {
-            this.playerPokemons[0].setHp(this.playerPokemons[0].getHp() - dmgToUser);
-            if (isNpcBattle) this.enemyPokemon[0].setHp(this.enemyPokemon[0].getHp() - dmgToTarget);
-            else this.wildPokemon.setHp(this.wildPokemon.getHp() - dmgToTarget);
-        }
-        
-        if (dmgToTarget > 0) {
-            System.out.println("t"+dmgToTarget);
-            flickeringSprite(g2, target, "enemy");
-        }
-        if (dmgToUser > 0) {
-            System.out.println("u" + dmgToUser);
-            flickeringSprite(g2, user, "ally");
-        }
-        System.out.println("t"+dmgToTarget);
+    public ArrayList<String> executeAttemptedMove(PokemonMove move, Pokemon user, Pokemon target, BattleState battleState) {
+    if (target == null) {
+        ArrayList<String> messages = new ArrayList<>();
+        messages.add(user.getName() + "'s attack missed!");
+        // Or handle it in another way that makes sense for your game.
         return messages;
     }
 
-    public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {
-        if (this.battleTextBox == null) {
-             // This should ideally be initialized in the constructor or initializeAssets
-            this.battleTextBox = new TextBox();
+    // Create temporary copies to calculate move effects without immediately changing the originals
+    Pokemon[] pokemonTemp = { new Pokemon(user), new Pokemon(target) };
+    
+    ArrayList<String> messages = new ArrayList<String>();
+
+    int dmgToUser, dmgToTarget, buffToUser = 0;
+    String buffedStats = "";
+
+    PokemonMoveCategory moveType = move.getMoveCategory();
+
+    // The move method calculates the result and returns the modified temporary Pokemon
+    pokemonTemp = move.move(pokemonTemp[0], pokemonTemp[1]);
+
+    // Calculate damage based on the difference in HP before and after the move
+    dmgToUser = user.getHp() - pokemonTemp[0].getHp();
+    dmgToTarget = target.getHp() - pokemonTemp[1].getHp();
+    
+    System.out.println(dmgToUser);
+
+    if (moveType == PokemonMoveCategory.PHYSICAL || moveType == PokemonMoveCategory.SPECIAL) {
+        if (dmgToTarget > 0) {
+            messages.add(user.getName() + " dealt " + dmgToTarget + " damage to " + target.getName());
+        } else {
+            messages.add(user.getName() + "'s attack failed and dealt no damage to " + target.getName());
+        }
+        if (dmgToUser > 0) {
+            messages.add(user.getName() + " took " + dmgToUser + " recoil damage!");
+        }
+    } else if (moveType == PokemonMoveCategory.STATUS) {
+        if (dmgToTarget > 0) {
+            messages.add(user.getName() + " used " + move.getMoveName() + " on " + target.getName() + " and inflicted " + dmgToTarget + " damage");
+        }
+        if (dmgToUser > 0) {
+            messages.add(user.getName() + " self damage " + dmgToUser);
         }
 
-        Pokemon activePlayerPokemon = getMainPlayerPokemon();
-        String decisionPrompt = "What will " +
-                                (activePlayerPokemon != null && activePlayerPokemon.getName() != null ?
-                                 activePlayerPokemon.getName().toUpperCase() : "POKEMON") +
-                                " do?";
-        if (hasNewDialogMessage) {
-            this.battleTextBox.setText(this.currentDialogMessage, g2);
-            this.battleTextBox.show();
-            hasNewDialogMessage = false; // Dialog message overrides prompt state
-            decisionPromptDisplayedThisTurn = false;
-            // decisionPromptDisplayedThisTurn was already set to false in setNewDialog
-        } else if (battleState == BattleState.BATTLE_DECISION) {
+        if (pokemonTemp[0].getHp() - user.getHp() > 0) {
+            buffToUser = (pokemonTemp[0].getHp() - user.getHp());
+            buffedStats = "hp";
+        } else if (pokemonTemp[0].getAtk() - user.getAtk() > 0) {
+            buffToUser = (pokemonTemp[0].getAtk() - user.getAtk());
+            buffedStats = "atk";
+        } else if (pokemonTemp[0].getDef() - user.getDef() > 0) {
+            buffToUser = (pokemonTemp[0].getDef() - user.getDef());
+            buffedStats = "def";
+        } else if (pokemonTemp[0].getSpd() - user.getSpd() > 0) {
+            buffToUser = (pokemonTemp[0].getSpd() - user.getSpd());
+            buffedStats = "spd";
+        }
 
-            if (!decisionPromptDisplayedThisTurn || !this.battleTextBox.isVisible() ||
-                !this.battleTextBox.getCurrentText().equals(decisionPrompt)) {
-                this.battleTextBoxHeight = this.battleTextBox.getDefaultHeight();
-                this.battleTextBox.setText(decisionPrompt, g2);
-                this.battleTextBox.show();
-                decisionPromptDisplayedThisTurn = true;
+        switch (buffedStats) {
+            case "hp" -> messages.add(user.getName() + " recovered " + buffToUser + " hp");
+            case "atk" -> messages.add(user.getName() + "'s attack increased by " + buffToUser);
+            case "def" -> messages.add(user.getName() + "'s defence increased by " + buffToUser);
+            case "spd" -> messages.add(user.getName() + "'s speed increased by " + buffToUser);
+            default -> {
+                System.out.println("No buff");
             }
-        } else if (battleState == BattleState.BATTLE_SELECTMOVE) {
-            String moveSelectionPrompt = "Choose a move to use:";
-            if (!decisionPromptDisplayedThisTurn || !this.battleTextBox.isVisible() ||
-                !this.battleTextBox.getCurrentText().equals(moveSelectionPrompt)) {
-                this.battleTextBox.setAdditionalHeight(15);
-                this.battleTextBox.setText(moveSelectionPrompt, g2);    
+        }
+    }
+
+    // Apply the changes from the temporary Pokemon to the actual Pokemon
+    user.setHp(pokemonTemp[0].getHp());
+    target.setHp(pokemonTemp[1].getHp());
+    user.setAtk(pokemonTemp[0].getAtk());
+    user.setDef(pokemonTemp[0].getDef());
+    user.setSpd(pokemonTemp[0].getSpd());
+    target.setAtk(pokemonTemp[1].getAtk());
+    target.setDef(pokemonTemp[1].getDef());
+    target.setSpd(pokemonTemp[1].getSpd());
+
+    // --- START: ADDED LOGIC TO HANDLE FAINTING ---
+    // Check if the target Pokemon has fainted
+    if (target.getHp() <= 0) {
+        messages.add(target.getName() + " fainted!");
+        // If the fainted Pokemon is the main enemy, handle the switch
+        if (target == getMainEnemyPokemon()) {
+            handleFaintedEnemy(); 
+        }
+        // Note: You may also want to add similar logic for when the player's Pokemon faints.
+    }
+    // --- END: ADDED LOGIC TO HANDLE FAINTING ---
+    
+    // Trigger the flickering animation
+    if (dmgToTarget > 0) {
+        this.pokemonToFlicker = target; 
+        this.flickerStartTime = System.currentTimeMillis();
+    }
+    if (dmgToUser > 0) {
+        this.pokemonToFlicker = user; 
+        this.flickerStartTime = System.currentTimeMillis();
+    }
+
+    System.out.println("t" + dmgToTarget);
+    return messages;
+}
+
+     public void drawBattleTextBox(Graphics2D g2, BattleState battleState, int panelWidth, int panelHeight) {
+        if (this.battleTextBox == null) {
+            return; 
+        }
+
+    if (hasNewDialogMessage) {
+            // The text is already set, just need to make sure it's visible.
+            if (!this.battleTextBox.isVisible()) {
                 this.battleTextBox.show();
-                decisionPromptDisplayedThisTurn = true;
             }
-        } else {
-            // Other states might hide the textbox or show specific messages
-            // For now, if not BATTLE_DECISION and no new dialog, assume textbox might be hidden or irrelevant.
-            decisionPromptDisplayedThisTurn = false; // Reset prompt flag if not in decision state
-            // if (battleTextBox.isVisible()) battleTextBox.hide(); // Optionally hide
+        } else if (battleState == BattleState.BATTLE_DECISION) {
+            Pokemon activePlayerPokemon = getMainPlayerPokemon();
+            String decisionPrompt = "What will " +
+                    (activePlayerPokemon != null ? activePlayerPokemon.getName().toUpperCase() : "POKEMON") +
+                    " do?";
+
+            if (!this.battleTextBox.getCurrentText().equals(decisionPrompt)) {
+                 this.battleTextBox.setText(decisionPrompt);
+            }
+            if (!this.battleTextBox.isVisible()) {
+                this.battleTextBox.show();
+            }
+        }
+        // ... other else-if conditions for different prompts (like selecting a move)
+        else {
+             this.battleTextBox.hide();
         }
 
         if (this.battleTextBox.isVisible()) {
             this.battleTextBox.draw(g2, panelWidth, panelHeight);
         }
     }
-
     public void resetTextBoxStateForNewTurn() {
         this.decisionPromptDisplayedThisTurn = false;
         this.hasNewDialogMessage = false; // Clear any pending dialog flags too
@@ -763,4 +779,47 @@ public class Battle {
         if (optionBox != null)
             optionBox.moveRight();
     }
+
+    public PokemonMove rollEnemyMove() {
+    Pokemon enemy = getMainEnemyPokemon();
+    ArrayList<PokemonMove> availableMoves = new ArrayList<>();
+    for (PokemonMove move : enemy.getMoves()) {
+        if (move != null && !move.getMoveName().equals("-")) {
+            availableMoves.add(move);
+        }
+    }
+    Random random = new Random();
+    PokemonMove chosenMove = availableMoves.get(random.nextInt(availableMoves.size()));
+    return chosenMove;
+    }
+    public void handleFaintedEnemy() {
+    if (!isNpcBattle) {
+        // No need to switch for wild battles
+        return;
+    }
+
+    // Check if the current main enemy has fainted
+    if (enemyPokemon != null && enemyPokemon.length > 0 && enemyPokemon[0].getHp() <= 0) {
+        Pokemon faintedPokemon = enemyPokemon[0];
+        boolean foundNewPokemon = false;
+
+        // Find the next non-fainted Pokemon and shift the array
+        for (int i = 1; i < enemyPokemon.length; i++) {
+            if (enemyPokemon[i] != null && enemyPokemon[i].getHp() > 0) {
+                // Set the new main enemy
+                enemyPokemon[0] = enemyPokemon[i];
+                enemyPokemon[i] = faintedPokemon; // Move the fainted one to the swapped position
+                foundNewPokemon = true;
+                setNewDialog("Your opponent is about to send in " + enemyPokemon[0].getName() + "!");
+                break;
+            }
+        }
+
+        // If no new Pokemon was found, the battle may be over
+        if (!foundNewPokemon) {
+            // Handle battle end logic here
+            System.out.println("All enemy Pokemon have fainted!");
+        }
+    }
+}
 }
